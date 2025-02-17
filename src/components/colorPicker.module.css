@@ -1,0 +1,29 @@
+.colorPicker{
+    height: 400px 
+}
+
+.column{
+    flex-direction: column;
+    display: flex
+}
+
+.column div{
+    align-items: center;
+    margin: 5px 0px;
+}
+
+.column >div  > *{
+    width: auto;
+}
+
+.primeColorPicker{
+    width: 30px;
+}
+
+.sliderOpacity{
+    width: 250px;
+}
+
+.sliderOpacityLabel{
+    width: auto;
+}
