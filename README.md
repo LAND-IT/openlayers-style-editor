@@ -1,2 +1,2 @@
-# styles-editor-openlayers
-A styles editor extension for OpenLayers
+# OpenLayers Style Editor
+A style editor extension for OpenLayers currently working with WebGL Vector Layers
