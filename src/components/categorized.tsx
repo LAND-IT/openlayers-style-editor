@@ -1,5 +1,5 @@
 import {Dropdown, DropdownChangeEvent} from "primereact/dropdown"
-import {useState} from "react"
+import React, {useState} from "react"
 import {ColorRamp, colorRamps, generateGradient, getColorRampString, Stop} from "./rampColors"
 import {Checkbox} from "primereact/checkbox"
 import {DataTable, DataTableSelectionMultipleChangeEvent} from "primereact/datatable"
@@ -18,13 +18,13 @@ import {
     RenderType,
     Row
 } from "./rendererObjects";
-import {AttributeDTO} from "./rendererObjects.ts";
+import {SEAttribute} from "./rendererObjects.ts";
 import {FlatStyle} from "ol/style/flat";
 import {MyColorPicker} from "./myColorPicker.tsx";
 import {Slider} from "primereact/slider";
 
 interface Props {
-    attr: AttributeDTO[]
+    attr: SEAttribute[]
     layerDefaultRenderer: Render
     layerCurrentRenderer: Render
     applyRenderer: (renderer: Render) => void
@@ -40,7 +40,7 @@ interface TableRow {
     value: string
 }
 
-export function Categorized(props: Props) {
+export const Categorized: React.FC<Props> = (props: Props)=> {
     const {
         attr,
         layerCurrentRenderer,
@@ -73,7 +73,7 @@ export function Categorized(props: Props) {
     const [selectedSpectrumColors, setSelectedSpectrumColors] =
         useState<ColorRampItem>()
     const [table, setTable] = useState<TableRow[]>(valuesAndColors)
-    const [selectedAttr, setSelectedAttr] = useState<AttributeDTO | undefined>(layerCurrentRenderer.field ?
+    const [selectedAttr, setSelectedAttr] = useState<SEAttribute | undefined>(layerCurrentRenderer.field ?
         attr.find(at => at.name == layerCurrentRenderer.field!)! : undefined)
     const [rowClick] = useState<boolean>(false)
 

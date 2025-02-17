@@ -1,6 +1,6 @@
-import {Dispatch, SetStateAction, useState} from "react";
+import React, {Dispatch, SetStateAction, useState} from "react";
 import {Dialog} from "primereact/dialog";
-import {AttributeDTO, PreDefinedRenderer, Render} from "./components/rendererObjects.ts";
+import {SEAttribute, PreDefinedRenderer, Render} from "./components/rendererObjects.ts";
 import {ColorRamp} from "./components/rampColors.ts";
 import {GeometryEditor} from "./components/geometryEditor.tsx";
 
@@ -10,14 +10,14 @@ interface Props {
     layerDefaultRenderer: Render
     layerCurrentRenderer: Render
     applyRenderer: (renderer: Render) => void
-    attributesAndValues: AttributeDTO[]
+    attributesAndValues: SEAttribute[]
     showPreDefinedRamps: boolean,
     moreRamps: ColorRamp[]
     preDefinedStyles: PreDefinedRenderer[]
     addingToHeader?: string
 }
 
-export const StyleEditor = (props: Props) => {
+export const StyleEditor: React.FC<Props> = (props: Props) => {
 
     const {layerDefaultRenderer, layerCurrentRenderer, applyRenderer,
         showPreDefinedRamps,moreRamps, preDefinedStyles, addingToHeader,

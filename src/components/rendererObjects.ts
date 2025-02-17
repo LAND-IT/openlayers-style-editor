@@ -9,11 +9,11 @@ export enum AttributeTypeEnum {
     'INTEGER',
     'FLOAT',
     'BOOLEAN',
-   'DATE',
+    'DATE',
     'JSON'
 }
 
-export interface AttributeDTO {
+export interface SEAttribute {
     id: number;
     name: string;
     type: AttributeTypeEnum;

@@ -1,22 +1,28 @@
 {
-  "name": "openlayers-styles-editor",
-  "private": true,
+  "name": "openlayers-style-editor",
   "version": "0.1.0",
   "type": "module",
-  "main": "./dist/openlayers-style-editor.umd.cjs",
-  "module": "./dist/openlayers-style-editor.js",
-  "files": ["dist"],
-  "exports": {
-    ".": {
-      "import": "./dist/openlayers-style-editor.js",
-      "require": "./dist/openlayers-style-editor.umd.cjs"
-    }
-  },
+  "main": "dist/openlayers-style-editor.umd.cjs",
+  "module": "dist/openlayers-style-editor.js",
+  "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+        "import": "./dist/index.js",
+        "require": "./dist/openlayers-style-editor.umd.cjs"
+        }
+    },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "dev": "vite --config vite.config.ts --port 3000",
+    "build": "vite build --config vite.config.ts",
+    "start": "vite --host --open",
+    "build:types": "dts-bundle-generator --config ./dts-bundle-generator.config.ts",
+    "lint:scripts": "eslint ./src --ext .ts",
+    "lint:styles": "stylelint ./**/*.{css,scss}",
+    "format:scripts": "prettier ./src --write",
+    "format:styles": "stylelint ./**/*.{css,scss} --fix"
   },
   "peerDependencies": {
     "ol": ">= 10.4.0",
@@ -24,14 +30,16 @@
     "react-dom": ">= 17.0.0"
   },
   "dependencies": {
-    "primereact": "10.9.2",
-    "react-icons": "5.4.0",
-    "react-best-gradient-color-picker": "3.0.14",
+    "chart.js": "4.4.7",
     "geobuckets": "0.0.3",
-    "chart.js": "4.4.7"
+    "primereact": "10.9.2",
+    "react-best-gradient-color-picker": "3.0.14",
+    "react-icons": "5.4.0",
+    "vite-plugin-dts": "^4.5.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
+    "@types/node": "^22.13.4",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
@@ -41,7 +49,9 @@
     "globals": "^15.14.0",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.22.0",
-    "vite": "^6.1.0",
-    "@types/node": "^22.13.4"
+    "vite": "^6.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

@@ -1,5 +1,5 @@
 import {Dialog} from "primereact/dialog";
-import {useState} from "react";
+import React, {useState} from "react";
 import {asString, Color} from "ol/color";
 import ColorPicker from "react-best-gradient-color-picker";
 
@@ -9,7 +9,7 @@ interface Props {
     hideAlpha?: boolean
 }
 
-export const MyColorPicker = (props: Props) => {
+export const MyColorPicker: React.FC<Props> = (props: Props) => {
     const {color, onChange, hideAlpha} = props;
 
     const [visible, setVisible] = useState(false);

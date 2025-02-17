@@ -1,14 +1,14 @@
-import {Dispatch, SetStateAction, useEffect, useState} from "react"
+import React, {Dispatch, SetStateAction, useEffect, useState} from "react"
 import {UniqueSymbol} from "./uniqueSymbol"
 import {Categorized} from "./categorized"
 import {Dropdown} from "primereact/dropdown";
-import {AttributeDTO, PreDefinedRenderer, Render, RenderType} from "./rendererObjects.ts";
+import {SEAttribute, PreDefinedRenderer, Render, RenderType} from "./rendererObjects.ts";
 import {ColorRamp} from "./rampColors.ts";
 import {Button} from "primereact/button";
 import {Graduated} from "./graduated.tsx";
 
 interface Props {
-    attributes: AttributeDTO[]
+    attributes: SEAttribute[]
     visible: boolean
     setVisible: Dispatch<SetStateAction<boolean>>
     layerDefaultRenderer: Render
@@ -19,7 +19,7 @@ interface Props {
     preDefinedStyles: PreDefinedRenderer[]
 }
 
-export function GeometryEditor(props: Props) {
+export const GeometryEditor: React.FC<Props> = (props: Props) => {
 
     const {
         layerCurrentRenderer,
@@ -31,7 +31,7 @@ export function GeometryEditor(props: Props) {
         setVisible
     } = props;
 
-    const [attr, setAttr] = useState<AttributeDTO[]>(props.attributes)
+    const [attr, setAttr] = useState<SEAttribute[]>(props.attributes)
 
     const [currentRenderer, setCurrentRenderer] = useState<Render>(layerCurrentRenderer)
 

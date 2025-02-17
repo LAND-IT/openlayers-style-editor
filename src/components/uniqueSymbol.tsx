@@ -1,4 +1,4 @@
-import {useState} from "react"
+import React, {useState} from "react"
 import {Color, fromString} from "ol/color";
 import {Slider} from "primereact/slider";
 import {Render, RenderType, singleColorStyle} from "./rendererObjects.ts";
@@ -13,7 +13,7 @@ interface UniqueSymbolProps {
     setVisible: (e: boolean) => void
 }
 
-export function UniqueSymbol(props: UniqueSymbolProps) {
+export const UniqueSymbol: React.FC<UniqueSymbolProps> = (props: UniqueSymbolProps)=> {
 
     const {layerCurrentRenderer, applyRenderer, setVisible} = props;
 

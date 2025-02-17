@@ -1,12 +1,12 @@
 import {Dropdown, DropdownChangeEvent} from "primereact/dropdown"
-import {useEffect, useRef, useState} from "react"
+import React, {useEffect, useRef, useState} from "react"
 import {Slider} from "primereact/slider"
 import {Color, fromString} from "ol/color";
 import {Chart} from "primereact/chart";
 import {InputNumber} from "primereact/inputnumber";
 import {Button, Button as PrimeButton} from "primereact/button";
 import {
-    AttributeDTO, AttributeTypeEnum, ColorRampDropdownItem, ColorRampItem, getGraduatedStyle,
+    SEAttribute, AttributeTypeEnum, ColorRampDropdownItem, ColorRampItem, getGraduatedStyle,
     getRendererColorAndSizeStroke,
     getRendererOpacity, GraduatedModes,
     Render,
@@ -21,7 +21,7 @@ import {MyColorPicker} from "./myColorPicker.tsx";
 
 
 interface GraduatedProps {
-    attr: AttributeDTO[]
+    attr: SEAttribute[]
     setAttr: (value: never) => void
     applyRenderer: (renderer: Render) => void
     setVisible: (e: boolean) => void
@@ -36,7 +36,7 @@ interface Interval {
     count: number
 }
 
-export function Graduated(props: GraduatedProps) {
+export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
     const {attr, applyRenderer, setVisible, layerCurrentRenderer, moreRamps, showPreDefinedRamps} = props
 
     const locale = "pt-PT"
@@ -62,7 +62,7 @@ export function Graduated(props: GraduatedProps) {
     const stroke = getRendererColorAndSizeStroke(layerCurrentRenderer)
     const [opacity, setOpacity] = useState<number>(currentStyle ? getRendererOpacity(layerCurrentRenderer) : 100)
     const [stops, setStops] = useState<Row[]>(valuesAndColors)
-    const [selectedAttr, setSelectedAttr] = useState<AttributeDTO | undefined>(layerCurrentRenderer.field ?
+    const [selectedAttr, setSelectedAttr] = useState<SEAttribute | undefined>(layerCurrentRenderer.field ?
         attr.find(at => at.name == layerCurrentRenderer.field!)! : undefined)
     const [selectedMode, setSelectedMode] = useState<GraduatedModes | undefined>(layerCurrentRenderer.type == RenderType.Graduated ?
         layerCurrentRenderer.graduatedType! : undefined)
