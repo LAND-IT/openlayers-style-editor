@@ -3,15 +3,16 @@ import react from '@vitejs/plugin-react';
 import dts from 'vite-plugin-dts';
 import path from 'path';
 
-export default defineConfig(({ command, mode }) => {
+export default defineConfig(({ command }) => {
     if (command === 'serve') {
         // Dev config
         return {
             plugins: [react()],
-            root: path.resolve(__dirname, 'dev'),
-            build: {
-                outDir: path.resolve(__dirname, 'dist'),
-            },
+            server: {
+                watch: {
+                    usePolling: true
+                }
+            }
         };
     } else {
         // Build config

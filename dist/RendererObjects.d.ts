@@ -1,6 +1,6 @@
 import { Color } from 'ol/color';
 import { FlatStyle } from 'ol/style/flat';
-import { Stop } from './rampColors.ts';
+import { Stop } from './components/rampColors.ts';
 export declare enum AttributeTypeEnum {
     'STRING' = 0,
     'INTEGER' = 1,
@@ -9,7 +9,7 @@ export declare enum AttributeTypeEnum {
     'DATE' = 4,
     'JSON' = 5
 }
-export interface AttributeDTO {
+export interface SEAttribute {
     id: number;
     name: string;
     type: AttributeTypeEnum;

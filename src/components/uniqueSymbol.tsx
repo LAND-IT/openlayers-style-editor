@@ -1,7 +1,7 @@
 import React, {useState} from "react"
 import {Color, fromString} from "ol/color";
 import {Slider} from "primereact/slider";
-import {Render, RenderType, singleColorStyle} from "./rendererObjects.ts";
+import {Render, RenderType, singleColorStyle} from "../RendererObjects.ts";
 import {MyColorPicker} from "./myColorPicker.tsx";
 import {Button} from "primereact/button";
 import {FlatStyle} from "ol/style/flat";
@@ -13,7 +13,7 @@ interface UniqueSymbolProps {
     setVisible: (e: boolean) => void
 }
 
-export const UniqueSymbol: React.FC<UniqueSymbolProps> = (props: UniqueSymbolProps)=> {
+export const UniqueSymbol: React.FC<UniqueSymbolProps> = (props: UniqueSymbolProps) => {
 
     const {layerCurrentRenderer, applyRenderer, setVisible} = props;
 
@@ -21,7 +21,19 @@ export const UniqueSymbol: React.FC<UniqueSymbolProps> = (props: UniqueSymbolPro
 
     const currentStyle: FlatStyle | null = layerCurrentRenderer.field ? null : layerCurrentRenderer.rendererOL as FlatStyle;
     const [color, setColor] = useState<Color>(currentStyle ? currentStyle["fill-color"]! as Color : fromString(start));
-    const [borderColor, setBorderColor] = useState<Color>(currentStyle ? currentStyle["stroke-color"]![3] as Color : fromString("#000000"));
+    let auxBorder;
+    if (currentStyle) {
+        if (currentStyle["stroke-color"])
+            if (currentStyle["stroke-color"][0] == "case")
+                auxBorder = currentStyle["stroke-color"]![3] as Color;
+            else
+                auxBorder = currentStyle["stroke-color"] as Color;
+        else
+            auxBorder = fromString("#000000");
+    } else {
+        auxBorder = fromString("#000000");
+    }
+    const [borderColor, setBorderColor] = useState<Color>(auxBorder);
     const [borderThickness, setBorderThickness] = useState<number>(currentStyle ? (currentStyle["stroke-width"]! as any[])[3] as number : 1);
 
     function createRenderUnique(color: Color, outlineColor: Color, outlineWidth: number) {

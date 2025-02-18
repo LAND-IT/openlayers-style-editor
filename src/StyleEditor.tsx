@@ -1,8 +1,11 @@
-import React, {Dispatch, SetStateAction, useState} from "react";
+import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {Dialog} from "primereact/dialog";
-import {SEAttribute, PreDefinedRenderer, Render} from "./components/rendererObjects.ts";
+import {SEAttribute, PreDefinedRenderer, Render} from "./RendererObjects.ts";
 import {ColorRamp} from "./components/rampColors.ts";
 import {GeometryEditor} from "./components/geometryEditor.tsx";
+import VectorSource from "ol/source/Vector";
+import {Feature} from "ol";
+import {mapFeaturesToSEAttributes} from "./components/utills.ts";
 
 interface Props {
     visible: boolean
@@ -10,20 +13,23 @@ interface Props {
     layerDefaultRenderer: Render
     layerCurrentRenderer: Render
     applyRenderer: (renderer: Render) => void
-    attributesAndValues: SEAttribute[]
+    vectorSource: VectorSource | Feature[]
     showPreDefinedRamps: boolean,
     moreRamps: ColorRamp[]
     preDefinedStyles: PreDefinedRenderer[]
     addingToHeader?: string
 }
 
-export const StyleEditor: React.FC<Props> = (props: Props) => {
+const StyleEditor: React.FC<Props> = (props: Props) => {
 
     const {layerDefaultRenderer, layerCurrentRenderer, applyRenderer,
         showPreDefinedRamps,moreRamps, preDefinedStyles, addingToHeader,
-        attributesAndValues, visible, setVisible} = props;
+        vectorSource, visible, setVisible} = props;
 
     const [activeIndex] = useState(1);
+
+    const [features, setFeatures] = useState<Feature[]>([])
+    const [attributesAndValues, setAttributesAndValues] = useState<SEAttribute[]>([])
 
     // const items: MenuItem[] = [
     //     {
@@ -34,6 +40,23 @@ export const StyleEditor: React.FC<Props> = (props: Props) => {
     //         label: "Geometrias",
     //         icon: <HiOutlineColorSwatch/>
     //     }]
+
+    if(vectorSource instanceof VectorSource){
+        if(vectorSource.getUrl()){
+            vectorSource.on('featuresloadend', function() {
+                const features = vectorSource.getFeatures();
+                setFeatures(features)
+            });
+        } else {
+            if(vectorSource.getFeatures().length > 0){
+                setFeatures(vectorSource.getFeatures())
+            }
+        }
+    }
+
+    useEffect(() => {
+        setAttributesAndValues(mapFeaturesToSEAttributes(features))
+    }, [features]);
 
     return <>
         <Dialog visible={props.visible} header={"Edição de Estilos" + (addingToHeader ? " - " + addingToHeader : "")}
@@ -52,3 +75,5 @@ export const StyleEditor: React.FC<Props> = (props: Props) => {
     </>
 
 }
+
+export default StyleEditor;

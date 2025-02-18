@@ -1,8 +1,8 @@
 import { default as React, Dispatch, SetStateAction } from 'react';
-import { AttributeDTO, PreDefinedRenderer, Render } from './rendererObjects.ts';
+import { SEAttribute, PreDefinedRenderer, Render } from '../RendererObjects.ts';
 import { ColorRamp } from './rampColors.ts';
 interface Props {
-    attributes: AttributeDTO[];
+    attributes: SEAttribute[];
     visible: boolean;
     setVisible: Dispatch<SetStateAction<boolean>>;
     layerDefaultRenderer: Render;

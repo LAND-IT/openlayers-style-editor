@@ -17,8 +17,8 @@ import {
     Render,
     RenderType,
     Row
-} from "./rendererObjects";
-import {SEAttribute} from "./rendererObjects.ts";
+} from "../RendererObjects.ts";
+import {SEAttribute} from "../RendererObjects.ts";
 import {FlatStyle} from "ol/style/flat";
 import {MyColorPicker} from "./myColorPicker.tsx";
 import {Slider} from "primereact/slider";
@@ -283,7 +283,8 @@ export const Categorized: React.FC<Props> = (props: Props)=> {
                         value={selectedAttr}
                         onChange={(e: DropdownChangeEvent) => changeAttribute(e)}
                         options={attr}
-                        optionLabel="name"
+                        optionLabel={"name"}
+                        itemTemplate={(option: SEAttribute) => <span>{option.name} ({option.values.length})</span>}
                         placeholder="Selecione um atributo"
                     />
                 </div>

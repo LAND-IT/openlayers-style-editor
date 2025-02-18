@@ -1,5 +1,5 @@
 import { default as React } from 'react';
-import { Render } from './rendererObjects.ts';
+import { Render } from '../RendererObjects.ts';
 interface UniqueSymbolProps {
     layerDefaultRenderer: Render;
     layerCurrentRenderer: Render;

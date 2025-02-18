@@ -1,6 +1,6 @@
 import {Color, fromString} from "ol/color";
 import {FlatStyle} from "ol/style/flat";
-import {Stop} from "./rampColors.ts";
+import {Stop} from "./components/rampColors.ts";
 
 //https://openlayers.org/en/latest/apidoc/module-ol_style_expressions.html
 

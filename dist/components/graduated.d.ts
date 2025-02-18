@@ -1,8 +1,8 @@
 import { default as React } from 'react';
-import { AttributeDTO, Render } from './rendererObjects';
+import { SEAttribute, Render } from '../RendererObjects.ts';
 import { ColorRamp } from './rampColors.ts';
 interface GraduatedProps {
-    attr: AttributeDTO[];
+    attr: SEAttribute[];
     setAttr: (value: never) => void;
     applyRenderer: (renderer: Render) => void;
     setVisible: (e: boolean) => void;

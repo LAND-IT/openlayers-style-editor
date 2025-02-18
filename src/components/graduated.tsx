@@ -12,7 +12,7 @@ import {
     Render,
     RenderType,
     Row
-} from "./rendererObjects";
+} from "../RendererObjects.ts";
 import {ColorRamp, colorRamps, generateGradient, getColorRampString, Stop} from "./rampColors.ts";
 import {FlatStyle} from "ol/style/flat";
 import {Toast, ToastMessage} from "primereact/toast";
