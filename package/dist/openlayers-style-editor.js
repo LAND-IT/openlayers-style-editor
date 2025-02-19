@@ -1,5 +1,5 @@
 import * as u from "react";
-import $, { useContext as ju, useEffect as pr, useState as bt, useRef as cA, isValidElement as Ii, cloneElement as Ui, Children as A0, createContext as a0, memo as o0 } from "react";
+import $, { useContext as ju, useEffect as gr, useState as bt, useRef as cA, isValidElement as Ii, cloneElement as Ui, Children as A0, createContext as a0, memo as o0 } from "react";
 import Ua, { createPortal as i0 } from "react-dom";
 var Ro = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {};
 function Gu(e) {
@@ -2828,7 +2828,7 @@ var Rg = {
   }
 }, Tg = function(r) {
   var t = r.callback, n = r.when, A = r.priority;
-  pr(function() {
+  gr(function() {
     if (n)
       return Pg.addListener(t, A);
   }, [t, n, A]);
@@ -2951,7 +2951,7 @@ var Rg = {
   }, M = function() {
     !f || !o.current || (L.removeInlineStyle(o.current), i(!1));
   };
-  return pr(function() {
+  return gr(function() {
     g || x();
   }, [g]), {
     id: w,
@@ -8300,7 +8300,7 @@ function M1(e) {
     defaultColor: (n = g.defaultColor) !== null && n !== void 0 ? n : Mo.defaultColor,
     defaultGradient: (A = g.defaultGradient) !== null && A !== void 0 ? A : Mo.defaultGradient
   }, w = U1(a, B.defaultColor, B.defaultGradient), h = L1(a), E = h.degrees, y = h.degreeStr, b = h.isGradient, x = h.gradientType, M = D1(w, B.defaultGradient), _ = M.currentColor, O = M.selectedColor, N = M.currentLeft, P = bt("rgb"), re = P[0], z = P[1], ue = bt({}), ie = ue[0], Re = ue[1], Ie = Kr(_), De = Ie.toRgb(), He = Ie.toHsv(), Q = bt(en(en({}, De), He)), Y = Q[0], X = Q[1];
-  pr(function() {
+  gr(function() {
     (He == null ? void 0 : He.s) === 0 ? X(en(en(en({}, De), He), { h: Y == null ? void 0 : Y.h })) : X(en(en({}, De), He));
   }, [_]);
   var U = function(we) {
@@ -8371,7 +8371,7 @@ var Mo = {
   defaultColor: "rgba(175, 51, 242, 1)",
   defaultGradient: "linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%)"
 }, k1 = function(e, r) {
-  pr(function() {
+  gr(function() {
     var t, n = (t = e == null ? void 0 : e.current) === null || t === void 0 ? void 0 : t.getContext("2d", { willReadFrequently: !0 });
     if (n) {
       n.rect(0, 0, r, 14);
@@ -8381,7 +8381,7 @@ var Mo = {
     }
   }, [e, r]);
 }, N1 = function(e, r, t, n) {
-  pr(function() {
+  gr(function() {
     var A, a = (A = e == null ? void 0 : e.current) === null || A === void 0 ? void 0 : A.getContext("2d", { willReadFrequently: !0 });
     if (a) {
       a.rect(0, 0, n, 14);
@@ -8391,7 +8391,7 @@ var Mo = {
     }
   }, [e, r, t, n]);
 }, K1 = function(e, r, t, n) {
-  pr(function() {
+  gr(function() {
     var A, a = (A = e == null ? void 0 : e.current) === null || A === void 0 ? void 0 : A.getContext("2d", { willReadFrequently: !0 });
     if (a) {
       a.rect(0, 0, n, 14);
@@ -8401,7 +8401,7 @@ var Mo = {
     }
   }, [e, r, t, n]);
 }, j1 = function(e, r, t, n) {
-  pr(function() {
+  gr(function() {
     var A, a = (A = e == null ? void 0 : e.current) === null || A === void 0 ? void 0 : A.getContext("2d", { willReadFrequently: !0 });
     if (a) {
       a.rect(0, 0, n, 14);
@@ -8435,7 +8435,7 @@ var Mo = {
   }, B = function(w) {
     s || v(w);
   };
-  return pr(function() {
+  return gr(function() {
     var w = function() {
       d();
     };
@@ -8518,7 +8518,7 @@ var $1 = function(e) {
   }, Bn.apply(this, arguments);
 }, un = function(e) {
   var r = e.label, t = e.value, n = e.callback, A = e.max, a = A === void 0 ? 100 : A, i = e.hideOpacity, o = e.defaultStyles, l = e.pickerIdSuffix, s = bt(t), c = s[0], f = s[1], d = i ? "25%" : "20%";
-  pr(function() {
+  gr(function() {
     f(t);
   }, [t]);
   var g = function(v) {
@@ -8535,7 +8535,7 @@ var $1 = function(e) {
   );
 }, W1 = function(e) {
   var r = e.opacity, t = e.tinyColor, n = e.showHexAlpha, A = e.handleChange, a = e.defaultStyles, i = e.pickerIdSuffix, o = bt(""), l = o[0], s = o[1], c = t.toHex(), f = bt(c), d = f[0], g = f[1];
-  pr(function() {
+  gr(function() {
     l !== "hex" && g(c);
   }, [t, l, c]);
   var v = function() {
@@ -8653,7 +8653,7 @@ var $1 = function(e) {
     } })
   );
 }, ew = function(e, r, t, n) {
-  pr(function() {
+  gr(function() {
     if (e.current) {
       var A = e.current.getContext("2d", { willReadFrequently: !0 });
       if (A) {
@@ -8768,7 +8768,7 @@ var SA = function() {
   }, SA.apply(this, arguments);
 }, Aw = function() {
   var e, r, t = nr(), n = t.hc, A = t.config, a = t.squareWidth, i = t.squareHeight, o = t.handleChange, l = t.defaultStyles, s = t.pickerIdSuffix, c = A.crossSize, f = bt(!1), d = f[0], g = f[1], v = cA(null), p = O1(n == null ? void 0 : n.s, (n == null ? void 0 : n.v) * 100, a, i, c), B = p[0], w = p[1], h = bt({ x: B, y: w }), E = h[0], y = h[1];
-  ew(v, n == null ? void 0 : n.h, a, i), pr(function() {
+  ew(v, n == null ? void 0 : n.h, a, i), gr(function() {
     d || y({ x: (n == null ? void 0 : n.v) === 0 ? E.x : B, y: w });
   }, [B, w]);
   var b = function(P) {
@@ -8793,7 +8793,7 @@ var SA = function() {
   }, N = function(P) {
     g(!0), b(P);
   };
-  return pr(function() {
+  return gr(function() {
     var P = function() {
       x();
     };
@@ -8850,7 +8850,7 @@ var SA = function() {
   }, y = function(x) {
     s || h(x);
   }, b = A - 18;
-  return pr(function() {
+  return gr(function() {
     var x = function() {
       B();
     };
@@ -9071,7 +9071,7 @@ var SA = function() {
   );
 }, hw = function(e) {
   var r, t = e.children, n = "id" + Math.random().toString(16).slice(2), A = cA((r = document.getElementById(n)) !== null && r !== void 0 ? r : document.createElement("div")), a = bt(!A.current.parentElement)[0];
-  return pr(function() {
+  return gr(function() {
     var i = A.current;
     return a && (A.current.id = n, document.body.appendChild(A.current)), function() {
       a && i.parentElement && i.parentElement.removeChild(i);
@@ -14254,7 +14254,7 @@ var K2 = function(e, r) {
   }, au.apply(this, arguments);
 }, us = function(e) {
   var r = e.value, t = e.reffy, n = e.label, A = e.config, a = e.callback, i = e.squareWidth, o = e.openAdvanced, l = e.defaultStyles, s = e.pickerIdSuffix, c = A.barSize, f = bt(!1), d = f[0], g = f[1], v = bt(2), p = v[0], B = v[1], w = r * (i - 18);
-  pr(function() {
+  gr(function() {
     var x;
     B(((x = t == null ? void 0 : t.current) === null || x === void 0 ? void 0 : x.offsetTop) - 2);
   }, [o, t]);
@@ -14267,7 +14267,7 @@ var K2 = function(e, r) {
   }, b = function() {
     g(!0);
   };
-  return pr(function() {
+  return gr(function() {
     var x = function() {
       h();
     };
@@ -14750,7 +14750,7 @@ var K2 = function(e, r) {
   }, h = function() {
     p();
   };
-  return pr(function() {
+  return gr(function() {
     return window.addEventListener("mouseup", h), function() {
       window.removeEventListener("mouseup", h);
     };
@@ -21441,7 +21441,7 @@ function tx() {
   throw new TypeError(`Invalid attempt to spread non-iterable instance.
 In order to be iterable, non-array objects must have a [Symbol.iterator]() method.`);
 }
-function gr(e) {
+function pr(e) {
   return q4(e) || ex(e) || Nv(e) || tx();
 }
 function rx(e) {
@@ -23437,7 +23437,7 @@ var $v = /* @__PURE__ */ u.memo(function(e) {
         }
       } else {
         var Ht = B(e.editingRows, tt);
-        Ue = e.editingRows ? gr(e.editingRows) : [], Ht !== -1 ? Ue = Ue.filter(function(Ot, Nt) {
+        Ue = e.editingRows ? pr(e.editingRows) : [], Ht !== -1 ? Ue = Ue.filter(function(Ot, Nt) {
           return Nt !== Ht;
         }) : Ue.push(tt);
       }
@@ -23846,7 +23846,7 @@ var Hi = /* @__PURE__ */ u.memo(/* @__PURE__ */ u.forwardRef(function(e, r) {
           type: S
         }));
       else
-        se = H.isObject(se) ? [se] : se, se = ge && De() ? [].concat(gr(se), [ve]) : [ve], Ct({
+        se = H.isObject(se) ? [se] : se, se = ge && De() ? [].concat(pr(se), [ve]) : [ve], Ct({
           originalEvent: j,
           data: ve,
           type: S
@@ -24006,7 +24006,7 @@ var Hi = /* @__PURE__ */ u.memo(/* @__PURE__ */ u.forwardRef(function(e, r) {
       }));
     } else {
       var S = he(e.expandedRows, I.data);
-      j = e.expandedRows ? gr(e.expandedRows) : [], S !== -1 ? (j = j.filter(function(J, se) {
+      j = e.expandedRows ? pr(e.expandedRows) : [], S !== -1 ? (j = j.filter(function(J, se) {
         return se !== S;
       }), e.onRowCollapse && e.onRowCollapse({
         originalEvent: I,
@@ -24040,7 +24040,7 @@ var Hi = /* @__PURE__ */ u.memo(/* @__PURE__ */ u.forwardRef(function(e, r) {
   }, Kt = function(I) {
     var j = I.originalEvent;
     if (O.current != null) {
-      var ve = _.current > O.current ? O.current : O.current === 0 ? 0 : O.current - 1, Ne = gr(e.tableProps.value);
+      var ve = _.current > O.current ? O.current : O.current === 0 ? 0 : O.current - 1, Ne = pr(e.tableProps.value);
       H.reorderArray(Ne, _.current, ve), e.onRowReorder && e.onRowReorder({
         originalEvent: j,
         value: Ne,
@@ -26039,7 +26039,7 @@ var Zv = /* @__PURE__ */ u.forwardRef(function(e, r) {
         var Ve = ht(te, ze);
         return Ve && ke.push(Ve), ke;
       }, []);
-      return [].concat(gr(be), gr(te.filter(function(ke) {
+      return [].concat(pr(be), pr(te.filter(function(ke) {
         return be.indexOf(ke) < 0;
       })));
     }
@@ -26148,7 +26148,7 @@ var Zv = /* @__PURE__ */ u.forwardRef(function(e, r) {
   }, Er = function(D) {
     if (A.onSelectAllChange)
       return A.selectAll;
-    var te = A.selectionPageOnly ? xl(D) : D, be = H.isNotEmpty(A.frozenValue) ? [].concat(gr(A.frozenValue), gr(te)) : te, ke = Zt(be);
+    var te = A.selectionPageOnly ? xl(D) : D, be = H.isNotEmpty(A.frozenValue) ? [].concat(pr(A.frozenValue), pr(te)) : te, ke = Zt(be);
     return H.isNotEmpty(ke) && A.selection && ke.every(function(ze) {
       return H.isArray(A.selection) && A.selection.some(function(Ve) {
         return At(Ve, ze);
@@ -26245,7 +26245,7 @@ var Zv = /* @__PURE__ */ u.forwardRef(function(e, r) {
           return At(et, nt);
         });
       }) : [];
-      ke ? (Ve = H.isNotEmpty(A.frozenValue) ? [].concat(gr(Ve), gr(A.frozenValue), gr(ze)) : [].concat(gr(Ve), gr(ze)), Ve = Zt(Ve), A.onAllRowsSelect && A.onAllRowsSelect({
+      ke ? (Ve = H.isNotEmpty(A.frozenValue) ? [].concat(pr(Ve), pr(A.frozenValue), pr(ze)) : [].concat(pr(Ve), pr(ze)), Ve = Zt(Ve), A.onAllRowsSelect && A.onAllRowsSelect({
         originalEvent: be,
         data: Ve,
         type: "all"
@@ -26294,7 +26294,7 @@ var Zv = /* @__PURE__ */ u.forwardRef(function(e, r) {
           return pn === ft;
         }), Jr = Tt.filter(function(Zr, pn) {
           return pn !== ft;
-        }), jn = [].concat(gr(Jr.slice(0, mt)), [tr], gr(Jr.slice(mt)));
+        }), jn = [].concat(pr(Jr.slice(0, mt)), [tr], pr(Jr.slice(mt)));
         Ke(jn), mt < ft && dt.current === 1 && mt++, mt > ft && dt.current === -1 && mt--, H.reorderArray(et, ft, mt);
         var qn = et.reduce(function(Zr, pn) {
           return Zr.push(j(pn, "columnKey") || j(pn, "field")), Zr;
@@ -26365,7 +26365,7 @@ var Zv = /* @__PURE__ */ u.forwardRef(function(e, r) {
     var te = D.originalEvent, be = D.column, ke = D.sortableDisabledFields, ze = j(be, "sortField") || j(be, "field"), Ve = A.defaultSortOrder, et, nt;
     if (Ce.current = j(be, "sortable"), ee.current = j(be, "sortFunction"), We.current = ze, A.sortMode === "multiple") {
       var ft = te.metaKey || te.ctrlKey;
-      et = gr(oe());
+      et = pr(oe());
       var mt = et.find(function(er) {
         return er.field === ze;
       });
@@ -26416,7 +26416,7 @@ var Zv = /* @__PURE__ */ u.forwardRef(function(e, r) {
         order: be
       }), wc(D, ke);
     }
-    var ze = gr(D);
+    var ze = pr(D);
     if (Ce.current && ee.current)
       ze = ee.current({
         data: D,
@@ -26445,9 +26445,9 @@ var Zv = /* @__PURE__ */ u.forwardRef(function(e, r) {
     var te = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : [];
     if (A.groupRowsBy && (He || te.length && A.groupRowsBy === te[0].field)) {
       var be = He, ke = te[0];
-      be || (be = ke, Q(be)), ke.field !== be.field && (te = [be].concat(gr(te)));
+      be || (be = ke, Q(be)), ke.field !== be.field && (te = [be].concat(pr(te)));
     }
-    var ze = gr(D);
+    var ze = pr(D);
     if (Ce.current && ee.current) {
       var Ve = te.find(function(mt) {
         return mt.field === We.current;
@@ -26595,7 +26595,7 @@ var Zv = /* @__PURE__ */ u.forwardRef(function(e, r) {
     }, [])), Re(te);
   }, Rh = function(D) {
     var te, be = "\uFEFF", ke = ve();
-    D && D.selectionOnly ? te = A.selection || [] : te = [].concat(gr(A.frozenValue || []), gr(wA() || [])), ke.forEach(function(ze, Ve) {
+    D && D.selectionOnly ? te = A.selection || [] : te = [].concat(pr(A.frozenValue || []), pr(wA() || [])), ke.forEach(function(ze, Ve) {
       var et = [j(ze, "field"), j(ze, "header"), j(ze, "exportHeader"), j(ze, "exportable")], nt = et[0], ft = et[1], mt = et[2], Tt = et[3];
       if (Tt && nt) {
         var er = String(mt || ft || nt).replace(/"/g, '""').replace(/\n/g, "\u2028");
@@ -26739,7 +26739,7 @@ var Zv = /* @__PURE__ */ u.forwardRef(function(e, r) {
   }, Lh = function(D, te, be) {
     if (A.showHeaders === !1)
       return null;
-    var ke = Ge(), ze = qe(), Ve = gr(oe()), et = Jt(), nt = fe, ft = !A.onFilter && A.filters || I(), mt = D.items, Tt = D.props, er = D.columns, tr = be || Tt.lazy ? mt : Tt.items;
+    var ke = Ge(), ze = qe(), Ve = pr(oe()), et = Jt(), nt = fe, ft = !A.onFilter && A.filters || I(), mt = D.items, Tt = D.props, er = D.columns, tr = be || Tt.lazy ? mt : Tt.items;
     return /* @__PURE__ */ u.createElement(Jv, {
       hostName: "DataTable",
       value: tr,
@@ -28327,14 +28327,14 @@ const zx = (e) => {
     }
     return console.log("stops", m), M(Se(F || [])), m;
   }
-  pr(() => {
+  gr(() => {
     if (B.length > 0) {
       let W = (h == null ? void 0 : h.values.map(Number)) || [];
       W = W.filter((fe) => !isNaN(fe) && fe != null), M(Se(W || []));
     }
   }, []);
   const xe = B.map((W) => W.value).join(", ");
-  return pr(() => {
+  return gr(() => {
     if (x && x.length > 0) {
       const W = {
         //max value of the attribute
@@ -28659,7 +28659,7 @@ const zx = (e) => {
     { label: "Categorizado", code: 1 },
     { label: "Graduado", code: 2 }
   ], [g, v] = bt(r.type == rn.Categorized ? d[1] : r.type == rn.Graduated ? d[2] : d[0]);
-  return pr(() => {
+  return gr(() => {
     v(c.type == rn.Categorized ? d[1] : c.type == rn.Graduated ? d[2] : d[0]);
   }, [c]), /* @__PURE__ */ Qe.jsx(Qe.Fragment, { children: /* @__PURE__ */ Qe.jsxs("div", { style: {
     height: "95%",
@@ -31532,14 +31532,19 @@ const o3 = (e) => {
     addingToHeader: o,
     vectorSource: l,
     visible: s,
-    setVisible: c
-  } = e, [f] = bt(1), [d, g] = bt([]), [v, p] = bt([]);
+    setVisible: c,
+    primeReactTheme: f
+  } = e;
+  gr(() => {
+    f ? import(`primereact/resources/themes/${f}/theme.css`) : Promise.resolve({          });
+  }, [f]);
+  const [d] = bt(1), [g, v] = bt([]), [p, B] = bt([]);
   return l instanceof ZF && (l.getUrl() ? l.on("featuresloadend", function() {
-    const B = l.getFeatures();
-    g(B);
-  }) : l.getFeatures().length > 0 && g(l.getFeatures())), pr(() => {
-    p(qF(d));
-  }, [d]), /* @__PURE__ */ Qe.jsx(Qe.Fragment, { children: /* @__PURE__ */ Qe.jsx(
+    const w = l.getFeatures();
+    v(w);
+  }) : l.getFeatures().length > 0 && v(l.getFeatures())), gr(() => {
+    B(qF(g));
+  }, [g]), /* @__PURE__ */ Qe.jsx(Qe.Fragment, { children: /* @__PURE__ */ Qe.jsx(
     tc,
     {
       visible: e.visible,
@@ -31548,10 +31553,10 @@ const o3 = (e) => {
       onHide: () => {
         e.setVisible(!1);
       },
-      children: f === 1 && v && /* @__PURE__ */ Qe.jsx(
+      children: d === 1 && p && /* @__PURE__ */ Qe.jsx(
         Wx,
         {
-          attributes: v,
+          attributes: p,
           visible: s,
           layerCurrentRenderer: t,
           applyRenderer: n,

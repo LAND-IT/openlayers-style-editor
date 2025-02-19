@@ -14,6 +14,7 @@ interface Props {
     moreRamps: ColorRamp[];
     preDefinedStyles: PreDefinedRenderer[];
     addingToHeader?: string;
+    primeReactTheme?: string;
 }
 declare const StyleEditor: React.FC<Props>;
 export default StyleEditor;

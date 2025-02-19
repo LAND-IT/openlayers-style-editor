@@ -6,6 +6,7 @@ import {GeometryEditor} from "./components/geometryEditor.tsx";
 import VectorSource from "ol/source/Vector";
 import {Feature} from "ol";
 import {mapFeaturesToSEAttributes} from "./components/utills.ts";
+import 'primereact/resources/primereact.min.css';
 
 interface Props {
     visible: boolean
@@ -18,13 +19,23 @@ interface Props {
     moreRamps: ColorRamp[]
     preDefinedStyles: PreDefinedRenderer[]
     addingToHeader?: string
+    primeReactTheme?: string
 }
 
 const StyleEditor: React.FC<Props> = (props: Props) => {
 
-    const {layerDefaultRenderer, layerCurrentRenderer, applyRenderer,
-        showPreDefinedRamps,moreRamps, preDefinedStyles, addingToHeader,
-        vectorSource, visible, setVisible} = props;
+    const {
+        layerDefaultRenderer, layerCurrentRenderer, applyRenderer,
+        showPreDefinedRamps, moreRamps, preDefinedStyles, addingToHeader,
+        vectorSource, visible, setVisible, primeReactTheme
+    } = props;
+
+    useEffect(() => {
+        if (primeReactTheme !== undefined) {
+            import(`primereact/resources/themes/${primeReactTheme}/theme.css`);
+        } else
+            import ('primereact/resources/themes/lara-light-green/theme.css');
+    }, [primeReactTheme]);
 
     const [activeIndex] = useState(1);
 
@@ -41,14 +52,14 @@ const StyleEditor: React.FC<Props> = (props: Props) => {
     //         icon: <HiOutlineColorSwatch/>
     //     }]
 
-    if(vectorSource instanceof VectorSource){
-        if(vectorSource.getUrl()){
-            vectorSource.on('featuresloadend', function() {
+    if (vectorSource instanceof VectorSource) {
+        if (vectorSource.getUrl()) {
+            vectorSource.on('featuresloadend', function () {
                 const features = vectorSource.getFeatures();
                 setFeatures(features)
             });
         } else {
-            if(vectorSource.getFeatures().length > 0){
+            if (vectorSource.getFeatures().length > 0) {
                 setFeatures(vectorSource.getFeatures())
             }
         }
@@ -69,7 +80,8 @@ const StyleEditor: React.FC<Props> = (props: Props) => {
             {activeIndex === 1 && attributesAndValues &&
                 <GeometryEditor attributes={attributesAndValues} visible={visible}
                                 layerCurrentRenderer={layerCurrentRenderer} applyRenderer={applyRenderer}
-                                setVisible={setVisible} layerDefaultRenderer={layerDefaultRenderer} moreRamps={moreRamps}
+                                setVisible={setVisible} layerDefaultRenderer={layerDefaultRenderer}
+                                moreRamps={moreRamps}
                                 preDefinedStyles={preDefinedStyles} showPreDefinedRamps={showPreDefinedRamps}/>}
         </Dialog>
     </>
