@@ -1,2 +1,2 @@
-export { default as StyleEditor } from './StyleEditor';
+export { default as StyleEditor } from './StyleEditor.tsx';
 export * from './RendererObjects.ts';

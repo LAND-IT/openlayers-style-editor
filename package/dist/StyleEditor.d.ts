@@ -1,8 +1,8 @@
-import { default as React, Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import { PreDefinedRenderer, Render } from './RendererObjects.ts';
-import { ColorRamp } from './components/rampColors.ts';
 import { default as VectorSource } from 'ol/source/Vector';
 import { Feature } from 'ol';
+import { ColorRamp } from './components/rampColors.ts';
 interface Props {
     visible: boolean;
     setVisible: Dispatch<SetStateAction<boolean>>;
@@ -16,5 +16,5 @@ interface Props {
     addingToHeader?: string;
     primeReactTheme?: string;
 }
-declare const StyleEditor: React.FC<Props>;
+declare function StyleEditor(props: Props): import("react/jsx-runtime").JSX.Element;
 export default StyleEditor;

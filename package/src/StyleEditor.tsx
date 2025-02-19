@@ -1,12 +1,13 @@
-import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
-import {Dialog} from "primereact/dialog";
-import {SEAttribute, PreDefinedRenderer, Render} from "./RendererObjects.ts";
-import {ColorRamp} from "./components/rampColors.ts";
-import {GeometryEditor} from "./components/geometryEditor.tsx";
+import {PrimeReactProvider} from "primereact/api";
+import StyleEditorComponent from "./StyleEditorComponent.tsx";
+import {Dispatch, SetStateAction} from "react";
+import {PreDefinedRenderer, Render} from "./RendererObjects.ts";
 import VectorSource from "ol/source/Vector";
 import {Feature} from "ol";
-import {mapFeaturesToSEAttributes} from "./components/utills.ts";
+import {ColorRamp} from "./components/rampColors.ts";
 import 'primereact/resources/primereact.min.css';
+
+// import 'primereact/resources/themes/bootstrap4-light-blue/theme.css';
 
 interface Props {
     visible: boolean
@@ -22,70 +23,40 @@ interface Props {
     primeReactTheme?: string
 }
 
-const StyleEditor: React.FC<Props> = (props: Props) => {
+function StyleEditor(props: Props) {
 
     const {
-        layerDefaultRenderer, layerCurrentRenderer, applyRenderer,
-        showPreDefinedRamps, moreRamps, preDefinedStyles, addingToHeader,
-        vectorSource, visible, setVisible, primeReactTheme
+        visible, setVisible, layerDefaultRenderer, layerCurrentRenderer, addingToHeader,
+        applyRenderer, vectorSource, showPreDefinedRamps, moreRamps, preDefinedStyles,
+        primeReactTheme
     } = props;
 
-    useEffect(() => {
-        if (primeReactTheme !== undefined) {
-            import(`primereact/resources/themes/${primeReactTheme}/theme.css`);
-        } else
-            import ('primereact/resources/themes/lara-light-green/theme.css');
-    }, [primeReactTheme]);
 
-    const [activeIndex] = useState(1);
+    const addLink = (href: string) => {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.id = 'primeTheme';
+        link.href = href;
+        document.head.appendChild(link);
+    };
 
-    const [features, setFeatures] = useState<Feature[]>([])
-    const [attributesAndValues, setAttributesAndValues] = useState<SEAttribute[]>([])
-
-    // const items: MenuItem[] = [
-    //     {
-    //         label: "Texto",
-    //         icon: <RxText/>
-    //     },
-    //     {
-    //         label: "Geometrias",
-    //         icon: <HiOutlineColorSwatch/>
-    //     }]
-
-    if (vectorSource instanceof VectorSource) {
-        if (vectorSource.getUrl()) {
-            vectorSource.on('featuresloadend', function () {
-                const features = vectorSource.getFeatures();
-                setFeatures(features)
-            });
-        } else {
-            if (vectorSource.getFeatures().length > 0) {
-                setFeatures(vectorSource.getFeatures())
-            }
-        }
-    }
-
-    useEffect(() => {
-        setAttributesAndValues(mapFeaturesToSEAttributes(features))
-    }, [features]);
+    if (document.getElementById('primeTheme') == null)
+        if (primeReactTheme == undefined)
+            addLink("themes/lara-light-green/theme.css");
+        else
+            addLink("themes/" + primeReactTheme + "/theme.css");
 
     return <>
-        <Dialog visible={props.visible} header={"Edição de Estilos" + (addingToHeader ? " - " + addingToHeader : "")}
-                style={{height: "90%", width: "80%"}}
-                onHide={() => {
-                    props.setVisible(false)
-                }}>
-            {/*<TabMenu model={items} activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}/>*/}
-            {/*{activeIndex === 0 && <TextEditor layer={layer} setVisible={setVisible}/>}*/}
-            {activeIndex === 1 && attributesAndValues &&
-                <GeometryEditor attributes={attributesAndValues} visible={visible}
-                                layerCurrentRenderer={layerCurrentRenderer} applyRenderer={applyRenderer}
-                                setVisible={setVisible} layerDefaultRenderer={layerDefaultRenderer}
-                                moreRamps={moreRamps}
-                                preDefinedStyles={preDefinedStyles} showPreDefinedRamps={showPreDefinedRamps}/>}
-        </Dialog>
+        <PrimeReactProvider>
+            <StyleEditorComponent visible={visible} setVisible={setVisible} layerDefaultRenderer={layerDefaultRenderer}
+                                  moreRamps={moreRamps} preDefinedStyles={preDefinedStyles}
+                                  showPreDefinedRamps={showPreDefinedRamps}
+                                  applyRenderer={applyRenderer} vectorSource={vectorSource}
+                                  layerCurrentRenderer={layerCurrentRenderer}
+                                  addingToHeader={addingToHeader}
+            />
+        </PrimeReactProvider>
     </>
-
 }
 
 export default StyleEditor;

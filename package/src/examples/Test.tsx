@@ -1,5 +1,4 @@
 import {Button} from "primereact/button";
-import StyleEditor from "../StyleEditor";
 import {useEffect, useMemo, useState} from "react";
 import {Render, RenderType} from "../RendererObjects";
 import TileLayer from "ol/layer/Tile";
@@ -9,6 +8,7 @@ import VectorSource from "ol/source/Vector";
 import WebGLVectorLayer from "ol/layer/WebGLVector";
 import {GeoJSON} from "ol/format";
 import "./test.css";
+import StyleEditor from "../StyleEditor";
 
 export function Test() {
 
@@ -70,6 +70,7 @@ export function Test() {
             <StyleEditor visible={visible} setVisible={setVisible} layerDefaultRenderer={defaultRender}
                          layerCurrentRenderer={renderer} applyRenderer={(renderer) => setRenderer(renderer)}
                          vectorSource={vectorSource}
+                         primeReactTheme={"bootstrap4-light-blue"}
                          showPreDefinedRamps={true} moreRamps={[]} preDefinedStyles={[]} />
         </>
     );
