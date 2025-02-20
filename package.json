@@ -3,6 +3,10 @@
   "version": "indiferent",
   "workspaces": [
     "page",
-    "package"
-  ]
+    "openlayers-style-editor"
+  ],
+  "dependencies": {
+    "nx": "19.4.3",
+    "lerna": "^8.1.9"
+  }
 }

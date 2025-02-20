@@ -1,4 +1,3 @@
-import {Button} from "primereact/button";
 import {useEffect, useMemo, useState} from "react";
 import TileLayer from "ol/layer/Tile";
 import {OSM} from "ol/source";
@@ -7,7 +6,9 @@ import VectorSource from "ol/source/Vector";
 import WebGLVectorLayer from "ol/layer/WebGLVector";
 import {GeoJSON} from "ol/format";
 import "./test.css";
+import {Button} from "primereact/button";
 import { Render, RenderType, StyleEditor } from "openlayers-style-editor";
+// import 'primereact/resources/themes/mdc-light-indigo/theme.css';
 
 export function Test() {
 
@@ -65,10 +66,12 @@ export function Test() {
     return (
         <>
             <div id={"viewID"} className={"map"}></div>
-            <Button label="Edit Style" onClick={() => setVisible(true)}/>
+            <Button onClick={() => setVisible(true)}>
+                Edit Style
+            </Button>
             <StyleEditor visible={visible} setVisible={setVisible} layerDefaultRenderer={defaultRender}
                          layerCurrentRenderer={renderer} applyRenderer={(renderer) => setRenderer(renderer)}
-                         vectorSource={vectorSource}
+                         vectorSource={vectorSource} primeReactTheme={"bootstrap4-light-blue"}
                          showPreDefinedRamps={true} moreRamps={[]} preDefinedStyles={[]} />
         </>
     );

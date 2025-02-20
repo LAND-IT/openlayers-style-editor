@@ -1,0 +1,35 @@
+.header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 7vh;
+    width: calc(99vw - 80px);
+    padding: 10px 80px 10px 10px;
+}
+
+.left{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.image{
+    height: 7vh;
+}
+
+.right{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-right: 20px;
+}
+
+.github{
+    background-color: black;
+    border-radius: 70px;
+    height: 10vh;
+    width: 10vh;
+    position: fixed;
+    right: -40px;
+    top: -40px;
+}
