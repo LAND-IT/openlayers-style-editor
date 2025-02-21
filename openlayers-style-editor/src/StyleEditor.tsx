@@ -47,10 +47,10 @@ function StyleEditor(props: Props) {
     else if (document.getElementById('primeTheme') == null)
         if (primeReactTheme == undefined)
             // addLink("themes/lara-light-green/theme.css");
-            addLink("https://raw.githubusercontent.com/primefaces/primereact/refs/heads/master/public/themes/lara-light-green/theme.css");
+            addLink("https://land-it.github.io/openlayers-style-editor/themes/lara-light-green/theme.css");
         else {
             // addLink(path.resolve(__dirname, 'themes', primeReactTheme!, 'theme.css'))
-            addLink("https://raw.githubusercontent.com/primefaces/primereact/refs/heads/master/public/themes/" + primeReactTheme + "/theme.css");
+            addLink("https://land-it.github.io/openlayers-style-editor/themes/" + primeReactTheme + "/theme.css");
         }
 
 
