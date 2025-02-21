@@ -1,9 +1,9 @@
-import { defineConfig } from 'vite';
+import {defineConfig} from 'vite';
 import react from '@vitejs/plugin-react';
 import dts from 'vite-plugin-dts';
 import path from 'path';
 
-export default defineConfig(({ command }) => {
+export default defineConfig(({command}) => {
     if (command === 'serve') {
         // Dev config
         return {
