@@ -5,7 +5,7 @@ export function Header() {
         <>
             <div className="header">
                 <div className="left">
-                    <img className={"image"} src={'public/favicons/android-chrome-512x512.png'} alt={"logo"}/>
+                    <img className={"image"} src={'/favicons/android-chrome-512x512.png'} alt={"logo"}/>
                     <h2>OpenLayers Style Editor</h2>
                 </div>
                 <div className={"right"}>
