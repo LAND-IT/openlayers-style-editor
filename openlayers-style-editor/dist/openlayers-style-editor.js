@@ -31689,7 +31689,7 @@ function gS(e) {
     const v = document.createElement("link");
     v.rel = "stylesheet", v.id = "theme-link", v.href = g, document.head.appendChild(v);
   };
-  return document.getElementById("primeTheme") == null && (f == null ? d("https://raw.githubusercontent.com/primefaces/primereact/refs/heads/master/public/themes/lara-light-green/theme.css") : d("https://raw.githubusercontent.com/primefaces/primereact/refs/heads/master/public/themes/" + f + "/theme.css")), /* @__PURE__ */ xe.jsx(xe.Fragment, { children: /* @__PURE__ */ xe.jsx(L0, { children: /* @__PURE__ */ xe.jsx(
+  return document.getElementById("primeTheme") == null && (f == null ? d("https://land-it.github.io/openlayers-style-editor/themes/lara-light-green/theme.css") : d("https://land-it.github.io/openlayers-style-editor/themes/" + f + "/theme.css")), /* @__PURE__ */ xe.jsx(xe.Fragment, { children: /* @__PURE__ */ xe.jsx(L0, { children: /* @__PURE__ */ xe.jsx(
     lS,
     {
       visible: r,
