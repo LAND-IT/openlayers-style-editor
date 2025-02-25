@@ -8,6 +8,7 @@ import {GeoJSON} from "ol/format";
 import "./test.css";
 import {Button} from "primereact/button";
 import { Render, RenderType, StyleEditor } from "openlayers-style-editor";
+import {Header} from "../components/Header.tsx";
 // import 'primereact/resources/themes/mdc-light-indigo/theme.css';
 
 export function Test() {
@@ -65,6 +66,7 @@ export function Test() {
 
     return (
         <>
+            <Header/>
             <div id={"viewID"} className={"map"}></div>
             <Button onClick={() => setVisible(true)}>
                 Edit Style

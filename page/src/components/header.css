@@ -2,9 +2,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 7vh;
-    width: calc(99vw - 80px);
+    height: 70px;
+    width: 99.9vw;
     padding: 10px 80px 10px 10px;
+    background-color: var(--primary-color-soft);
+    margin-bottom: 5px;
 }
 
 .left{
@@ -14,7 +16,7 @@
 }
 
 .image{
-    height: 7vh;
+    height: 6vh;
 }
 
 .right{
@@ -22,14 +24,29 @@
     align-items: center;
     gap: 15px;
     padding-right: 20px;
+    margin-right: 80px
 }
 
-.github{
+.github {
     background-color: black;
     border-radius: 70px;
-    height: 10vh;
-    width: 10vh;
+    height: 100px;
+    width: 100px;
     position: fixed;
     right: -40px;
     top: -40px;
+}
+
+.github:hover {
+    cursor: pointer;
+}
+
+.github-icon{
+    position: fixed;
+    right: 15px;
+    top: 15px;
+    color: #fff;
+    rotate: 45deg;
+    width: 24px;
+    height: 24px;
 }
