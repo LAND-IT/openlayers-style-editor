@@ -5,6 +5,7 @@ import {Render, RenderType, singleColorStyle} from "../RendererObjects.ts";
 import {MyColorPicker} from "./myColorPicker.tsx";
 import {Button} from "primereact/button";
 import {FlatStyle} from "ol/style/flat";
+import {useTranslation} from "react-i18next";
 
 interface UniqueSymbolProps {
     layerDefaultRenderer: Render
@@ -17,6 +18,13 @@ export const UniqueSymbol: React.FC<UniqueSymbolProps> = (props: UniqueSymbolPro
 
     const {layerCurrentRenderer, applyRenderer, setVisible} = props;
 
+    const { t } = useTranslation();
+    const fillColorLabel: string = t("unique_symbol.fill_color" as any)
+    const colorRampLabel: string = t("categorized.color_ramps" as any)
+    const strokeColorLabel: string = t("categorized.stroke_color" as any)
+    const strokeWidthLabel: string = t("categorized.stroke_width" as any)
+    const concludeLabel: string = t("common.conclude" as any)
+
     const start = "#18d7ba";
 
     const currentStyle: FlatStyle | null = layerCurrentRenderer.field ? null : layerCurrentRenderer.rendererOL as FlatStyle;
@@ -24,7 +32,7 @@ export const UniqueSymbol: React.FC<UniqueSymbolProps> = (props: UniqueSymbolPro
     let auxBorder;
     if (currentStyle) {
         if (currentStyle["stroke-color"])
-            if (currentStyle["stroke-color"][0] == "case")
+            if (currentStyle["stroke-color"]![0] == "case")
                 auxBorder = currentStyle["stroke-color"]![3] as Color;
             else
                 auxBorder = currentStyle["stroke-color"] as Color;
@@ -50,27 +58,27 @@ export const UniqueSymbol: React.FC<UniqueSymbolProps> = (props: UniqueSymbolPro
         }}>
             <div>
                 <div style={{display: "flex", flexDirection: "row", gap: "5px", alignItems: "center", padding: "5px"}}>
-                    <span>Cor do preenchimento:</span>
+                    <span>{fillColorLabel}:</span>
                     <div>
                         <MyColorPicker color={color}
                                        onChange={(e: string) => setColor(fromString(e))}/>
                     </div>
                 </div>
                 <div style={{display: "flex", flexDirection: "row", gap: "5px", alignItems: "center", padding: "5px"}}>
-                    <span>Cor do traço:</span>
+                    <span>{strokeColorLabel}:</span>
                     <div>
                         <MyColorPicker color={borderColor} hideAlpha={true}
                                        onChange={(e: string) => setBorderColor(fromString(e))}/>
                     </div>
                 </div>
                 <div style={{display: "flex", flexDirection: "column", gap: "7px", padding: "5px"}}>
-                    <span>Espessura do traço: {borderThickness}</span>
+                    <span>{strokeWidthLabel}: {borderThickness}</span>
                     <Slider max={10} min={0} style={{width: "300px"}}
                             value={borderThickness} onChange={(e) => setBorderThickness(e.value as number)}/>
                 </div>
             </div>
             <div style={{width: "100%", display: "flex", justifyContent: "end", padding: "15px"}}>
-                <Button label={"Concluir"}
+                <Button label={concludeLabel}
                         onClick={() => {
                             applyRenderer({
                                 type: RenderType.Unique,

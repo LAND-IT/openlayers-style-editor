@@ -6,6 +6,7 @@ import {SEAttribute, PreDefinedRenderer, Render, RenderType} from "../RendererOb
 import {ColorRamp} from "./rampColors.ts";
 import {Button} from "primereact/button";
 import {Graduated} from "./graduated.tsx";
+import {useTranslation} from "react-i18next";
 
 interface Props {
     attributes: SEAttribute[]
@@ -16,7 +17,8 @@ interface Props {
     applyRenderer: (renderer: Render) => void
     showPreDefinedRamps: boolean,
     moreRamps: ColorRamp[]
-    preDefinedStyles: PreDefinedRenderer[]
+    preDefinedStyles: PreDefinedRenderer[],
+    numbersLocale: string
 }
 
 export const GeometryEditor: React.FC<Props> = (props: Props) => {
@@ -28,17 +30,25 @@ export const GeometryEditor: React.FC<Props> = (props: Props) => {
         preDefinedStyles,
         showPreDefinedRamps,
         applyRenderer,
-        setVisible
+        setVisible,
+        numbersLocale
     } = props;
+
+    const { t } = useTranslation();
+    const uniqueSymbol: string = t("common.unique_symbol" as any)
+    const categorized: string = t("common.categorized" as any)
+    const graduated: string = t("common.graduated" as any)
+    const resetStyle: string = t("common.reset_style" as any)
+    const selectStyle: string = t("common.select_type" as any)
 
     const [attr, setAttr] = useState<SEAttribute[]>(props.attributes)
 
     const [currentRenderer, setCurrentRenderer] = useState<Render>(layerCurrentRenderer)
 
     const options = [
-        {label: "Simbolo único", code: 0},
-        {label: "Categorizado", code: 1},
-        {label: "Graduado", code: 2}
+        {label: uniqueSymbol, code: 0},
+        {label: categorized, code: 1},
+        {label: graduated, code: 2}
     ]
 
     const [activeIndex, setActiveIndex] = useState<{
@@ -63,10 +73,10 @@ export const GeometryEditor: React.FC<Props> = (props: Props) => {
                     display: "flex", justifyContent: "space-between",
                     flexDirection: "row"
                 }}>
-                    <Dropdown options={options} placeholder={"Selecione o tipo de estilo"}
+                    <Dropdown options={options} placeholder={selectStyle}
                               optionLabel={"label"} value={activeIndex}
                               onChange={(e) => setActiveIndex(e.value)}/>
-                    <Button label={"Resetar estilo"}
+                    <Button label={resetStyle}
                             disabled={currentRenderer == layerDefaultRenderer}
                             onClick={() => {
                                 applyRenderer(layerDefaultRenderer)
@@ -89,7 +99,8 @@ export const GeometryEditor: React.FC<Props> = (props: Props) => {
                         attr={attr}
                         setAttr={setAttr}
                         applyRenderer={applyRenderer} moreRamps={moreRamps} setVisible={setVisible}
-                        showPreDefinedRamps={showPreDefinedRamps} layerCurrentRenderer={layerCurrentRenderer}/>}
+                        showPreDefinedRamps={showPreDefinedRamps}
+                        layerCurrentRenderer={layerCurrentRenderer} numbersLocale={numbersLocale}/>}
             </div>
         </>
     )

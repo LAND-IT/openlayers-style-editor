@@ -2,6 +2,7 @@ import {Dialog} from "primereact/dialog";
 import React, {useState} from "react";
 import {asString, Color} from "ol/color";
 import ColorPicker from "react-best-gradient-color-picker";
+import {useTranslation} from "react-i18next";
 
 interface Props {
     color: Color
@@ -14,6 +15,9 @@ export const MyColorPicker: React.FC<Props> = (props: Props) => {
 
     const [visible, setVisible] = useState(false);
 
+    const { t } = useTranslation();
+    const selectColor: string = t("color_picker.select_color" as any)
+
     return <>
         <div style={{
             width: "20px", height: "20px", borderRadius: "5px", borderStyle: "solid",
@@ -21,7 +25,7 @@ export const MyColorPicker: React.FC<Props> = (props: Props) => {
         }}
              onClick={() => setVisible(true)}
         />
-        <Dialog header={"Selecione uma cor"} onHide={() => setVisible(false)} visible={visible}>
+        <Dialog header={selectColor} onHide={() => setVisible(false)} visible={visible}>
             <ColorPicker value={asString(color)} onChange={onChange} hideOpacity={hideAlpha} hideControls={true}/>
         </Dialog>
 

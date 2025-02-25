@@ -6,6 +6,7 @@ import {GeometryEditor} from "./components/geometryEditor.tsx";
 import VectorSource from "ol/source/Vector";
 import {Feature} from "ol";
 import {mapFeaturesToSEAttributes} from "./components/utills.ts";
+import {useTranslation} from "react-i18next";
 
 
 interface Props {
@@ -18,6 +19,7 @@ interface Props {
     showPreDefinedRamps: boolean,
     moreRamps: ColorRamp[]
     preDefinedStyles: PreDefinedRenderer[]
+    numbersLocale: string
     addingToHeader?: string
 }
 
@@ -26,8 +28,11 @@ const StyleEditorComponent: React.FC<Props> = (props: Props) => {
     const {
         layerDefaultRenderer, layerCurrentRenderer, applyRenderer,
         showPreDefinedRamps, moreRamps, preDefinedStyles, addingToHeader,
-        vectorSource, visible, setVisible
+        vectorSource, visible, setVisible, numbersLocale
     } = props;
+
+    const { t } = useTranslation();
+    const titleHeader: string = t("common.style_editor" as any)
 
     const [activeIndex] = useState(1);
 
@@ -46,7 +51,6 @@ const StyleEditorComponent: React.FC<Props> = (props: Props) => {
 
     if (vectorSource instanceof VectorSource) {
         if (vectorSource.getUrl()) {
-            console.log("loading features")
             vectorSource.on('featuresloadend', function () {
                 const features = vectorSource.getFeatures();
                 setFeatures(features)
@@ -64,7 +68,7 @@ const StyleEditorComponent: React.FC<Props> = (props: Props) => {
 
     return <>
         <Dialog visible={props.visible}
-                header={"Edição de Estilos" + (addingToHeader ? " - " + addingToHeader : "")}
+                header={titleHeader + (addingToHeader ? " - " + addingToHeader : "")}
                 style={{height: "90%", width: "80%"}}
                 onHide={() => {
                     props.setVisible(false)
@@ -75,7 +79,7 @@ const StyleEditorComponent: React.FC<Props> = (props: Props) => {
                 <GeometryEditor attributes={attributesAndValues} visible={visible}
                                 layerCurrentRenderer={layerCurrentRenderer} applyRenderer={applyRenderer}
                                 setVisible={setVisible} layerDefaultRenderer={layerDefaultRenderer}
-                                moreRamps={moreRamps}
+                                moreRamps={moreRamps} numbersLocale={numbersLocale}
                                 preDefinedStyles={preDefinedStyles} showPreDefinedRamps={showPreDefinedRamps}/>}
         </Dialog>
     </>

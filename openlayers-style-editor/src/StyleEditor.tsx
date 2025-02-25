@@ -6,6 +6,8 @@ import VectorSource from "ol/source/Vector";
 import {Feature} from "ol";
 import {ColorRamp} from "./components/rampColors.ts";
 import 'primereact/resources/primereact.min.css';
+import {I18nextProvider} from "react-i18next";
+import i18n from "../i18n.ts";
 
 // import 'primereact/resources/themes/bootstrap4-light-blue/theme.css';
 
@@ -21,6 +23,7 @@ interface Props {
     preDefinedStyles: PreDefinedRenderer[]
     addingToHeader?: string
     primeReactTheme?: string
+    numbersLocale?: string
 }
 
 function StyleEditor(props: Props) {
@@ -28,7 +31,7 @@ function StyleEditor(props: Props) {
     const {
         visible, setVisible, layerDefaultRenderer, layerCurrentRenderer, addingToHeader,
         applyRenderer, vectorSource, showPreDefinedRamps, moreRamps, preDefinedStyles,
-        primeReactTheme
+        primeReactTheme, numbersLocale
     } = props;
 
 
@@ -53,20 +56,19 @@ function StyleEditor(props: Props) {
             addLink("https://land-it.github.io/openlayers-style-editor/themes/" + primeReactTheme + "/theme.css");
         }
 
-
-    // import((`./themes/${primeReactTheme}/theme.css`))
-
-
     return <>
-        <PrimeReactProvider>
-            <StyleEditorComponent visible={visible} setVisible={setVisible} layerDefaultRenderer={layerDefaultRenderer}
-                                  moreRamps={moreRamps} preDefinedStyles={preDefinedStyles}
-                                  showPreDefinedRamps={showPreDefinedRamps}
-                                  applyRenderer={applyRenderer} vectorSource={vectorSource}
-                                  layerCurrentRenderer={layerCurrentRenderer}
-                                  addingToHeader={addingToHeader}
-            />
-        </PrimeReactProvider>
+        <I18nextProvider i18n={i18n}>
+            <PrimeReactProvider>
+                <StyleEditorComponent visible={visible} setVisible={setVisible}
+                                      layerDefaultRenderer={layerDefaultRenderer}
+                                      moreRamps={moreRamps} preDefinedStyles={preDefinedStyles}
+                                      showPreDefinedRamps={showPreDefinedRamps}
+                                      applyRenderer={applyRenderer} vectorSource={vectorSource}
+                                      layerCurrentRenderer={layerCurrentRenderer}
+                                      addingToHeader={addingToHeader}
+                                      numbersLocale={numbersLocale ? numbersLocale : "en-US"}/>
+            </PrimeReactProvider>
+        </I18nextProvider>
     </>
 }
 

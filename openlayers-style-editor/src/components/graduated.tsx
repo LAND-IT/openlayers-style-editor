@@ -8,17 +8,17 @@ import {Button, Button as PrimeButton} from "primereact/button";
 import {
     SEAttribute, AttributeTypeEnum, ColorRampDropdownItem, ColorRampItem, getGraduatedStyle,
     getRendererColorAndSizeStroke,
-    getRendererOpacity, GraduatedModes,
+    getRendererOpacity,
     Render,
     RenderType,
-    Row
+    Row, GraduatedModes
 } from "../RendererObjects.ts";
 import {ColorRamp, colorRamps, generateGradient, getColorRampString, Stop} from "./rampColors.ts";
 import {FlatStyle} from "ol/style/flat";
 import {Toast, ToastMessage} from "primereact/toast";
-import {jenksBuckets} from "geobuckets/dist/src";
+import {jenksBuckets, quantileBuckets, standardDeviationBuckets} from "geobuckets/dist/src";
 import {MyColorPicker} from "./myColorPicker.tsx";
-
+import {useTranslation} from "react-i18next";
 
 interface GraduatedProps {
     attr: SEAttribute[]
@@ -28,6 +28,7 @@ interface GraduatedProps {
     showPreDefinedRamps: boolean,
     moreRamps: ColorRamp[]
     layerCurrentRenderer: Render
+    numbersLocale: string
 }
 
 interface Interval {
@@ -37,14 +38,48 @@ interface Interval {
 }
 
 export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
-    const {attr, applyRenderer, setVisible, layerCurrentRenderer, moreRamps, showPreDefinedRamps} = props
+    const {
+        attr, applyRenderer, setVisible, layerCurrentRenderer, moreRamps,
+        showPreDefinedRamps, numbersLocale
+    } = props
 
-    const locale = "pt-PT"
+    const {t} = useTranslation()
+    const errorRamps = t("errors.error_ramps_same_name" as any)
+    const colorRampLabel: string = t("categorized.color_ramps" as any)
+    const errorDiffLabel: string = t("errors.error_diff" as any)
+    const errorSumLabel: string = t("errors.error_sum" as any)
+    const errorSum2Label: string = t("errors.error_sum2" as any)
+    const amountValuesLabel: string = t("graduated.amount_values" as any)
+    const valuesLabel: string = t("graduated.values" as any)
+    const amountLabel: string = t("graduated.amount" as any)
+    const attributeLabel: string = t("categorized.attribute" as any)
+    const selectAttributeLabel: string = t("categorized.select_attribute" as any)
+    const selectModeLabel: string = t("graduated.select_mode" as any)
+    const whichModeLabel: string = t("graduated.which_mode" as any)
+    const intervalSizeLabel: string = t("graduated.interval_size" as any)
+    const classesNumberLabel: string = t("graduated.classes_number" as any)
+    const colorsSpectrumLabel: string = t("categorized.colors_spectrum" as any)
+    const selectSpectrumLabel: string = t("categorized.select_spectrum" as any)
+    const invertColorsLabel: string = t("graduated.invert_colors" as any)
+    const gradientIntervalsLabel: string = t("graduated.gradient_intervals" as any)
+    const valueLabel: string = t("graduated.value" as any)
+    const strokeColorLabel: string = t("categorized.stroke_color" as any)
+    const strokeWidthLabel: string = t("categorized.stroke_width" as any)
+    const colorOpacityLabel: string = t("categorized.color_opacity" as any)
+    const concludeLabel: string = t("common.conclude" as any)
+    const previewLabel: string = t("graduated.preview" as any)
+    const errorValuesLabel: string = t("errors.error_values" as any)
+    const minValueLabel: string = t("graduated.min_value" as any)
+    const maxValueLabel: string = t("graduated.max_value" as any)
+    const colorLabel: string = t("graduated.color" as any)
+    const modeLabel: string = t("graduated.mode" as any)
 
-    const toast = useRef<Toast>(null);
+    const locale = numbersLocale
+
+    const toast = useRef<Toast | null>(null);
 
     const showToast = (message: string, severity: string) => {
-        toast.current?.show({ severity: severity, summary: 'Error', detail: message } as ToastMessage);
+        toast.current?.show({severity: severity, summary: 'Error', detail: message} as ToastMessage);
     };
 
     const currentRender = layerCurrentRenderer.type != RenderType.Graduated ? [] :
@@ -88,13 +123,13 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
     )
 
     if (existingRenderers.length > 0) {
-        console.error("There are ramps with the same name: " + existingRenderers.map(ramp => ramp.name))
+        console.error(errorRamps + existingRenderers.map(ramp => ramp.name))
         return
     }
 
     const preDefinedPalettes = [
         {
-            label: "Rampas de Cores",
+            label: colorRampLabel,
             items: allRamps.map((ramp) => {
                 return {
                     label: ramp.name,
@@ -160,7 +195,7 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
         const maxNumber = Math.round(Math.max(...list));
         const minNumber = Math.round(Math.min(...list));
         if (maxNumber - minNumber <= 0)
-            showToast("The difference between the max and min values must be greater than 0, it is: " + (maxNumber - minNumber), "error")
+            showToast(errorDiffLabel + (maxNumber - minNumber), "error")
         const result: number[] = new Array(maxNumber - minNumber).fill(0);
 
         Object.entries(counting).forEach(([n, times]) => {
@@ -172,7 +207,7 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
         })
 
         if (list.length != intervals.reduce((acc, curr) => acc + curr.count, 0))
-            showToast("The sum of the counts of the intervals must be equal to the number of values", "error")
+            showToast(errorSumLabel, "error")
 
         const reduceFactor = 2
         while (intervals.length > 100) {
@@ -198,7 +233,7 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
 
         const total = intervals.reduce((acc, curr) => acc + curr.count, 0)
         if (list.length != total)
-            showToast("The sum of the counts is wrong: " + (list.length - total), "error")
+            showToast(errorSum2Label + (list.length - total), "error")
 
         // let maxCount = Math.max(...intervals.map((i) => i.count))
 
@@ -207,7 +242,7 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
             return {min: i.min, max: i.max, count: i.count * 100 / list.length}
         })
 
-        console.log("intervals", intervals)
+        // console.log("intervals", intervals)
 
         return intervals;
     }
@@ -222,55 +257,58 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
 
         switch (mode) {
             case GraduatedModes.EqualInterval:
-            case GraduatedModes.Manual:
-                { const interval2 = range / nClasses
+            case GraduatedModes.Manual: {
+                const interval2 = range / nClasses
                 for (let i = 0; i < nClasses; i++) {
                     stops.push({value: min + interval2 * i, color: fromString("rgb(0,0,0)")})
                 }
                 stops.push({value: max, color: fromString("rgb(0,0,0)")})
-                break }
-            case GraduatedModes.DefinedInterval:
-                { const interval = range / intervalSize
+                break
+            }
+            case GraduatedModes.DefinedInterval: {
+                const interval = range / intervalSize
+                console.log("interval", interval, intervalSize)
                 for (let i = 0; i <= interval; i++) {
                     stops.push({value: min + intervalSize * i, color: fromString("rgb(0,0,0)")})
                 }
-                break }
-            case GraduatedModes.NaturalBreaks:
-                { const auxJenks = await jenksBuckets(values, nClasses);
+                break
+            }
+            case GraduatedModes.NaturalBreaks: {
+                const auxJenks = await jenksBuckets(values, nClasses);
                 stops = auxJenks.map((value) => {
                     return {value: value, color: fromString("rgb(0,0,0)")}
                 })
-                break }
-            case GraduatedModes.Quantile:
-                { const numbersPerInterval = values.length / nClasses
-                const aux = values.sort((a, b) => a - b)
-                console.log("aux", aux)
-                for (let i = 0; i < nClasses; i++) {
-                    stops.push({value: aux[Math.round(numbersPerInterval * i)], color: fromString("rgb(0,0,0)")})
-                }
-                stops.push({value: max, color: fromString("rgb(0,0,0)")})
-                break }
+                break
+            }
+            case GraduatedModes.Quantile: {
+                const auxQuantile = await quantileBuckets(values, nClasses)
+                stops = auxQuantile.map((value) => {
+                    return {value: value, color: fromString("rgb(0,0,0)")}
+                })
+                break
+            }
             // case Modes.GeometricInterval:
             //     for (let i = 0; i < 5; i++) {
             //         stops.push({value: min + interval * i, color: fromString("rgb(0,0,0)")})
             //     }
             //     break
-            // case Modes.StandardDeviation:
-            //     for (let i = 0; i < 5; i++) {
-            //         stops.push({value: min + interval * i, color: fromString("rgb(0,0,0)")})
-            //     }
-            //     break
+            case GraduatedModes.StandardDeviation:
+                const auxStand = await standardDeviationBuckets(values, nClasses)
+                stops = auxStand.map((value) => {
+                    return {value: value, color: fromString("rgb(0,0,0)")}
+                })
+                break
             default:
                 break
         }
-        console.log("stops", stops)
+        // console.log("stops", stops)
         setIntervals(countNumbers(values || []))
         return stops
     }
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
-        if(stops.length > 0) {
+        if (stops.length > 0) {
             let values = selectedAttr?.values!.map(Number) || []
             values = values.filter((v) => !isNaN(v) && v != null)
             setIntervals(countNumbers(values || []))
@@ -287,7 +325,7 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
                 labels: intervals.map((i) => i.min.toString()),
                 datasets: [
                     {
-                        label: "Quantidade de valores (%)",
+                        label: amountValuesLabel,
                         data: intervals.map((i) => i.count),
                         backgroundColor: "rgb(54, 162, 235)",
                         borderWidth: 2,
@@ -303,7 +341,7 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
                     x: {
                         title: {
                             display: true,
-                            text: 'Valores'
+                            text: valuesLabel
                         },
                         ticks: {
                             autoSkip: false,
@@ -331,7 +369,7 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
                     y: {
                         title: {
                             display: true,
-                            text: 'Quantidade (%)'
+                            text: amountLabel
                         }
                     }
                 }
@@ -344,7 +382,7 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
         <div style={{display: "flex", flexDirection: "column", gap: "10px"}}>
             <div style={{display: "flex", flexDirection: "row", gap: "20px", alignItems: "center"}}>
                 <div style={{display: "flex", flexDirection: "row", gap: "5px", alignItems: "center"}}>
-                    <span style={{width: "auto"}}>Atributo:</span>
+                    <span style={{width: "auto"}}>{attributeLabel}:</span>
 
                     <Dropdown
                         value={selectedAttr}
@@ -356,62 +394,75 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
                         }}
                         options={attr.filter((a) => a.type === AttributeTypeEnum.INTEGER || a.type === AttributeTypeEnum.FLOAT)}
                         optionLabel="name"
-                        placeholder="Selecione um atributo"
+                        placeholder={selectAttributeLabel}
                     />
                 </div>
                 <div style={{display: "flex", flexDirection: "row", gap: "5px", alignItems: "center"}}>
-                    <span style={{width: "auto"}}>Modo:</span>
+                    <span style={{width: "auto"}}>{modeLabel}:</span>
 
                     <Dropdown
+                        disabled={!selectedAttr}
                         value={selectedMode}
                         onChange={async (e: DropdownChangeEvent) => {
-                            const iSize = Math.round(Math.max(...selectedAttr!.values!.map(Number).filter(v => v != null && !isNaN(v))) / 10)
+                            let iSize = Math.round(Math.max(...selectedAttr!.values!.map(Number).filter(v => v != null && !isNaN(v))) / 10)
+                            if (iSize == 0)
+                                iSize = 1
                             setIntervalSize(iSize)
-                            setClassNo(5)
-                            setStops(await calculateStopsByMode(e.value as GraduatedModes, classNo, iSize))
+                            const classNumber = selectedAttr!.values!.length > 5 ? 5 : selectedAttr!.values!.length - 1
+                            setClassNo(classNumber)
+                            setStops(await calculateStopsByMode(e.value as GraduatedModes, classNumber, iSize))
                             setSelectedMode(e.value)
                             setSelectedSpectrumColors(undefined)
                         }}
                         options={Object.values(GraduatedModes).filter((m) =>
-                            m != GraduatedModes.GeometricInterval && m != GraduatedModes.StandardDeviation)}
-                        // optionLabel="name"
-                        placeholder="Selecione um modo"
+                            m != GraduatedModes.GeometricInterval)
+                        }
+                        itemTemplate={(option: GraduatedModes) => {
+                            return t(`graduate_modes.${option}` as any)
+                        }}
+                        valueTemplate={(option: GraduatedModes) => {
+                            if (option)
+                                return t(`graduate_modes.${option}` as any)
+                            else return selectModeLabel
+                        }}
+                        placeholder={selectModeLabel}
                     />
                     <a href="https://resources.arcgis.com/en/help/main/10.2/index.html#//00s50000001r000000"
-                       target="_blank">Qual modo escolher?</a>
+                       target="_blank">{whichModeLabel}</a>
                 </div>
                 {selectedAttr &&
-                    <span>Valor min.: {Math.min(...selectedAttr!.values!.map(Number).filter((v) => !isNaN(v) && v != null)).toLocaleString(locale)}</span>}
+                    <span>{minValueLabel}: {Math.min(...selectedAttr!.values!.map(Number).filter((v) => !isNaN(v) && v != null)).toLocaleString(locale)}</span>}
                 {selectedAttr &&
-                    <span>Valor máx.: {Math.max(...selectedAttr!.values!.map(Number).filter((v) => !isNaN(v) && v != null)).toLocaleString(locale)}</span>}
+                    <span>{maxValueLabel}: {Math.max(...selectedAttr!.values!.map(Number).filter((v) => !isNaN(v) && v != null)).toLocaleString(locale)}</span>}
             </div>
             {selectedMode &&
                 <div style={{display: "flex", flexDirection: "row", gap: "15px", alignItems: "center"}}>
                     {(selectedMode == GraduatedModes.Manual || selectedMode == GraduatedModes.EqualInterval ||
                         selectedMode == GraduatedModes.Quantile || selectedMode == GraduatedModes.NaturalBreaks ||
                         selectedMode == GraduatedModes.GeometricInterval) && <div>
-                        <span style={{width: "auto"}}>Nº classes:</span>
+                        <span style={{width: "auto"}}>{classesNumberLabel}:</span>
 
                         <InputNumber value={classNo}
                                      locale={locale}
                                      onChange={async (e) => {
                                          setClassNo(e.value as number)
                                          setSelectedSpectrumColors(undefined)
-                                         setStops(await calculateStopsByMode(selectedMode, e.value as number, intervalSize))
+                                         setStops(await calculateStopsByMode(selectedMode!, e.value as number, intervalSize))
                                      }}/>
                     </div>}
 
-                    {(selectedMode == GraduatedModes.DefinedInterval || selectedMode == GraduatedModes.StandardDeviation) && <div>
-                        <span style={{width: "auto"}}>Tamanho do intervalo:</span>
+                    {(selectedMode == GraduatedModes.DefinedInterval || selectedMode == GraduatedModes.StandardDeviation) &&
+                        <div>
+                            <span style={{width: "auto"}}>{intervalSizeLabel}:</span>
 
-                        <InputNumber value={intervalSize}
-                                     locale={locale}
-                                     onChange={async (e) => {
-                                         setIntervalSize(e.value as number)
-                                         setSelectedSpectrumColors(undefined)
-                                         setStops(await calculateStopsByMode(selectedMode, classNo, e.value as number))
-                                     }}/>
-                    </div>}
+                            <InputNumber value={intervalSize}
+                                         locale={locale}
+                                         onChange={async (e) => {
+                                             setIntervalSize(e.value as number)
+                                             setSelectedSpectrumColors(undefined)
+                                             setStops(await calculateStopsByMode(selectedMode!, classNo, e.value as number))
+                                         }}/>
+                        </div>}
                 </div>}
 
             {selectedMode && selectedAttr &&
@@ -428,7 +479,7 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
                         gap: "7px",
                         padding: "5px"
                     }}>
-                        <span style={{width: "auto"}}>Espetro de cores:</span>
+                        <span style={{width: "auto"}}>{colorsSpectrumLabel}:</span>
                         <Dropdown
                             value={selectedSpectrumColors}
                             options={preDefinedPalettes}
@@ -436,23 +487,20 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
                                 setSelectedSpectrumColors(e.value as ColorRampItem)
                                 applyRampToStops(e.value)
                             }}
-                            placeholder="Selecione um espetro"
+                            placeholder={selectSpectrumLabel}
                             optionLabel={"label"}
                             optionGroupLabel={"label"}
                             itemTemplate={itemTemplate}
                         />
                         <PrimeButton text icon={"pi pi-arrow-right-arrow-left"}
-                                     tooltip={"Inverter as cores do espetro"}
+                                     tooltip={invertColorsLabel}
                                      disabled={!selectedSpectrumColors}
                                      onClick={() => applyRampToStops(selectedSpectrumColors!, true)}/>
-                        {/*<PrimeButton text icon={"pi pi-refresh"} disabled={!selectedSpectrumColors}*/}
-                        {/*             tooltip={"Atualizar as cores"}*/}
-                        {/*             onClick={() => updateColorsByColorRamp(selectedSpectrumColors!)}/>*/}
 
                     </div>
                     <div style={{display: "flex", flexDirection: "row", gap: "50px"}}>
                         <div style={{display: "flex", flexDirection: "column", gap: "5px"}}>
-                            <span style={{width: "auto"}}>Intervalos de Gradiente:</span>
+                            <span style={{width: "auto"}}>{gradientIntervalsLabel}:</span>
                             {stops.map((value: Row, index: number) => {
                                     return (
                                         <div key={index}
@@ -462,12 +510,13 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
                                                  gap: "5px",
                                                  alignItems: "center",
                                              }}>
-                                            <span style={{width: "auto"}}> Valor:  </span>
-                                            <InputNumber placeholder="Valor"
+                                            <span style={{width: "auto"}}> {valueLabel}:  </span>
+                                            <InputNumber placeholder={valueLabel}
                                                          allowEmpty={false}
                                                          locale={locale}
                                                          min={stops[0].value as number}
-                                                         max={index < (stops.length - 1 as number) ? (stops[index + 1]?.value as number) - 0.001 : (stops[stops.length]?.value as number)}
+                                                         max={index < (stops.length - 1 as number) ?
+                                                             (stops[index + 1]?.value as number) - 0.001 : (stops[stops.length]?.value as number)}
                                                          disabled={index === 0 || selectedMode != GraduatedModes.Manual || index === stops.length - 1}
                                                          onChange={(e) => {
                                                              const aux = [...stops]
@@ -478,7 +527,7 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
                                                          value={value.value as number}
                                             />
 
-                                            <span style={{width: "auto"}}>Cor: </span>
+                                            <span style={{width: "auto"}}>{colorLabel}: </span>
                                             <MyColorPicker
                                                 color={value.color}
                                                 onChange={(e: string) => {
@@ -502,21 +551,21 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
                                 alignItems: "center",
                                 padding: "5px"
                             }}>
-                                <span>Cor do traço:</span>
+                                <span>{strokeColorLabel}:</span>
                                 <div>
                                     <MyColorPicker color={borderColor} hideAlpha={true}
                                                    onChange={(e: string) => setBorderColor(fromString(e))}/>
                                 </div>
                             </div>
                             <div style={{display: "flex", flexDirection: "column", gap: "7px", padding: "5px"}}>
-                                <span>Espessura do traço: {borderThickness}</span>
+                                <span>{strokeWidthLabel}: {borderThickness}</span>
                                 <Slider max={10} min={0} style={{width: "300px"}}
                                         value={borderThickness}
                                         onChange={(e) => setBorderThickness(e.value as number)}/>
                             </div>
 
                             <div style={{display: "flex", flexDirection: "column", gap: "7px", padding: "5px"}}>
-                                <span>Opacidade da cor: {opacity}%</span>
+                                <span>{colorOpacityLabel}: {opacity}%</span>
                                 <Slider max={100} min={0} style={{width: "300px"}}
                                         value={opacity} onChange={(e) => {
                                     setOpacity(e.value as number)
@@ -532,7 +581,7 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
                                     setStops(newTable)
                                 }}/>
                             </div>
-                            <span>Pré-visualização</span>
+                            <span>{previewLabel}</span>
                             <div style={{
                                 background: getColorRampString(stops.map((stop, index) => {
                                     return {offset: index / stops.length, color: stop.color}
@@ -542,16 +591,16 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
                         </div>
                     </div>
                     <div style={{display: "flex", justifyContent: "flex-end", padding: "10px", width: "100%"}}>
-                        <Button label={"Concluir"}
+                        <Button label={concludeLabel}
                                 onClick={() => {
                                     let allGood = true
                                     stops.forEach((stop, index) => {
                                         if (index < stops.length - 1 && stop.value >= stops[index + 1].value) {
-                                            showToast("Os valores dos intervalos devem ser crescentes", "error")
+                                            showToast(errorValuesLabel, "error")
                                             allGood = false
                                         }
                                     })
-                                    if(allGood) {
+                                    if (allGood) {
                                         applyRenderer({
                                             type: RenderType.Graduated,
                                             graduatedType: selectedMode,

@@ -22,6 +22,7 @@ import {SEAttribute} from "../RendererObjects.ts";
 import {FlatStyle} from "ol/style/flat";
 import {MyColorPicker} from "./myColorPicker.tsx";
 import {Slider} from "primereact/slider";
+import {useTranslation} from "react-i18next";
 
 interface Props {
     attr: SEAttribute[]
@@ -40,7 +41,7 @@ interface TableRow {
     value: string
 }
 
-export const Categorized: React.FC<Props> = (props: Props)=> {
+export const Categorized: React.FC<Props> = (props: Props) => {
     const {
         attr,
         layerCurrentRenderer,
@@ -50,6 +51,21 @@ export const Categorized: React.FC<Props> = (props: Props)=> {
         applyRenderer,
         setVisible
     } = props
+
+    const {t} = useTranslation();
+    const nullText: string = t("common.null" as any)
+    const errorRamps: string = t("errors.error_ramps_same_name" as any)
+    const predefinedStylesLabel: string = t("categorized.predefined_styles" as any)
+    const colorRampLabel: string = t("categorized.color_ramps" as any)
+    const strokeColorLabel: string = t("categorized.stroke_color" as any)
+    const strokeWidthLabel: string = t("categorized.stroke_width" as any)
+    const attributeLabel: string = t("categorized.attribute" as any)
+    const selectAttributeLabel: string = t("categorized.select_attribute" as any)
+    const updateColorsLabel: string = t("categorized.update_colors" as any)
+    const colorOpacityLabel: string = t("categorized.color_opacity" as any)
+    const colorsSpectrumLabel: string = t("categorized.colors_spectrum" as any)
+    const selectSpectrumLabel: string = t("categorized.select_spectrum" as any)
+    const concludeLabel: string = t("common.conclude" as any)
 
     const currentRender = layerCurrentRenderer.type != RenderType.Categorized ? [] :
         (layerCurrentRenderer.rendererOL["fill-color"] as any[])
@@ -64,7 +80,7 @@ export const Categorized: React.FC<Props> = (props: Props)=> {
     }
     if (currentRender.length > 0)
         valuesAndColors.push({
-            value: "Nulo",
+            value: nullText,
             color: currentRender[currentRender.length - 1],
             visible: true
         })
@@ -92,13 +108,13 @@ export const Categorized: React.FC<Props> = (props: Props)=> {
     )
 
     if (existingRenderers.length > 0) {
-        console.error("There are ramps with the same name: " + existingRenderers.map(ramp => ramp.name))
+        console.error(errorRamps + existingRenderers.map(ramp => ramp.name))
         return
     }
 
     const preDefinedPalettes = [
         {
-            label: "Estilos pré-definidos",
+            label: predefinedStylesLabel,
             items: preDefinedStyles.map((renderer) => {
                 return {
                     label: renderer.name,
@@ -110,7 +126,7 @@ export const Categorized: React.FC<Props> = (props: Props)=> {
             })
         },
         {
-            label: "Rampas de Cores",
+            label: colorRampLabel,
             items: allRamps.map((ramp) => {
                 return {
                     label: ramp.name,
@@ -235,7 +251,7 @@ export const Categorized: React.FC<Props> = (props: Props)=> {
                 })
         })
         tableValues.push({
-            value: "Nulo",
+            value: nullText,
             color: generateRandomColor(),
             visible: true
         })
@@ -266,45 +282,45 @@ export const Categorized: React.FC<Props> = (props: Props)=> {
         }}>
             <div>
                 <div style={{display: "flex", flexDirection: "row", gap: "5px", alignItems: "center", padding: "5px"}}>
-                    <span>Cor do traço:</span>
+                    <span>{strokeColorLabel}:</span>
                     <div>
                         <MyColorPicker color={borderColor} hideAlpha={true}
                                        onChange={(e: string) => setBorderColor(fromString(e))}/>
                     </div>
                 </div>
                 <div style={{display: "flex", flexDirection: "column", gap: "7px", padding: "5px"}}>
-                    <span>Espessura do traço: {borderThickness}</span>
+                    <span>{strokeWidthLabel}: {borderThickness}</span>
                     <Slider max={10} min={0} style={{width: "300px"}}
                             value={borderThickness} onChange={(e) => setBorderThickness(e.value as number)}/>
                 </div>
                 <div style={{display: "flex", flexDirection: "row", alignItems: "center", gap: "7px", padding: "5px"}}>
-                    <span style={{width: "auto"}}>Atributo:</span>
+                    <span style={{width: "auto"}}>{attributeLabel}:</span>
                     <Dropdown
                         value={selectedAttr}
                         onChange={(e: DropdownChangeEvent) => changeAttribute(e)}
                         options={attr}
                         optionLabel={"name"}
                         itemTemplate={(option: SEAttribute) => <span>{option.name} ({option.values.length})</span>}
-                        placeholder="Selecione um atributo"
+                        placeholder={selectAttributeLabel}
                     />
                 </div>
                 <div style={{display: "flex", flexDirection: "row", alignItems: "center", gap: "7px", padding: "5px"}}>
-                    <span style={{width: "auto"}}>Espetro de cores:</span>
+                    <span style={{width: "auto"}}>{colorsSpectrumLabel}:</span>
                     <Dropdown
                         value={selectedSpectrumColors}
                         options={preDefinedPalettes}
                         onChange={(e: DropdownChangeEvent) => changeColorsOfValues(e.value)}
-                        placeholder="Selecione um espetro"
+                        placeholder={selectSpectrumLabel}
                         optionLabel={"label"}
                         optionGroupLabel={"label"}
                         itemTemplate={itemTemplate}
                     />
                     <PrimeButton text icon={"pi pi-refresh"} disabled={!selectedSpectrumColors}
-                                 tooltip={"Atualizar as cores"}
+                                 tooltip={updateColorsLabel}
                                  onClick={() => updateColorsByColorRamp(selectedSpectrumColors!)}/>
                 </div>
                 <div style={{display: "flex", flexDirection: "column", gap: "7px", padding: "5px"}}>
-                    <span>Opacidade da cor: {fillOpacity}%</span>
+                    <span>{colorOpacityLabel}: {fillOpacity}%</span>
                     <Slider max={100} min={0} style={{width: "300px"}}
                             value={fillOpacity} onChange={(e) => {
                         setFillOpacity(e.value as number)
@@ -323,7 +339,7 @@ export const Categorized: React.FC<Props> = (props: Props)=> {
                 {table.length > 0 && <div style={{padding: "5px"}}>
                     <DataTable
                         value={table}
-                        selectionMode={rowClick ? null : "checkbox"}
+                        selectionMode={rowClick ? undefined : "checkbox"}
                         tableStyle={{minWidth: "25rem"}}
                         selection={table.filter((tr) => tr.visible)!}
                         onSelectionChange={(e: DataTableSelectionMultipleChangeEvent<TableRow[]>) => {
@@ -345,15 +361,15 @@ export const Categorized: React.FC<Props> = (props: Props)=> {
                 </div>}
             </div>
             <div style={{display: "flex", justifyContent: "flex-end", padding: "10px", width: "100%"}}>
-                <Button label={"Concluir"}
+                <Button label={concludeLabel}
                         onClick={() => {
                             applyRenderer({
                                 type: RenderType.Categorized, field: selectedAttr?.name,
-                                rendererOL: getCategorizedStyle(selectedAttr?.name!, table.filter(row => row.value != "Nulo" && row.visible)
+                                rendererOL: getCategorizedStyle(selectedAttr?.name!, table.filter(row => row.value != nullText && row.visible)
                                     .map((tr) => ({
                                         value: tr.value,
                                         color: tr.color
-                                    })), borderColor, borderThickness, table.find(row => row.value == "Nulo")!.color)
+                                    })), borderColor, borderThickness, table.find(row => row.value == nullText)!.color)
                             })
                             setVisible(false)
                         }}/></div>

@@ -1,6 +1,8 @@
 import {Color, fromString} from "ol/color";
 import {FlatStyle} from "ol/style/flat";
 import {Stop} from "./components/rampColors.ts";
+import i18n from "../i18n.ts";
+
 
 //https://openlayers.org/en/latest/apidoc/module-ol_style_expressions.html
 
@@ -34,16 +36,20 @@ export enum RenderType {
     ByRules = "ByRules"
 }
 
-//taken from: https://resources.arcgis.com/en/help/main/10.2/index.html#//00s50000001r000000
+
+// //taken from: https://resources.arcgis.com/en/help/main/10.2/index.html#//00s50000001r000000
 export enum GraduatedModes {
     Manual = "Manual",
-    EqualInterval = "Intervalos Iguais",
-    DefinedInterval = "Intervalos Definidos",
-    Quantile = "Quantil",
-    NaturalBreaks = "Quebras Naturais (Jenks)",
+    EqualInterval = "EqualInterval",
+    DefinedInterval = "DefinedInterval",
+    Quantile = "Quantile",
+    NaturalBreaks = "NaturalBreaks",
+    //not yet implemented
     GeometricInterval = "GeometricInterval",
-    StandardDeviation = "StandardDeviation"
+    StandardDeviation = "StandardDeviation",
 }
+
+
 
 export interface PreDefinedRenderer {
     name: string
