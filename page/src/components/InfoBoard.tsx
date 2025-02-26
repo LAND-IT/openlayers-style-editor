@@ -29,7 +29,8 @@ export function InfoBoard(props: Props) {
     useEffect(() => {
         if (repoData) return;
         getContributorsAndLatestVersion("LAND-IT", "openlayers-style-editor").then((res) => {
-            setRepoData(res);
+            if (res)
+                setRepoData(res);
         })
     }, []);
 
@@ -43,7 +44,7 @@ export function InfoBoard(props: Props) {
             {/*<p>Version: {repoData}</p>*/}
             <p>Stars: {repoData?.data?.stargazers_count}</p>
             <p>Forks: {repoData?.data?.forks_count}</p>
-            <p>Last Update: {(repoData?.data?.updated_at as string).split("T")[0]}</p>
+            <p>Last Update: {(repoData?.data?.updated_at as string)?.split("T")[0]}</p>
             <p>License: {repoData?.data?.license?.name}</p>
             <p>Opened Issues: {repoData?.data?.open_issues_count}</p>
 

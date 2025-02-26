@@ -20,7 +20,6 @@ export const UniqueSymbol: React.FC<UniqueSymbolProps> = (props: UniqueSymbolPro
 
     const { t } = useTranslation();
     const fillColorLabel: string = t("unique_symbol.fill_color" as any)
-    const colorRampLabel: string = t("categorized.color_ramps" as any)
     const strokeColorLabel: string = t("categorized.stroke_color" as any)
     const strokeWidthLabel: string = t("categorized.stroke_width" as any)
     const concludeLabel: string = t("common.conclude" as any)

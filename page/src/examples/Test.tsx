@@ -1,19 +1,21 @@
 import {useEffect, useMemo, useState} from "react";
 import TileLayer from "ol/layer/Tile";
 import {OSM} from "ol/source";
-import {Map, View} from "ol";
+import {Feature, Map, View} from "ol";
 import VectorSource from "ol/source/Vector";
 import WebGLVectorLayer from "ol/layer/WebGLVector";
 import {GeoJSON} from "ol/format";
 import "./test.css";
 import {Button} from "primereact/button";
-import { Render, RenderType, StyleEditor } from "openlayers-style-editor";
+import {Render, RenderType, StyleEditor} from "openlayers-style-editor";
 import {Header} from "../components/Header.tsx";
+
 // import 'primereact/resources/themes/mdc-light-indigo/theme.css';
 
 export function Test() {
 
     const [visible, setVisible] = useState<boolean>(false);
+    const [features, setFeatures] = useState<Feature[]>([]);
 
     const defaultRender: Render = {
         type: RenderType.Unique,
@@ -51,6 +53,10 @@ export function Test() {
 
     useEffect(() => {
         map.setTarget("viewID")
+        vectorSource.on('featuresloadend', function () {
+            const features = vectorSource.getFeatures();
+            setFeatures(features)
+        });
     })
 
     useEffect(() => {
@@ -67,14 +73,17 @@ export function Test() {
     return (
         <>
             <Header/>
-            <div id={"viewID"} className={"map"}></div>
-            <Button onClick={() => setVisible(true)}>
-                Edit Style
-            </Button>
-            <StyleEditor visible={visible} setVisible={setVisible} layerDefaultRenderer={defaultRender}
-                         layerCurrentRenderer={renderer} applyRenderer={(renderer) => setRenderer(renderer)}
-                         vectorSource={vectorSource} primeReactTheme={"bootstrap4-light-blue"}
-                         showPreDefinedRamps={true} moreRamps={[]} preDefinedStyles={[]} />
+            <div className={"demo"}>
+                <span><b>Ecoregions of the Earth</b></span>
+                <div id={"viewID"} className={"map"}></div>
+                <Button onClick={() => setVisible(true)}>
+                    Edit Style
+                </Button>
+                <StyleEditor visible={visible} setVisible={setVisible} layerDefaultRenderer={defaultRender}
+                             layerCurrentRenderer={renderer} applyRenderer={(renderer) => setRenderer(renderer)}
+                             features={features}
+                             showPreDefinedRamps={true} moreRamps={[]} preDefinedStyles={[]}/>
+            </div>
         </>
     );
 }

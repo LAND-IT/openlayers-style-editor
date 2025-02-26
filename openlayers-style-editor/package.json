@@ -4,7 +4,7 @@
   "type": "module",
   "main": "dist/openlayers-style-editor.umd.cjs",
   "module": "dist/openlayers-style-editor.js",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/src/index.d.ts",
   "files": [
     "dist"
   ],

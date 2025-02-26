@@ -1,5 +1,5 @@
 import './usage.css'
-import {CodeBlock, CopyBlock} from "react-code-blocks";
+import {CopyBlock} from "react-code-blocks";
 import {atomOneLight} from "react-code-blocks";
 
 export function Usage() {

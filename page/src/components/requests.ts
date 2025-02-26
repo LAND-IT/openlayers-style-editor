@@ -4,7 +4,7 @@ export interface RepoInfo {
     data: any;
 }
 
-export async function getContributorsAndLatestVersion(owner: string, repo: string): Promise<RepoInfo> {
+export async function getContributorsAndLatestVersion(owner: string, repo: string): Promise<RepoInfo | undefined> {
     const contributorsUrl = `https://api.github.com/repos/${owner}/${repo}/contributors`;
     const releasesUrl = `https://api.github.com/repos/${owner}/${repo}/releases/latest`;
     const repoUrl = `https://api.github.com/repos/${owner}/${repo}`;

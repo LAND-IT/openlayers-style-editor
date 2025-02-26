@@ -17,10 +17,7 @@
     "noFallthroughCasesInSwitch": true,
     "declaration": true,
     "baseUrl": ".",
-    "paths": {
-      "src/*": ["src/*"]
-    }
   },
-  "include": ["src", "src/themes"],
+  "include": ["src"],
   "exclude": ["src/**/__docs__", "src/**/__test__","src/examples"]
 }
