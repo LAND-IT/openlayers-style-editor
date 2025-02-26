@@ -4,11 +4,6 @@ import translationPT from './src/locales/pt/translation.json';
 import translationEN from './src/locales/en/translation.json';
 
 
-// don't want to use this?
-// have a look at the Quick start guide
-// for passing in lng and translations on init
-
-
 i18n
     // pass the i18n instance to react-i18next.
     .use(initReactI18next)
@@ -19,9 +14,9 @@ i18n
         fallbackLng: 'en',
         debug: true,
         resources:{
-            // pt: {
-            //     translation: translationPT
-            // },
+            pt: {
+                translation: translationPT
+            },
             en: {
                 translation: translationEN
             }

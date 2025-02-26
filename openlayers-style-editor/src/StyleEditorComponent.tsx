@@ -3,7 +3,6 @@ import {Dialog} from "primereact/dialog";
 import {SEAttribute, PreDefinedRenderer, Render} from "./RendererObjects.ts";
 import {ColorRamp} from "./components/rampColors.ts";
 import {GeometryEditor} from "./components/geometryEditor.tsx";
-import VectorSource from "ol/source/Vector";
 import {Feature} from "ol";
 import {mapFeaturesToSEAttributes} from "./components/utills.ts";
 import {useTranslation} from "react-i18next";
@@ -15,7 +14,7 @@ interface Props {
     layerDefaultRenderer: Render
     layerCurrentRenderer: Render
     applyRenderer: (renderer: Render) => void
-    vectorSource: VectorSource | Feature[]
+    features: Feature[]
     showPreDefinedRamps: boolean,
     moreRamps: ColorRamp[]
     preDefinedStyles: PreDefinedRenderer[]
@@ -28,7 +27,7 @@ const StyleEditorComponent: React.FC<Props> = (props: Props) => {
     const {
         layerDefaultRenderer, layerCurrentRenderer, applyRenderer,
         showPreDefinedRamps, moreRamps, preDefinedStyles, addingToHeader,
-        vectorSource, visible, setVisible, numbersLocale
+        features, visible, setVisible, numbersLocale
     } = props;
 
     const { t } = useTranslation();
@@ -36,7 +35,6 @@ const StyleEditorComponent: React.FC<Props> = (props: Props) => {
 
     const [activeIndex] = useState(1);
 
-    const [features, setFeatures] = useState<Feature[]>([])
     const [attributesAndValues, setAttributesAndValues] = useState<SEAttribute[]>([])
 
     // const items: MenuItem[] = [
@@ -48,19 +46,6 @@ const StyleEditorComponent: React.FC<Props> = (props: Props) => {
     //         label: "Geometrias",
     //         icon: <HiOutlineColorSwatch/>
     //     }]
-
-    if (vectorSource instanceof VectorSource) {
-        if (vectorSource.getUrl()) {
-            vectorSource.on('featuresloadend', function () {
-                const features = vectorSource.getFeatures();
-                setFeatures(features)
-            });
-        } else {
-            if (vectorSource.getFeatures().length > 0) {
-                setFeatures(vectorSource.getFeatures())
-            }
-        }
-    }
 
     useEffect(() => {
         setAttributesAndValues(mapFeaturesToSEAttributes(features))

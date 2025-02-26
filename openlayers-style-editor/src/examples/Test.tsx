@@ -3,7 +3,7 @@ import {useEffect, useMemo, useState} from "react";
 import {Render, RenderType} from "../RendererObjects";
 import TileLayer from "ol/layer/Tile";
 import {OSM} from "ol/source";
-import {Map, View} from "ol";
+import {Feature, Map, View} from "ol";
 import VectorSource from "ol/source/Vector";
 import WebGLVectorLayer from "ol/layer/WebGLVector";
 import {GeoJSON} from "ol/format";
@@ -13,6 +13,7 @@ import StyleEditor from "../StyleEditor";
 export function Test() {
 
     const [visible, setVisible] = useState<boolean>(false);
+    const [features, setFeatures] = useState<Feature[]>([]);
 
     const defaultRender: Render = {
         type: RenderType.Unique,
@@ -50,6 +51,10 @@ export function Test() {
 
     useEffect(() => {
         map.setTarget("viewID")
+        vectorSource.on('featuresloadend', function () {
+            const features = vectorSource.getFeatures();
+            setFeatures(features)
+        });
     })
 
     useEffect(() => {
@@ -69,9 +74,9 @@ export function Test() {
             <Button label="Edit Style" onClick={() => setVisible(true)}/>
             <StyleEditor visible={visible} setVisible={setVisible} layerDefaultRenderer={defaultRender}
                          layerCurrentRenderer={renderer} applyRenderer={(renderer) => setRenderer(renderer)}
-                         vectorSource={vectorSource}
+                         features={features}
                          primeReactTheme={"bootstrap4-light-blue"}
-                         showPreDefinedRamps={true} moreRamps={[]} preDefinedStyles={[]} />
+                         showPreDefinedRamps={true} moreRamps={[]} preDefinedStyles={[]}/>
         </>
     );
 }
