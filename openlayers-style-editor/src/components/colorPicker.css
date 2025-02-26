@@ -1,0 +1,8 @@
+.color-picker{
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+}

@@ -23,6 +23,7 @@ import {FlatStyle} from "ol/style/flat";
 import {MyColorPicker} from "./myColorPicker.tsx";
 import {Slider} from "primereact/slider";
 import {useTranslation} from "react-i18next";
+import "./categorized.css"
 
 interface Props {
     attr: SEAttribute[]
@@ -66,6 +67,11 @@ export const Categorized: React.FC<Props> = (props: Props) => {
     const colorsSpectrumLabel: string = t("categorized.colors_spectrum" as any)
     const selectSpectrumLabel: string = t("categorized.select_spectrum" as any)
     const concludeLabel: string = t("common.conclude" as any)
+    const colorLabel: string = t("graduated.color" as any)
+    const customStyleLabel: string = t("categorized.custom_style" as any)
+    const valueLabel: string = t("graduated.value" as any)
+    const reverseColorsLabel: string = t("categorized.reverse_colors" as any)
+    const colorStyleLabel: string = t("categorized.color_style" as any)
 
     const currentRender = layerCurrentRenderer.type != RenderType.Categorized ? [] :
         (layerCurrentRenderer.rendererOL["fill-color"] as any[])
@@ -87,7 +93,7 @@ export const Categorized: React.FC<Props> = (props: Props) => {
 
     const stroke = getRendererColorAndSizeStroke(layerCurrentRenderer)
     const [selectedSpectrumColors, setSelectedSpectrumColors] =
-        useState<ColorRampItem>()
+        useState<ColorRampItem>({label: customStyleLabel, value: []})
     const [table, setTable] = useState<TableRow[]>(valuesAndColors)
     const [selectedAttr, setSelectedAttr] = useState<SEAttribute | undefined>(layerCurrentRenderer.field ?
         attr.find(at => at.name == layerCurrentRenderer.field!)! : undefined)
@@ -97,6 +103,7 @@ export const Categorized: React.FC<Props> = (props: Props) => {
     const [borderColor, setBorderColor] = useState<Color>(currentStyle ? stroke.color : fromString("#000000"));
     const [borderThickness, setBorderThickness] = useState<number>(currentStyle ? stroke.size : 1);
     const [fillOpacity, setFillOpacity] = useState<number>(currentStyle ? getRendererOpacity(layerCurrentRenderer) : 100);
+    const [isReversed, setIsReversed] = useState<boolean>(false)
 
     const allRamps = showPreDefinedRamps ? moreRamps.concat(colorRamps) : moreRamps
 
@@ -113,6 +120,10 @@ export const Categorized: React.FC<Props> = (props: Props) => {
     }
 
     const preDefinedPalettes = [
+        {
+            label: customStyleLabel,
+            items: [{label: customStyleLabel, value: {label: customStyleLabel, value: []}}]
+        },
         {
             label: predefinedStylesLabel,
             items: preDefinedStyles.map((renderer) => {
@@ -172,13 +183,19 @@ export const Categorized: React.FC<Props> = (props: Props) => {
 
     const colorColumnTemplate = (tr: TableRow) => {
         return (
-            <MyColorPicker
-                onChange={(e) => updateColorPicker(fromString(e), tr)}
-                color={tr.color}/>
+            <div hidden={!tr.visible}>
+                <MyColorPicker
+                    onChange={(e) => updateColorPicker(fromString(e), tr)}
+                    color={tr.color}/>
+            </div>
         )
     }
 
-    function updateColorsByColorRamp(colorRamp: ColorRampItem) {
+    function updateColorsByColorRamp(colorRampInput: ColorRampItem, reversed: boolean) {
+        const colorRamp: ColorRampItem = {label: colorRampInput.label, value: [...colorRampInput.value]}
+        if(reversed){
+            colorRamp.value.reverse()
+        }
         //palettes
         if (colorRamp.value.length > 0 && "offset" in colorRamp.value[0]) {
             const value = colorRamp.value.map((stop) =>
@@ -203,7 +220,7 @@ export const Categorized: React.FC<Props> = (props: Props) => {
 
             })
             setTable(tableUpdated)
-        } else {
+        } else if (colorRamp.value.length > 0) {
             const style = getCategorizedStyle(selectedAttr?.name!, colorRamp.value as Row[])
             const colors = getStyleColorsAndValues(style, RenderType.Categorized)
 
@@ -224,20 +241,36 @@ export const Categorized: React.FC<Props> = (props: Props) => {
                     })
             })
             setTable(tableUpdated)
+        } else {
+            const tableUpdated: TableRow[] = []
+            table.forEach(({value, visible}: TableRow) => {
+                tableUpdated.push({
+                    value,
+                    visible,
+                    color: generateRandomColor()
+                })
+            })
+            setTable(tableUpdated)
         }
+    }
+
+    function revertColors() {
+        setIsReversed(!isReversed)
+        updateColorsByColorRamp(selectedSpectrumColors, !isReversed)
     }
 
     function changeColorsOfValues(e: ColorRampItem) {
         const colorRamp = e
+        setIsReversed(false)
         setSelectedSpectrumColors(colorRamp)
-        updateColorsByColorRamp(colorRamp)
+        updateColorsByColorRamp(colorRamp, false)
     }
 
     function changeAttribute(e: DropdownChangeEvent) {
 
         let attribute = attr.find(a => a.name == e.value.name)!
         setSelectedAttr(attribute)
-        setSelectedSpectrumColors(undefined)
+        setSelectedSpectrumColors({label: customStyleLabel, value: []})
         //Change values in table
 
         let tableValues: TableRow[] = []
@@ -266,35 +299,18 @@ export const Categorized: React.FC<Props> = (props: Props) => {
             tableValues.push({
                 value: tr.value,
                 visible: found,
-                color: tr.color,
+                color: found ? tr.color : [0, 0, 0, 0],
             })
         })
         setTable(tableValues)
+        // updateColorsByColorRamp(selectedSpectrumColors!)
     }
 
     return (
-        <div style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            height: "100%",
-            paddingTop: "10px"
-        }}>
+        <div className={"categorized-container"}>
             <div>
-                <div style={{display: "flex", flexDirection: "row", gap: "5px", alignItems: "center", padding: "5px"}}>
-                    <span>{strokeColorLabel}:</span>
-                    <div>
-                        <MyColorPicker color={borderColor} hideAlpha={true}
-                                       onChange={(e: string) => setBorderColor(fromString(e))}/>
-                    </div>
-                </div>
-                <div style={{display: "flex", flexDirection: "column", gap: "7px", padding: "5px"}}>
-                    <span>{strokeWidthLabel}: {borderThickness}</span>
-                    <Slider max={10} min={0} style={{width: "300px"}}
-                            value={borderThickness} onChange={(e) => setBorderThickness(e.value as number)}/>
-                </div>
-                <div style={{display: "flex", flexDirection: "row", alignItems: "center", gap: "7px", padding: "5px"}}>
-                    <span style={{width: "auto"}}>{attributeLabel}:</span>
+                <div className={"attribute-container"}>
+                    <span style={{width: "auto"}}><b>{attributeLabel}:</b></span>
                     <Dropdown
                         value={selectedAttr}
                         onChange={(e: DropdownChangeEvent) => changeAttribute(e)}
@@ -304,63 +320,86 @@ export const Categorized: React.FC<Props> = (props: Props) => {
                         placeholder={selectAttributeLabel}
                     />
                 </div>
-                <div style={{display: "flex", flexDirection: "row", alignItems: "center", gap: "7px", padding: "5px"}}>
-                    <span style={{width: "auto"}}>{colorsSpectrumLabel}:</span>
-                    <Dropdown
-                        value={selectedSpectrumColors}
-                        options={preDefinedPalettes}
-                        onChange={(e: DropdownChangeEvent) => changeColorsOfValues(e.value)}
-                        placeholder={selectSpectrumLabel}
-                        optionLabel={"label"}
-                        optionGroupLabel={"label"}
-                        itemTemplate={itemTemplate}
-                    />
-                    <PrimeButton text icon={"pi pi-refresh"} disabled={!selectedSpectrumColors}
-                                 tooltip={updateColorsLabel}
-                                 onClick={() => updateColorsByColorRamp(selectedSpectrumColors!)}/>
-                </div>
-                <div style={{display: "flex", flexDirection: "column", gap: "7px", padding: "5px"}}>
-                    <span>{colorOpacityLabel}: {fillOpacity}%</span>
-                    <Slider max={100} min={0} style={{width: "300px"}}
-                            value={fillOpacity} onChange={(e) => {
-                        setFillOpacity(e.value as number)
-                        let aux = [...table]
-                        let newTable = aux.map((tr) => {
-                            let aux2 = []
-                            aux2.push(tr.color[0])
-                            aux2.push(tr.color[1])
-                            aux2.push(tr.color[2])
-                            aux2.push(e.value as number / 100)
-                            return {...tr, color: aux2}
-                        })
-                        setTable(newTable)
-                    }}/>
-                </div>
-                {table.length > 0 && <div style={{padding: "5px"}}>
-                    <DataTable
-                        value={table}
-                        selectionMode={rowClick ? undefined : "checkbox"}
-                        tableStyle={{minWidth: "25rem"}}
-                        selection={table.filter((tr) => tr.visible)!}
-                        onSelectionChange={(e: DataTableSelectionMultipleChangeEvent<TableRow[]>) => {
-                            const value = e.value as TableRow[]
-                            changeVisibility(value)
-                        }}
-                        reorderableRows
-                        onRowReorder={(e) => setTable(e.value)}
-                    >
-                        <Column rowReorder style={{width: '3rem'}}/>
-                        <Column
-                            selectionMode="multiple"
-                            field="visible"
-                            body={visibleColumnTemplate}
-                        />
-                        <Column field="color" header="Cor" body={colorColumnTemplate}/>
-                        <Column field="value" header="Valor" sortable/>
-                    </DataTable>
-                </div>}
+                {table.length > 0 &&
+                    <div>
+                        <div className={"stroke-row"}>
+                            <div className={"stroke-color-container"}>
+                                <span><b>{strokeColorLabel}:</b></span>
+                                <div>
+                                    <MyColorPicker color={borderColor} hideAlpha={true}
+                                                   onChange={(e: string) => setBorderColor(fromString(e))}/>
+                                </div>
+                            </div>
+                            <div className={"stroke-width-container"}>
+                                <span><b>{strokeWidthLabel}:</b></span>
+                                <Slider max={10} min={0} className={"stroke-slider"}
+                                        value={borderThickness}
+                                        onChange={(e) => setBorderThickness(e.value as number)}/>
+                                <span>{borderThickness} px</span>
+                            </div>
+                        </div>
+                        <div className={"opacity-container"}>
+                            <span><b>{colorOpacityLabel}:</b></span>
+                            <Slider max={100} min={0} className={"opacity-slider"}
+                                    value={fillOpacity} onChange={(e) => {
+                                setFillOpacity(e.value as number)
+                                let aux = [...table]
+                                let newTable = aux.map((tr) => {
+                                    let aux2 = []
+                                    aux2.push(tr.color[0])
+                                    aux2.push(tr.color[1])
+                                    aux2.push(tr.color[2])
+                                    aux2.push(e.value as number / 100)
+                                    return {...tr, color: aux2}
+                                })
+                                setTable(newTable)
+                            }}/>
+                            <span>{fillOpacity}%</span>
+                        </div>
+                        <div className={"spectrum-container"}>
+                            <span style={{width: "auto"}}><b>{colorStyleLabel}:</b></span>
+                            <Dropdown
+                                value={selectedSpectrumColors}
+                                options={preDefinedPalettes}
+                                onChange={(e: DropdownChangeEvent) => changeColorsOfValues(e.value)}
+                                placeholder={selectSpectrumLabel}
+                                optionLabel={"label"}
+                                optionGroupLabel={"label"}
+                                itemTemplate={itemTemplate}
+                            />
+                            <PrimeButton text icon={"pi pi-refresh"} disabled={!selectedSpectrumColors}
+                                         tooltip={updateColorsLabel}
+                                         onClick={() => updateColorsByColorRamp(selectedSpectrumColors!, isReversed)}/>
+                            <PrimeButton text icon={"pi pi-arrow-right-arrow-left"} disabled={!selectedSpectrumColors}
+                                         tooltip={reverseColorsLabel}
+                                         onClick={() => revertColors()}/>
+                        </div>
+                        <div className={"table-container"}>
+                            <DataTable
+                                value={table}
+                                selectionMode={rowClick ? undefined : "checkbox"}
+                                tableStyle={{minWidth: "25rem"}}
+                                selection={table.filter((tr) => tr.visible)!}
+                                onSelectionChange={(e: DataTableSelectionMultipleChangeEvent<TableRow[]>) => {
+                                    const value = e.value as TableRow[]
+                                    changeVisibility(value)
+                                }}
+                                reorderableRows
+                                onRowReorder={(e) => setTable(e.value)}
+                            >
+                                <Column rowReorder style={{width: '3rem'}}/>
+                                <Column
+                                    selectionMode="multiple"
+                                    field="visible"
+                                    body={visibleColumnTemplate}
+                                />
+                                <Column field="color" header={colorLabel} body={colorColumnTemplate}/>
+                                <Column field="value" header={valueLabel} sortable/>
+                            </DataTable>
+                        </div>
+                    </div>}
             </div>
-            <div style={{display: "flex", justifyContent: "flex-end", padding: "10px", width: "100%"}}>
+            <div className={"footer-container"}>
                 <Button label={concludeLabel}
                         onClick={() => {
                             applyRenderer({

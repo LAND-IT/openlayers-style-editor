@@ -3,6 +3,7 @@ import React, {useState} from "react";
 import {asString, Color} from "ol/color";
 import ColorPicker from "react-best-gradient-color-picker";
 import {useTranslation} from "react-i18next";
+import "./colorPicker.css";
 
 interface Props {
     color: Color
@@ -19,10 +20,8 @@ export const MyColorPicker: React.FC<Props> = (props: Props) => {
     const selectColor: string = t("color_picker.select_color" as any)
 
     return <>
-        <div style={{
-            width: "20px", height: "20px", borderRadius: "5px", borderStyle: "solid",
-            borderWidth: "1px", borderColor: "black", backgroundColor: asString(color)
-        }}
+        <div style={{backgroundColor: asString(color)}}
+                className="color-picker"
              onClick={() => setVisible(true)}
         />
         <Dialog header={selectColor} onHide={() => setVisible(false)} visible={visible}>

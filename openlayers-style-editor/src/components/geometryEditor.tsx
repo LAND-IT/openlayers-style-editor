@@ -7,6 +7,7 @@ import {ColorRamp} from "./rampColors.ts";
 import {Button} from "primereact/button";
 import {Graduated} from "./graduated.tsx";
 import {useTranslation} from "react-i18next";
+import "./geometryEditor.css"
 
 interface Props {
     attributes: SEAttribute[]
@@ -34,12 +35,13 @@ export const GeometryEditor: React.FC<Props> = (props: Props) => {
         numbersLocale
     } = props;
 
-    const { t } = useTranslation();
+    const {t} = useTranslation();
     const uniqueSymbol: string = t("common.unique_symbol" as any)
     const categorized: string = t("common.categorized" as any)
     const graduated: string = t("common.graduated" as any)
     const resetStyle: string = t("common.reset_style" as any)
     const selectStyle: string = t("common.select_type" as any)
+    const styleType: string = t("common.style_type" as any)
 
     const [attr, setAttr] = useState<SEAttribute[]>(props.attributes)
 
@@ -64,18 +66,14 @@ export const GeometryEditor: React.FC<Props> = (props: Props) => {
 
     return (
         <>
-            <div style={{
-                height: "95%",
-                display: "flex", gap: "15px",
-                flexDirection: "column", marginTop: "10px"
-            }}>
-                <div style={{
-                    display: "flex", justifyContent: "space-between",
-                    flexDirection: "row"
-                }}>
-                    <Dropdown options={options} placeholder={selectStyle}
-                              optionLabel={"label"} value={activeIndex}
-                              onChange={(e) => setActiveIndex(e.value)}/>
+            <div className={"geometry-editor"}>
+                <div className={"dropdown"}>
+                    <div className={"style-type"}>
+                        <span><b>{styleType}:</b></span>
+                        <Dropdown options={options} placeholder={selectStyle}
+                                  optionLabel={"label"} value={activeIndex}
+                                  onChange={(e) => setActiveIndex(e.value)}/>
+                    </div>
                     <Button label={resetStyle}
                             disabled={currentRenderer == layerDefaultRenderer}
                             onClick={() => {

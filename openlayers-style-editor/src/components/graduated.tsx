@@ -19,6 +19,7 @@ import {Toast, ToastMessage} from "primereact/toast";
 import {jenksBuckets, quantileBuckets, standardDeviationBuckets} from "geobuckets/dist/src";
 import {MyColorPicker} from "./myColorPicker.tsx";
 import {useTranslation} from "react-i18next";
+import "./graduated.css"
 
 interface GraduatedProps {
     attr: SEAttribute[]
@@ -379,10 +380,10 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
     }, [intervals, stopsValues]);
 
     return <>
-        <div style={{display: "flex", flexDirection: "column", gap: "10px"}}>
-            <div style={{display: "flex", flexDirection: "row", gap: "20px", alignItems: "center"}}>
-                <div style={{display: "flex", flexDirection: "row", gap: "5px", alignItems: "center"}}>
-                    <span style={{width: "auto"}}>{attributeLabel}:</span>
+        <div className="flex-column">
+            <div className="flex-row">
+                <div className="flex-row-small-gap">
+                    <span className="auto-width-span">{attributeLabel}:</span>
 
                     <Dropdown
                         value={selectedAttr}
@@ -397,8 +398,8 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
                         placeholder={selectAttributeLabel}
                     />
                 </div>
-                <div style={{display: "flex", flexDirection: "row", gap: "5px", alignItems: "center"}}>
-                    <span style={{width: "auto"}}>{modeLabel}:</span>
+                <div className={"flex-row-small-gap"}>
+                    <span className={"auto-width-span"}>{modeLabel}:</span>
 
                     <Dropdown
                         disabled={!selectedAttr}
@@ -436,11 +437,11 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
                     <span>{maxValueLabel}: {Math.max(...selectedAttr!.values!.map(Number).filter((v) => !isNaN(v) && v != null)).toLocaleString(locale)}</span>}
             </div>
             {selectedMode &&
-                <div style={{display: "flex", flexDirection: "row", gap: "15px", alignItems: "center"}}>
+                <div className={"flex-row-gap-15"}>
                     {(selectedMode == GraduatedModes.Manual || selectedMode == GraduatedModes.EqualInterval ||
                         selectedMode == GraduatedModes.Quantile || selectedMode == GraduatedModes.NaturalBreaks ||
                         selectedMode == GraduatedModes.GeometricInterval) && <div>
-                        <span style={{width: "auto"}}>{classesNumberLabel}:</span>
+                        <span className={"auto-width-span"}>{classesNumberLabel}:</span>
 
                         <InputNumber value={classNo}
                                      locale={locale}
@@ -453,7 +454,7 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
 
                     {(selectedMode == GraduatedModes.DefinedInterval || selectedMode == GraduatedModes.StandardDeviation) &&
                         <div>
-                            <span style={{width: "auto"}}>{intervalSizeLabel}:</span>
+                            <span className={"auto-width-span"}>{intervalSizeLabel}:</span>
 
                             <InputNumber value={intervalSize}
                                          locale={locale}
@@ -466,20 +467,14 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
                 </div>}
 
             {selectedMode && selectedAttr &&
-                <Chart style={{height: "500px"}} type="bar" data={chartData}
+                <Chart className={"chart-wrapper"} type="bar" data={chartData}
                        options={chartOptions}
                 />}
 
             {stops.length > 0 && selectedMode &&
-                <div style={{display: "flex", flexDirection: "column", gap: "15px", paddingTop: "10px"}}>
-                    <div style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        gap: "7px",
-                        padding: "5px"
-                    }}>
-                        <span style={{width: "auto"}}>{colorsSpectrumLabel}:</span>
+                <div className={"flex-column-gap-15px"}>
+                    <div className={"flex-row-center"}>
+                        <span className={"auto-width-span"}>{colorsSpectrumLabel}:</span>
                         <Dropdown
                             value={selectedSpectrumColors}
                             options={preDefinedPalettes}
@@ -498,19 +493,14 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
                                      onClick={() => applyRampToStops(selectedSpectrumColors!, true)}/>
 
                     </div>
-                    <div style={{display: "flex", flexDirection: "row", gap: "50px"}}>
-                        <div style={{display: "flex", flexDirection: "column", gap: "5px"}}>
-                            <span style={{width: "auto"}}>{gradientIntervalsLabel}:</span>
+                    <div className={"flex-row-gap-50px"}>
+                        <div className={"flex-column-small-gap"}>
+                            <span className={"auto-width-span"}>{gradientIntervalsLabel}:</span>
                             {stops.map((value: Row, index: number) => {
                                     return (
                                         <div key={index}
-                                             style={{
-                                                 display: "flex",
-                                                 flexDirection: "row",
-                                                 gap: "5px",
-                                                 alignItems: "center",
-                                             }}>
-                                            <span style={{width: "auto"}}> {valueLabel}:  </span>
+                                             className={"flex-row-small-gap"}>
+                                            <span className={"auto-width-span"}> {valueLabel}:  </span>
                                             <InputNumber placeholder={valueLabel}
                                                          allowEmpty={false}
                                                          locale={locale}
@@ -527,7 +517,7 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
                                                          value={value.value as number}
                                             />
 
-                                            <span style={{width: "auto"}}>{colorLabel}: </span>
+                                            <span className={"auto-width-span"}>{colorLabel}: </span>
                                             <MyColorPicker
                                                 color={value.color}
                                                 onChange={(e: string) => {
@@ -544,29 +534,23 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
                         </div>
 
                         <div>
-                            <div style={{
-                                display: "flex",
-                                flexDirection: "row",
-                                gap: "5px",
-                                alignItems: "center",
-                                padding: "5px"
-                            }}>
+                            <div className={"color-picker-wrapper"} >
                                 <span>{strokeColorLabel}:</span>
                                 <div>
                                     <MyColorPicker color={borderColor} hideAlpha={true}
                                                    onChange={(e: string) => setBorderColor(fromString(e))}/>
                                 </div>
                             </div>
-                            <div style={{display: "flex", flexDirection: "column", gap: "7px", padding: "5px"}}>
+                            <div className={"flex-column-gap-7px"}>
                                 <span>{strokeWidthLabel}: {borderThickness}</span>
-                                <Slider max={10} min={0} style={{width: "300px"}}
+                                <Slider max={10} min={0} className={"slider-wrapper"}
                                         value={borderThickness}
                                         onChange={(e) => setBorderThickness(e.value as number)}/>
                             </div>
 
-                            <div style={{display: "flex", flexDirection: "column", gap: "7px", padding: "5px"}}>
+                            <div className={"flex-column-gap-7px"}>
                                 <span>{colorOpacityLabel}: {opacity}%</span>
-                                <Slider max={100} min={0} style={{width: "300px"}}
+                                <Slider max={100} min={0} className={"slider-wrapper"}
                                         value={opacity} onChange={(e) => {
                                     setOpacity(e.value as number)
                                     const aux = [...stops]
@@ -585,12 +569,11 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
                             <div style={{
                                 background: getColorRampString(stops.map((stop, index) => {
                                     return {offset: index / stops.length, color: stop.color}
-                                })),
-                                width: "90px", height: "20px"
-                            }}/>
+                                }))
+                            }} className={"preview-color-ramp"}/>
                         </div>
                     </div>
-                    <div style={{display: "flex", justifyContent: "flex-end", padding: "10px", width: "100%"}}>
+                    <div className={"button-wrapper"}>
                         <Button label={concludeLabel}
                                 onClick={() => {
                                     let allGood = true

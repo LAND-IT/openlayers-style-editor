@@ -6,6 +6,7 @@ import {MyColorPicker} from "./myColorPicker.tsx";
 import {Button} from "primereact/button";
 import {FlatStyle} from "ol/style/flat";
 import {useTranslation} from "react-i18next";
+import "./uniqueSymbol.css"
 
 interface UniqueSymbolProps {
     layerDefaultRenderer: Render
@@ -41,42 +42,46 @@ export const UniqueSymbol: React.FC<UniqueSymbolProps> = (props: UniqueSymbolPro
         auxBorder = fromString("#000000");
     }
     const [borderColor, setBorderColor] = useState<Color>(auxBorder);
-    const [borderThickness, setBorderThickness] = useState<number>(currentStyle ? (currentStyle["stroke-width"]! as any[])[3] as number : 1);
+    let auxBorderWidth;
+    if (currentStyle) {
+        if(currentStyle["stroke-width"] instanceof Array)
+            auxBorderWidth = (currentStyle["stroke-width"]! as any[])[3] as number;
+        else
+            auxBorderWidth = currentStyle["stroke-width"] as number;
+    } else {
+        auxBorderWidth = 0;
+    }
+    const [borderThickness, setBorderThickness] = useState<number>(auxBorderWidth);
 
     function createRenderUnique(color: Color, outlineColor: Color, outlineWidth: number) {
         return singleColorStyle(color, outlineColor, outlineWidth);
     }
 
     return (
-        <div style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            height: "100%",
-            paddingTop: "10px"
-        }}>
+        <div className={"container"}>
             <div>
-                <div style={{display: "flex", flexDirection: "row", gap: "5px", alignItems: "center", padding: "5px"}}>
-                    <span>{fillColorLabel}:</span>
+                <div className={"flex-row-unique"}>
+                    <span><b>{fillColorLabel}:</b></span>
                     <div>
                         <MyColorPicker color={color}
                                        onChange={(e: string) => setColor(fromString(e))}/>
                     </div>
                 </div>
-                <div style={{display: "flex", flexDirection: "row", gap: "5px", alignItems: "center", padding: "5px"}}>
-                    <span>{strokeColorLabel}:</span>
+                <div className={"flex-row-unique"}>
+                    <span><b>{strokeColorLabel}:</b></span>
                     <div>
                         <MyColorPicker color={borderColor} hideAlpha={true}
                                        onChange={(e: string) => setBorderColor(fromString(e))}/>
                     </div>
                 </div>
-                <div style={{display: "flex", flexDirection: "column", gap: "7px", padding: "5px"}}>
-                    <span>{strokeWidthLabel}: {borderThickness}</span>
-                    <Slider max={10} min={0} style={{width: "300px"}}
+                <div className={"flex-column-gap-7"}>
+                    <span><b>{strokeWidthLabel}: </b></span>
+                    <Slider max={10} min={0} className={"slider-wrapper"}
                             value={borderThickness} onChange={(e) => setBorderThickness(e.value as number)}/>
+                    <span>{borderThickness} px</span>
                 </div>
             </div>
-            <div style={{width: "100%", display: "flex", justifyContent: "end", padding: "15px"}}>
+            <div className={"button-wrapper"}>
                 <Button label={concludeLabel}
                         onClick={() => {
                             applyRenderer({

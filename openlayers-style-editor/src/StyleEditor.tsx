@@ -5,6 +5,7 @@ import {PreDefinedRenderer, Render} from "./RendererObjects.ts";
 import {Feature} from "ol";
 import {ColorRamp} from "./components/rampColors.ts";
 import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
 import {I18nextProvider} from "react-i18next";
 import i18n from "../i18n.ts";
 

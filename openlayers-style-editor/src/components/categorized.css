@@ -1,0 +1,95 @@
+/* General container styling */
+.categorized-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    padding-top: 10px;
+}
+
+/* Stroke color section */
+.stroke-color-container {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
+    padding-bottom: 15px;
+}
+
+/* Stroke width section */
+.stroke-width-container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    padding-bottom: 15px;
+    align-items: center;
+}
+
+.stroke-row{
+    display: flex;
+    flex-direction: row;
+    gap:40px;
+    align-items: center;
+}
+
+.stroke-slider {
+    width: 300px;
+}
+
+/* Attribute selection section */
+.attribute-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 15px;
+}
+
+/* Spectrum selection section */
+.spectrum-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
+    padding-bottom: 15px;
+}
+
+/* Color preview */
+.color-preview {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+}
+
+.color-box {
+    width: 90px;
+    height: 20px;
+}
+
+/* Color opacity section */
+.opacity-container {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    padding-bottom: 15px;
+    align-items: center;
+}
+
+.opacity-slider {
+    width: 300px;
+}
+
+/* Table section */
+.table-container {
+    padding: 5px;
+    height: 40vh;
+    overflow-y: auto;
+}
+
+/* Footer buttons */
+.footer-container {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px;
+    width: 100%;
+}
