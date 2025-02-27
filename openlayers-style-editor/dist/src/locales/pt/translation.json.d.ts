@@ -7,7 +7,8 @@ declare const _default: {
     "categorized": "Categorizado",
     "graduated": "Graduado",
     "null": "Nulo",
-    "select_type": "Selecionar um tipo de estilo"
+    "select_type": "Selecionar um tipo de estilo",
+    "style_type": "Tipo de Estilo"
   },
   "errors": {
     "error_ramps_same_name": "Existem rampas com o mesmo nome: ",
@@ -26,7 +27,10 @@ declare const _default: {
     "update_colors": "Atualizar cores",
     "color_opacity": "Opacidade da Cor",
     "colors_spectrum": "Espetro de Cores",
-    "select_spectrum": "Selecionar um espetro"
+    "select_spectrum": "Selecionar um espetro",
+    "custom_style": "Estilo Personalizado",
+    "reverse_colors": "Inverter cores",
+    "color_style": "Estilo de Cores"
   },
   "unique_symbol": {
     "fill_color": "Cor de Preenchimento"

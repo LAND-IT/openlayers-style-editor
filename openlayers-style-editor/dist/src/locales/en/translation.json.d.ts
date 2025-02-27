@@ -2,12 +2,13 @@ declare const _default: {
   "common": {
     "style_editor": "Style Editor",
     "reset_style": "Reset Style",
-    "conclude": "Conclude",
+    "conclude": "Apply",
     "unique_symbol": "Unique Symbol",
     "categorized": "Categorized",
     "graduated": "Graduated",
     "null": "Null",
-    "select_type": "Select a style type"
+    "select_type": "Select a style type",
+    "style_type": "Style Type"
   },
   "errors": {
     "error_ramps_same_name": "There are ramps with the same name: ",
@@ -26,7 +27,10 @@ declare const _default: {
     "update_colors": "Update colors",
     "color_opacity": "Color Opacity",
     "colors_spectrum": "Colors Spectrum",
-    "select_spectrum": "Select a spectrum"
+    "select_spectrum": "Select a spectrum",
+    "custom_style": "Custom Style",
+    "reverse_colors": "Reverse colors",
+    "color_style": "Color Style"
   },
   "unique_symbol": {
     "fill_color": "Fill Color"
