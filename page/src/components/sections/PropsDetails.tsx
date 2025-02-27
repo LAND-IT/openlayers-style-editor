@@ -1,7 +1,6 @@
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
-import {ReactNode, useState} from "react";
-import {fromString} from "ol/color";
+import {ReactNode} from "react";
 
 interface PropDetail {
     name: string,
@@ -12,7 +11,7 @@ interface PropDetail {
 
 export function PropsDetails() {
 
-    const [propDetails, setPropDetails] = useState<PropDetail[]>([
+    const propDetails: PropDetail[] = [
         {
             name: "visible (boolean)",
             requirement: "mandatory",
@@ -133,7 +132,7 @@ export function PropsDetails() {
 
         },
 
-    ])
+    ]
 
     return (
         <div>

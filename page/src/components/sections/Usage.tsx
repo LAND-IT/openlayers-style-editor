@@ -1,7 +1,6 @@
 import './usage.css'
 import {CopyBlock} from "react-code-blocks";
 import {atomOneLight} from "react-code-blocks";
-import React from "react";
 
 export function Usage() {
     return (

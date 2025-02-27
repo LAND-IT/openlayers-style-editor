@@ -58,7 +58,7 @@ export function Starting(props: Props) {
         };
 
 
-        const content = document.getElementById("content");
+        const content = document.getElementById("content")!;
         content.addEventListener("scroll", handleScroll);
         handleScroll();
 
