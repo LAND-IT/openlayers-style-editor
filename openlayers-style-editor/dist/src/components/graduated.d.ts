@@ -7,7 +7,7 @@ interface GraduatedProps {
     applyRenderer: (renderer: Render) => void;
     setVisible: (e: boolean) => void;
     showPreDefinedRamps: boolean;
-    moreRamps: ColorRamp[];
+    moreRamps?: ColorRamp[];
     layerCurrentRenderer: Render;
     numbersLocale: string;
 }

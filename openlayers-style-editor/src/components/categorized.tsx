@@ -64,7 +64,6 @@ export const Categorized: React.FC<Props> = (props: Props) => {
     const selectAttributeLabel: string = t("categorized.select_attribute" as any)
     const updateColorsLabel: string = t("categorized.update_colors" as any)
     const colorOpacityLabel: string = t("categorized.color_opacity" as any)
-    const colorsSpectrumLabel: string = t("categorized.colors_spectrum" as any)
     const selectSpectrumLabel: string = t("categorized.select_spectrum" as any)
     const concludeLabel: string = t("common.conclude" as any)
     const colorLabel: string = t("graduated.color" as any)
@@ -105,10 +104,10 @@ export const Categorized: React.FC<Props> = (props: Props) => {
     const [fillOpacity, setFillOpacity] = useState<number>(currentStyle ? getRendererOpacity(layerCurrentRenderer) : 100);
     const [isReversed, setIsReversed] = useState<boolean>(false)
 
-    let allRamps;
+    let allRamps: ColorRamp[];
     if (showPreDefinedRamps)
         if (moreRamps)
-            allRamps = moreRamps?.concat(colorRamps)
+            allRamps = moreRamps.concat(colorRamps)
         else
             allRamps = colorRamps
     else {
@@ -202,7 +201,7 @@ export const Categorized: React.FC<Props> = (props: Props) => {
     }
 
     function updateColorsByColorRamp(colorRampInput: ColorRampItem, reversed: boolean) {
-        const colorRamp: ColorRampItem = {label: colorRampInput.label, value: [...colorRampInput.value]}
+        const colorRamp: ColorRampItem = {label: colorRampInput.label, value: [...colorRampInput.value] as  Row[] | Stop[]}
         if(reversed){
             colorRamp.value.reverse()
         }

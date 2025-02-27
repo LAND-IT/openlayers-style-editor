@@ -1,4 +1,4 @@
-<p align="center"><img src="../page/public/favicons/android-chrome-192x192.png"></p>
+<p align="center"><img src="https://land-it.github.io/openlayers-style-editor/favicons/android-chrome-192x192.png"></p>
 <h1 align="center">Welcome to <code>openlayers-style-editor</code></h1>
 <p>
   <a href="https://www.npmjs.com/package/openlayers-style-editor" target="_blank">
@@ -48,15 +48,15 @@ This Style Editor for OpenLayers allows the user to change the style of layers. 
 
 - **Unique Symbol:** Allows the user to change the layer's color, opacity, and stroke.
 - **Categorized:** Allows the user to change the layer's color, opacity, and stroke based on the values of an attribute.
-- **Graduated:** Allows the user to change the layer's color, opacity, and stroke based on a numeric attribute and the 
-mode used to group its values. This package has six modes implemented, some of them are implemented using the
-[GeoBuckets](https://www.npmjs.com/package/geobuckets) package. The implemented modes are:
-  - Manual
-  - Equal Intervals
-  - Defined Intervals
-  - Quantile
-  - Natural Breaks (Jenks)
-  - Standard Deviation
+- **Graduated:** Allows the user to change the layer's color, opacity, and stroke based on a numeric attribute and the
+  mode used to group its values. This package has six modes implemented, some of them are implemented using the
+  [GeoBuckets](https://www.npmjs.com/package/geobuckets) package. The implemented modes are:
+    - Manual
+    - Equal Intervals
+    - Defined Intervals
+    - Quantile
+    - Natural Breaks (Jenks)
+    - Standard Deviation
 
 A detailed explanation of each mode can be found [here](https://resources.arcgis.com/en/help/main/10.2/index.html#//00s50000001r000000).
 

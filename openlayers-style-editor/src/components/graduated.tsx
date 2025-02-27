@@ -114,10 +114,10 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
     const [chartData, setChartData] = useState<any>({})
     const [chartOptions, setChartOptions] = useState<any>({})
 
-    let allRamps;
+    let allRamps: ColorRamp[];
     if (showPreDefinedRamps)
         if (moreRamps)
-            allRamps = moreRamps?.concat(colorRamps)
+            allRamps = moreRamps.concat(colorRamps)
         else
             allRamps = colorRamps
     else {

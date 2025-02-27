@@ -82,7 +82,7 @@ export function Test() {
                 <StyleEditor visible={visible} setVisible={setVisible} layerDefaultRenderer={defaultRender}
                              layerCurrentRenderer={renderer} applyRenderer={(renderer) => setRenderer(renderer)}
                              features={features}
-                             showPreDefinedRamps={true} moreRamps={[]} preDefinedStyles={[]}/>
+                             showPreDefinedRamps={true} moreRamps={[]} predefinedStyles={[]}/>
             </div>
         </>
     );

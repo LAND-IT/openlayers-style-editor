@@ -36,7 +36,7 @@ export declare enum GraduatedModes {
     GeometricInterval = "GeometricInterval",
     StandardDeviation = "StandardDeviation"
 }
-export interface PreDefinedRenderer {
+export interface PredefinedRenderer {
     name: string;
     renderer: Row[];
 }

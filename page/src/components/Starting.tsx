@@ -7,6 +7,7 @@ import {Presentation} from "./sections/Presentation.tsx";
 import {Installation} from "./sections/Installation.tsx";
 import {Usage} from "./sections/Usage.tsx";
 import {InfoBoard} from "./InfoBoard.tsx";
+import {PropsDetails} from "./sections/PropsDetails.tsx";
 
 interface Props {
     section?: string
@@ -21,9 +22,19 @@ export function Starting(props: Props) {
         {id: "presentation", label: "Presentation", body: <Presentation/>},
         {id: "installation", label: "Installation", body: <Installation/>},
         {id: "usage", label: "Usage", body: <Usage/>},
+        {id: "details", label: "Props Details", body: <PropsDetails/>},
     ];
 
     const [activeSection, setActiveSection] = useState<string>(section ? section : "background");
+
+    useEffect(() => {
+        const url = new URL(window.location.href);
+        let findSection  = sections.find((section) => url.hash.includes(section.id));
+        if(findSection) {
+            setActiveSection(findSection.id);
+            document.getElementById(findSection.id)?.scrollIntoView();
+        }
+    }, []);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -34,7 +45,7 @@ export function Starting(props: Props) {
                 const element = document.getElementById(section.id);
                 if (element) {
                     const rect = element.getBoundingClientRect();
-                    if (rect.top >= 0 && rect.top <= window.innerHeight * 0.4) {
+                    if (rect.top >= 0 && rect.top <= window.innerHeight) {
                         currentSection = section.id;
                         break;
                     }
@@ -46,10 +57,12 @@ export function Starting(props: Props) {
             }
         };
 
-        window.addEventListener("scroll", handleScroll);
+
+        const content = document.getElementById("content");
+        content.addEventListener("scroll", handleScroll);
         handleScroll();
 
-        return () => window.removeEventListener("scroll", handleScroll);
+        return () => content.removeEventListener("scroll", handleScroll);
     }, [activeSection]);
 
 
@@ -62,7 +75,7 @@ export function Starting(props: Props) {
                 <InfoBoard activeSection={activeSection} sections={sections} setActiveSection={setActiveSection}/>
 
                 {/* Conteúdo principal */}
-                <div className="content">
+                <div id={"content"} className="content">
                     {sections.map((section) => (
                         <Card key={section.id} title={section.label} id={section.id} className="section">
                             {section.body}

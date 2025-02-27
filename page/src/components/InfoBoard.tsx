@@ -49,6 +49,7 @@ export function InfoBoard(props: Props) {
             <p>Opened Issues: {repoData?.data?.open_issues_count}</p>
 
             <h2>Links</h2>
+            <a href={"https://www.npmjs.com/package/openlayers-style-editor"} target={"_blank"}>NPM</a>
 
             <h2>Contributors</h2>
 

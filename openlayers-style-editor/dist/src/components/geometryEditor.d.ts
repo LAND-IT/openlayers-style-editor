@@ -1,5 +1,5 @@
 import { default as React, Dispatch, SetStateAction } from 'react';
-import { SEAttribute, PreDefinedRenderer, Render } from '../RendererObjects.ts';
+import { SEAttribute, PredefinedRenderer, Render } from '../RendererObjects.ts';
 import { ColorRamp } from './rampColors.ts';
 interface Props {
     attributes: SEAttribute[];
@@ -9,8 +9,8 @@ interface Props {
     layerCurrentRenderer: Render;
     applyRenderer: (renderer: Render) => void;
     showPreDefinedRamps: boolean;
-    moreRamps: ColorRamp[];
-    preDefinedStyles: PreDefinedRenderer[];
+    moreRamps?: ColorRamp[];
+    predefinedStyles: PredefinedRenderer[];
     numbersLocale: string;
 }
 export declare const GeometryEditor: React.FC<Props>;

@@ -1,10 +1,12 @@
 import './usage.css'
 import {CopyBlock} from "react-code-blocks";
 import {atomOneLight} from "react-code-blocks";
+import React from "react";
 
 export function Usage() {
     return (
         <div className={"usage"}>
+            <span>It is possible to enjoy this package by adding the following code snippets to your code.</span>
             <CopyBlock
                 theme={atomOneLight}
                 language={"typescript"}
@@ -37,10 +39,12 @@ export function Usage() {
                     "               layerDefaultRenderer={defaultRender}\n" +
                     "               layerCurrentRenderer={renderer}\n" +
                     "               applyRenderer={(renderer) => setRenderer(renderer)}\n" +
-                    "               vectorSource={vectorSource}\n" +
+                    "               features={features}\n" +
                     "               primeReactTheme={\"bootstrap4-light-blue\"}\n" +
-                    "               showPreDefinedRamps={true} moreRamps={[]} preDefinedStyles={[]} />"}
+                    "               showPreDefinedRamps={true} moreRamps={[]} predefinedStyles={[]} />"}
             />
+            <span><b>To see a full example click
+                <a href={"https://github.com/LAND-IT/openlayers-style-editor/blob/master/page/src/examples/Test.tsx"} target={"_blank"}> here</a>.</b></span>
         </div>
     )
 }

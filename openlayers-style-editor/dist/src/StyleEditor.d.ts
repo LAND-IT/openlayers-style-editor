@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from 'react';
-import { PreDefinedRenderer, Render } from './RendererObjects.ts';
+import { PredefinedRenderer, Render } from './RendererObjects.ts';
 import { Feature } from 'ol';
 import { ColorRamp } from './components/rampColors.ts';
 interface Props {
@@ -10,8 +10,8 @@ interface Props {
     applyRenderer: (renderer: Render) => void;
     features: Feature[];
     showPreDefinedRamps: boolean;
-    moreRamps: ColorRamp[];
-    preDefinedStyles: PreDefinedRenderer[];
+    moreRamps?: ColorRamp[];
+    predefinedStyles?: PredefinedRenderer[];
     addingToHeader?: string;
     primeReactTheme?: string;
     numbersLocale?: string;
