@@ -243,8 +243,6 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
             return {min: i.min, max: i.max, count: i.count * 100 / list.length}
         })
 
-        // console.log("intervals", intervals)
-
         return intervals;
     }
 
@@ -383,8 +381,7 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
         <div className="flex-column">
             <div className="flex-row">
                 <div className="flex-row-small-gap">
-                    <span className="auto-width-span">{attributeLabel}:</span>
-
+                    <span className="auto-width-span"><b>{attributeLabel}:</b></span>
                     <Dropdown
                         value={selectedAttr}
                         onChange={(e: DropdownChangeEvent) => {
@@ -399,8 +396,7 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
                     />
                 </div>
                 <div className={"flex-row-small-gap"}>
-                    <span className={"auto-width-span"}>{modeLabel}:</span>
-
+                    <span className={"auto-width-span"}><b>{modeLabel}:</b></span>
                     <Dropdown
                         disabled={!selectedAttr}
                         value={selectedMode}
@@ -431,17 +427,19 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
                     <a href="https://resources.arcgis.com/en/help/main/10.2/index.html#//00s50000001r000000"
                        target="_blank">{whichModeLabel}</a>
                 </div>
-                {selectedAttr &&
-                    <span>{minValueLabel}: {Math.min(...selectedAttr!.values!.map(Number).filter((v) => !isNaN(v) && v != null)).toLocaleString(locale)}</span>}
-                {selectedAttr &&
-                    <span>{maxValueLabel}: {Math.max(...selectedAttr!.values!.map(Number).filter((v) => !isNaN(v) && v != null)).toLocaleString(locale)}</span>}
             </div>
             {selectedMode &&
-                <div className={"flex-row-gap-15"}>
+                <div>
+                    <div className={"flex-row-small-gap"}>
+                        {selectedAttr &&
+                            <span><b>{minValueLabel}:</b> {Math.min(...selectedAttr!.values!.map(Number).filter((v) => !isNaN(v) && v != null)).toLocaleString(locale)}</span>}
+                        {selectedAttr &&
+                            <span><b>{maxValueLabel}:</b> {Math.max(...selectedAttr!.values!.map(Number).filter((v) => !isNaN(v) && v != null)).toLocaleString(locale)}</span>}
+                    </div>
                     {(selectedMode == GraduatedModes.Manual || selectedMode == GraduatedModes.EqualInterval ||
                         selectedMode == GraduatedModes.Quantile || selectedMode == GraduatedModes.NaturalBreaks ||
-                        selectedMode == GraduatedModes.GeometricInterval) && <div>
-                        <span className={"auto-width-span"}>{classesNumberLabel}:</span>
+                        selectedMode == GraduatedModes.GeometricInterval) && <div className={"flex-row-gap-15"}>
+                        <span className={"auto-width-span"}><b>{classesNumberLabel}:</b></span>
 
                         <InputNumber value={classNo}
                                      locale={locale}
@@ -473,104 +471,112 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
 
             {stops.length > 0 && selectedMode &&
                 <div className={"flex-column-gap-15px"}>
-                    <div className={"flex-row-center"}>
-                        <span className={"auto-width-span"}>{colorsSpectrumLabel}:</span>
-                        <Dropdown
-                            value={selectedSpectrumColors}
-                            options={preDefinedPalettes}
-                            onChange={(e: DropdownChangeEvent) => {
-                                setSelectedSpectrumColors(e.value as ColorRampItem)
-                                applyRampToStops(e.value)
-                            }}
-                            placeholder={selectSpectrumLabel}
-                            optionLabel={"label"}
-                            optionGroupLabel={"label"}
-                            itemTemplate={itemTemplate}
-                        />
-                        <PrimeButton text icon={"pi pi-arrow-right-arrow-left"}
-                                     tooltip={invertColorsLabel}
-                                     disabled={!selectedSpectrumColors}
-                                     onClick={() => applyRampToStops(selectedSpectrumColors!, true)}/>
-
-                    </div>
                     <div className={"flex-row-gap-50px"}>
-                        <div className={"flex-column-small-gap"}>
-                            <span className={"auto-width-span"}>{gradientIntervalsLabel}:</span>
-                            {stops.map((value: Row, index: number) => {
-                                    return (
-                                        <div key={index}
-                                             className={"flex-row-small-gap"}>
-                                            <span className={"auto-width-span"}> {valueLabel}:  </span>
-                                            <InputNumber placeholder={valueLabel}
-                                                         allowEmpty={false}
-                                                         locale={locale}
-                                                         min={stops[0].value as number}
-                                                         max={index < (stops.length - 1 as number) ?
-                                                             (stops[index + 1]?.value as number) - 0.001 : (stops[stops.length]?.value as number)}
-                                                         disabled={index === 0 || selectedMode != GraduatedModes.Manual || index === stops.length - 1}
-                                                         onChange={(e) => {
-                                                             const aux = [...stops]
-                                                             aux[index].value = e.value as number
-                                                             setStops(aux)
-                                                         }
-                                                         }
-                                                         value={value.value as number}
-                                            />
-
-                                            <span className={"auto-width-span"}>{colorLabel}: </span>
-                                            <MyColorPicker
-                                                color={value.color}
-                                                onChange={(e: string) => {
-                                                    const aux = [...stops]
-                                                    aux[index].color = fromString(e)
-                                                    setStops(aux)
-                                                }}
-                                            />
-                                        </div>
-                                    )
-                                },
-                            )}
-
-                        </div>
-
                         <div>
-                            <div className={"color-picker-wrapper"} >
-                                <span>{strokeColorLabel}:</span>
-                                <div>
-                                    <MyColorPicker color={borderColor} hideAlpha={true}
-                                                   onChange={(e: string) => setBorderColor(fromString(e))}/>
+                            <div className={"flex-row-center"}>
+                                <span className={"auto-width-span"}><b>{colorsSpectrumLabel}:</b></span>
+                                <Dropdown
+                                    value={selectedSpectrumColors}
+                                    options={preDefinedPalettes}
+                                    onChange={(e: DropdownChangeEvent) => {
+                                        setSelectedSpectrumColors(e.value as ColorRampItem)
+                                        applyRampToStops(e.value)
+                                    }}
+                                    placeholder={selectSpectrumLabel}
+                                    optionLabel={"label"}
+                                    optionGroupLabel={"label"}
+                                    itemTemplate={itemTemplate}
+                                />
+                                <PrimeButton text icon={"pi pi-arrow-right-arrow-left"}
+                                             tooltip={invertColorsLabel}
+                                             disabled={!selectedSpectrumColors}
+                                             onClick={() => applyRampToStops(selectedSpectrumColors!, true)}/>
+
+                            </div>
+                            <div className={"flex-column-small-gap"}>
+                                <span className={"auto-width-span"}><b>{gradientIntervalsLabel}:</b></span>
+                                <div className={"flex-row-small-gap"}>
+                                <span className={"auto-width-span"}>{valueLabel}&emsp;&emsp;&emsp;&emsp;
+                                    &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;</span>
+                                    <span className={"auto-width-span"}>{colorLabel}</span>
+                                </div>
+                                {stops.map((value: Row, index: number) => {
+                                        return (
+                                            <div key={index} className={"flex-row-small-small-gap"}>
+                                                <InputNumber placeholder={valueLabel}
+                                                             allowEmpty={false}
+                                                             locale={locale}
+                                                             min={stops[0].value as number}
+                                                             max={index < (stops.length - 1 as number) ?
+                                                                 (stops[index + 1]?.value as number) - 0.001 : (stops[stops.length]?.value as number)}
+                                                             disabled={index === 0 || selectedMode != GraduatedModes.Manual || index === stops.length - 1}
+                                                             onChange={(e) => {
+                                                                 const aux = [...stops]
+                                                                 aux[index].value = e.value as number
+                                                                 setStops(aux)
+                                                             }}
+                                                             value={value.value as number}
+                                                />
+
+                                                <MyColorPicker
+                                                    color={value.color}
+                                                    onChange={(e: string) => {
+                                                        const aux = [...stops]
+                                                        aux[index].color = fromString(e)
+                                                        setStops(aux)
+                                                    }}
+                                                />
+                                            </div>
+                                        )
+                                    },
+                                )}
+
+                            </div>
+                        </div>
+                        <div className={"flex-row-gap-50px"}>
+                            <div>
+                                <div className={"color-picker-wrapper"}>
+                                    <span><b>{strokeColorLabel}:</b></span>
+                                    <div>
+                                        <MyColorPicker color={borderColor} hideAlpha={true}
+                                                       onChange={(e: string) => setBorderColor(fromString(e))}/>
+                                    </div>
+                                </div>
+                                <div className={"flex-column-gap-7px"}>
+                                    <span><b>{strokeWidthLabel}:</b></span>
+                                    <Slider max={10} min={0} className={"slider-wrapper"}
+                                            value={borderThickness}
+                                            onChange={(e) => setBorderThickness(e.value as number)}/>
+                                    <span>{borderThickness} px</span>
+                                </div>
+
+                                <div className={"flex-column-gap-7px"}>
+                                    <span><b>{colorOpacityLabel}:</b></span>
+                                    <Slider max={100} min={0} className={"slider-wrapper"}
+                                            value={opacity} onChange={(e) => {
+                                        setOpacity(e.value as number)
+                                        const aux = [...stops]
+                                        const newTable = aux.map((tr) => {
+                                            const aux2 = []
+                                            aux2.push(tr.color[0])
+                                            aux2.push(tr.color[1])
+                                            aux2.push(tr.color[2])
+                                            aux2.push(e.value as number / 100)
+                                            return {...tr, color: aux2}
+                                        })
+                                        setStops(newTable)
+                                    }}/>
+                                    <span>{opacity}%</span>
+                                </div>
+                                <div className={"flex-column-gap-7px"}>
+                                    <span><b>{previewLabel}:</b></span>
+                                    <div style={{
+                                        background: getColorRampString(stops.map((stop, index) => {
+                                            return {offset: index / stops.length, color: stop.color}
+                                        }))
+                                    }} className={"preview-color-ramp"}/>
                                 </div>
                             </div>
-                            <div className={"flex-column-gap-7px"}>
-                                <span>{strokeWidthLabel}: {borderThickness}</span>
-                                <Slider max={10} min={0} className={"slider-wrapper"}
-                                        value={borderThickness}
-                                        onChange={(e) => setBorderThickness(e.value as number)}/>
-                            </div>
-
-                            <div className={"flex-column-gap-7px"}>
-                                <span>{colorOpacityLabel}: {opacity}%</span>
-                                <Slider max={100} min={0} className={"slider-wrapper"}
-                                        value={opacity} onChange={(e) => {
-                                    setOpacity(e.value as number)
-                                    const aux = [...stops]
-                                    const newTable = aux.map((tr) => {
-                                        const aux2 = []
-                                        aux2.push(tr.color[0])
-                                        aux2.push(tr.color[1])
-                                        aux2.push(tr.color[2])
-                                        aux2.push(e.value as number / 100)
-                                        return {...tr, color: aux2}
-                                    })
-                                    setStops(newTable)
-                                }}/>
-                            </div>
-                            <span>{previewLabel}</span>
-                            <div style={{
-                                background: getColorRampString(stops.map((stop, index) => {
-                                    return {offset: index / stops.length, color: stop.color}
-                                }))
-                            }} className={"preview-color-ramp"}/>
                         </div>
                     </div>
                     <div className={"button-wrapper"}>
