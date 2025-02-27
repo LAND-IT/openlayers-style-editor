@@ -49,7 +49,7 @@ export enum GraduatedModes {
 
 
 
-export interface PreDefinedRenderer {
+export interface PredefinedRenderer {
     name: string
     renderer: Row[]
 }

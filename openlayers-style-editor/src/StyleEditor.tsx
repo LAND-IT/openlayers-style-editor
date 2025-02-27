@@ -1,7 +1,7 @@
 import {PrimeReactProvider} from "primereact/api";
 import StyleEditorComponent from "./StyleEditorComponent.tsx";
 import {Dispatch, SetStateAction, useEffect} from "react";
-import {PreDefinedRenderer, Render} from "./RendererObjects.ts";
+import {PredefinedRenderer, Render} from "./RendererObjects.ts";
 import {Feature} from "ol";
 import {ColorRamp} from "./components/rampColors.ts";
 import 'primereact/resources/primereact.min.css';
@@ -19,8 +19,8 @@ interface Props {
     applyRenderer: (renderer: Render) => void
     features: Feature[]
     showPreDefinedRamps: boolean,
-    moreRamps: ColorRamp[]
-    preDefinedStyles: PreDefinedRenderer[]
+    moreRamps?: ColorRamp[]
+    predefinedStyles?: PredefinedRenderer[]
     addingToHeader?: string
     primeReactTheme?: string
     numbersLocale?: string
@@ -32,7 +32,7 @@ function StyleEditor(props: Props) {
 
     const {
         visible, setVisible, layerDefaultRenderer, layerCurrentRenderer, addingToHeader,
-        applyRenderer, features, showPreDefinedRamps, moreRamps, preDefinedStyles,
+        applyRenderer, features, showPreDefinedRamps, moreRamps, predefinedStyles,
         primeReactTheme, numbersLocale, textLocale, customLocale
     } = props;
 
@@ -69,7 +69,7 @@ function StyleEditor(props: Props) {
             <PrimeReactProvider>
                 <StyleEditorComponent visible={visible} setVisible={setVisible}
                                       layerDefaultRenderer={layerDefaultRenderer}
-                                      moreRamps={moreRamps} preDefinedStyles={preDefinedStyles}
+                                      moreRamps={moreRamps} predefinedStyles={predefinedStyles}
                                       showPreDefinedRamps={showPreDefinedRamps}
                                       applyRenderer={applyRenderer} features={features}
                                       layerCurrentRenderer={layerCurrentRenderer}

@@ -27,7 +27,7 @@ interface GraduatedProps {
     applyRenderer: (renderer: Render) => void
     setVisible: (e: boolean) => void
     showPreDefinedRamps: boolean,
-    moreRamps: ColorRamp[]
+    moreRamps?: ColorRamp[]
     layerCurrentRenderer: Render
     numbersLocale: string
 }
@@ -114,7 +114,18 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
     const [chartData, setChartData] = useState<any>({})
     const [chartOptions, setChartOptions] = useState<any>({})
 
-    const allRamps = showPreDefinedRamps ? moreRamps.concat(colorRamps) : moreRamps
+    let allRamps;
+    if (showPreDefinedRamps)
+        if (moreRamps)
+            allRamps = moreRamps?.concat(colorRamps)
+        else
+            allRamps = colorRamps
+    else {
+        if (moreRamps)
+            allRamps = moreRamps
+        else
+            allRamps = []
+    }
 
     //two ramps with same name
     const existingRenderers = allRamps.filter((ramp, _index, self) =>

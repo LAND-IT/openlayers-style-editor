@@ -2,7 +2,7 @@ import React, {Dispatch, SetStateAction, useEffect, useState} from "react"
 import {UniqueSymbol} from "./uniqueSymbol"
 import {Categorized} from "./categorized"
 import {Dropdown} from "primereact/dropdown";
-import {SEAttribute, PreDefinedRenderer, Render, RenderType} from "../RendererObjects.ts";
+import {SEAttribute, PredefinedRenderer, Render, RenderType} from "../RendererObjects.ts";
 import {ColorRamp} from "./rampColors.ts";
 import {Button} from "primereact/button";
 import {Graduated} from "./graduated.tsx";
@@ -17,8 +17,8 @@ interface Props {
     layerCurrentRenderer: Render
     applyRenderer: (renderer: Render) => void
     showPreDefinedRamps: boolean,
-    moreRamps: ColorRamp[]
-    preDefinedStyles: PreDefinedRenderer[],
+    moreRamps?: ColorRamp[]
+    predefinedStyles: PredefinedRenderer[],
     numbersLocale: string
 }
 
@@ -28,7 +28,7 @@ export const GeometryEditor: React.FC<Props> = (props: Props) => {
         layerCurrentRenderer,
         layerDefaultRenderer,
         moreRamps,
-        preDefinedStyles,
+        predefinedStyles,
         showPreDefinedRamps,
         applyRenderer,
         setVisible,
@@ -90,7 +90,7 @@ export const GeometryEditor: React.FC<Props> = (props: Props) => {
                     <Categorized attr={attr} layerCurrentRenderer={currentRenderer}
                                  layerDefaultRenderer={layerDefaultRenderer}
                                  applyRenderer={applyRenderer} setVisible={setVisible} moreRamps={moreRamps}
-                                 preDefinedStyles={preDefinedStyles}
+                                 predefinedStyles={predefinedStyles}
                                  showPreDefinedRamps={showPreDefinedRamps}/>}
                 {activeIndex?.code == 2 &&
                     <Graduated

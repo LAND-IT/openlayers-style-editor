@@ -1,6 +1,6 @@
 import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {Dialog} from "primereact/dialog";
-import {SEAttribute, PreDefinedRenderer, Render} from "./RendererObjects.ts";
+import {SEAttribute, PredefinedRenderer, Render} from "./RendererObjects.ts";
 import {ColorRamp} from "./components/rampColors.ts";
 import {GeometryEditor} from "./components/geometryEditor.tsx";
 import {Feature} from "ol";
@@ -16,8 +16,8 @@ interface Props {
     applyRenderer: (renderer: Render) => void
     features: Feature[]
     showPreDefinedRamps: boolean,
-    moreRamps: ColorRamp[]
-    preDefinedStyles: PreDefinedRenderer[]
+    moreRamps?: ColorRamp[]
+    predefinedStyles?: PredefinedRenderer[]
     numbersLocale: string
     addingToHeader?: string
 }
@@ -26,7 +26,7 @@ const StyleEditorComponent: React.FC<Props> = (props: Props) => {
 
     const {
         layerDefaultRenderer, layerCurrentRenderer, applyRenderer,
-        showPreDefinedRamps, moreRamps, preDefinedStyles, addingToHeader,
+        showPreDefinedRamps, moreRamps, predefinedStyles, addingToHeader,
         features, visible, setVisible, numbersLocale
     } = props;
 
@@ -65,7 +65,7 @@ const StyleEditorComponent: React.FC<Props> = (props: Props) => {
                                 layerCurrentRenderer={layerCurrentRenderer} applyRenderer={applyRenderer}
                                 setVisible={setVisible} layerDefaultRenderer={layerDefaultRenderer}
                                 moreRamps={moreRamps} numbersLocale={numbersLocale}
-                                preDefinedStyles={preDefinedStyles} showPreDefinedRamps={showPreDefinedRamps}/>}
+                                predefinedStyles={predefinedStyles ? predefinedStyles : []} showPreDefinedRamps={showPreDefinedRamps}/>}
         </Dialog>
     </>
 

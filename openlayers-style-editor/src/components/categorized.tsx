@@ -13,7 +13,7 @@ import {
     getRendererColorAndSizeStroke,
     getRendererOpacity,
     getStyleColorsAndValues,
-    PreDefinedRenderer,
+    PredefinedRenderer,
     Render,
     RenderType,
     Row
@@ -32,8 +32,8 @@ interface Props {
     applyRenderer: (renderer: Render) => void
     setVisible: (e: boolean) => void
     showPreDefinedRamps: boolean,
-    moreRamps: ColorRamp[]
-    preDefinedStyles: PreDefinedRenderer[]
+    moreRamps?: ColorRamp[]
+    predefinedStyles: PredefinedRenderer[]
 }
 
 interface TableRow {
@@ -47,7 +47,7 @@ export const Categorized: React.FC<Props> = (props: Props) => {
         attr,
         layerCurrentRenderer,
         showPreDefinedRamps,
-        preDefinedStyles,
+        predefinedStyles,
         moreRamps,
         applyRenderer,
         setVisible
@@ -105,8 +105,18 @@ export const Categorized: React.FC<Props> = (props: Props) => {
     const [fillOpacity, setFillOpacity] = useState<number>(currentStyle ? getRendererOpacity(layerCurrentRenderer) : 100);
     const [isReversed, setIsReversed] = useState<boolean>(false)
 
-    const allRamps = showPreDefinedRamps ? moreRamps.concat(colorRamps) : moreRamps
-
+    let allRamps;
+    if (showPreDefinedRamps)
+        if (moreRamps)
+            allRamps = moreRamps?.concat(colorRamps)
+        else
+            allRamps = colorRamps
+    else {
+        if (moreRamps)
+            allRamps = moreRamps
+        else
+            allRamps = []
+    }
     //two ramps with same name
     const existingRenderers = allRamps.filter((ramp, _index, self) =>
         self.filter((r) => (
@@ -126,7 +136,7 @@ export const Categorized: React.FC<Props> = (props: Props) => {
         },
         {
             label: predefinedStylesLabel,
-            items: preDefinedStyles.map((renderer) => {
+            items: predefinedStyles.map((renderer) => {
                 return {
                     label: renderer.name,
                     value: {

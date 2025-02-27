@@ -76,7 +76,7 @@ export function Test() {
                          layerCurrentRenderer={renderer} applyRenderer={(renderer) => setRenderer(renderer)}
                          features={features}
                          primeReactTheme={"bootstrap4-light-blue"}
-                         showPreDefinedRamps={true} moreRamps={[]} preDefinedStyles={[]}/>
+                         showPreDefinedRamps={true} moreRamps={[]} predefinedStyles={[]}/>
         </>
     );
 }
