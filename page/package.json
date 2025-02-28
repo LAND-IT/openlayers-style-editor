@@ -14,7 +14,7 @@
     "@types/react-syntax-highlighter": "^15.5.13",
     "dotenv": "^16.4.7",
     "ol": "^10.4.0",
-    "openlayers-style-editor": "0.1.2",
+    "openlayers-style-editor": "0.1.3",
     "primereact": "^10.9.2",
     "prism-react-renderer": "^2.4.1",
     "react": "^18.3.1",

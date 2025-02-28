@@ -1,22 +1,17 @@
 <p align="center"><img src="https://land-it.github.io/openlayers-style-editor/favicons/android-chrome-192x192.png"></p>
 <h1 align="center">Welcome to <code>openlayers-style-editor</code></h1>
-<p>
-  <a href="https://www.npmjs.com/package/openlayers-style-editor" target="_blank">
-    <img alt="Version" src="https://img.shields.io/npm/v/openlayers-style-editor.svg">
-  </a>
-   <a href="https://www.npmjs.com/package/openlayers-style-editor" target="_blank">
-  <img alt="Downloads" src="https://img.shields.io/npm/dw/openlayers-style-editor">
-  </a>
-  <a href="https://openlayers-style-editor.rajinwonderland.vercel.app" target="_blank">
-    <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
-  </a>
 
-[//]: # (  <a href="#" target="_blank">)
+![](https://img.shields.io/npm/v/openlayers-style-editor.svg)
+![](https://img.shields.io/npm/dw/openlayers-style-editor)
+![](https://img.shields.io/npm/dt/openlayers-style-editor)
+![](https://img.shields.io/github/stars/land-it/openlayers-style-editor)
+![](https://img.shields.io/github/commit-activity/m/land-it/openlayers-style-editor)
+![](https://img.shields.io/github/v/release/land-it/openlayers-style-editor)
 
-[//]: # (    <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />)
-
-[//]: # (  </a>)
-</p>
+![](https://img.shields.io/badge/documentation-yes-brightgreen.svg)
+![](https://img.shields.io/github/issues/land-it/openlayers-style-editor)
+![](https://img.shields.io/github/issues-closed/land-it/openlayers-style-editor)
+![](https://img.shields.io/github/contributors/land-it/openlayers-style-editor)
 
 
 ### ✨ [Demo](https://land-it.github.io/openlayers-style-editor/#/demo)
@@ -73,6 +68,12 @@ yarn add openlayers-style-editor
 ```
 
 ## Usage
+
+Firstly it is necessary to import the styles of the package. This can be done by adding the following code snippet to your index/main file.
+
+```tsx
+import 'openlayers-style-editor/dist/openlayers-style-editor.css';
+```
 
 It is possible to enjoy this package by adding the following code snippets to your code.
 

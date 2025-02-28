@@ -5,6 +5,16 @@ import {atomOneLight} from "react-code-blocks";
 export function Usage() {
     return (
         <div className={"usage"}>
+            <span>Firstly it is necessary to import the styles of the package.
+                This can be done by adding the following code snippet to your index/main file.</span>
+
+            <CopyBlock
+                theme={atomOneLight}
+                language={"typescript"}
+                showLineNumbers={false}
+                text={"import 'openlayers-style-editor/dist/openlayers-style-editor.css';"}
+            />
+            <br/>
             <span>It is possible to enjoy this package by adding the following code snippets to your code.</span>
             <CopyBlock
                 theme={atomOneLight}

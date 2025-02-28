@@ -35,7 +35,7 @@ export default defineConfig(({command}) => {
                     fileName: (format: ModuleFormat, entryName: string) => `${entryName}.${format}.js`,
                 },
                 rollupOptions: {
-                    external: ['react', 'react-dom', 'ol'],
+                    external: ['react', 'react-dom'],
                     output: {
                         format: ["es", "umd"],
                         globals: {
