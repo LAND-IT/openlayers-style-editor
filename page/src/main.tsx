@@ -5,6 +5,7 @@ import App from './App.tsx'
 import 'ol/ol.css';
 import {PrimeReactProvider} from "primereact/api";
 import 'primereact/resources/themes/lara-light-indigo/theme.css'
+import 'openlayers-style-editor/dist/openlayers-style-editor.css';
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
