@@ -1,12 +1,12 @@
 import React, {useState} from "react"
 import {Color, fromString} from "ol/color";
 import {Slider} from "primereact/slider";
-import {Render, RenderType, singleColorStyle} from "../RendererObjects.ts";
 import {MyColorPicker} from "./myColorPicker.tsx";
 import {Button} from "primereact/button";
 import {FlatStyle} from "ol/style/flat";
 import {useTranslation} from "react-i18next";
 import "./uniqueSymbol.css"
+import {Render, RenderType, singleColorStyle} from "../rendererUtils";
 
 interface UniqueSymbolProps {
     layerDefaultRenderer: Render

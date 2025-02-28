@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from 'react';
-import { PredefinedRenderer, Render } from './RendererObjects.ts';
+import { PredefinedRenderer, Render } from '../../rendererUtils.ts';
 import { Feature } from 'ol';
-import { ColorRamp } from './components/rampColors.ts';
+import { ColorRamp } from '../rampColors.ts';
 interface Props {
     visible: boolean;
     setVisible: Dispatch<SetStateAction<boolean>>;

@@ -1,5 +1,5 @@
 import { default as React } from 'react';
-import { SEAttribute, Render } from '../RendererObjects.ts';
+import { SEAttribute, Render } from '../rendererUtils';
 import { ColorRamp } from './rampColors.ts';
 interface GraduatedProps {
     attr: SEAttribute[];

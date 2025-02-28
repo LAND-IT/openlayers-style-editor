@@ -2,7 +2,7 @@ import React, {Dispatch, SetStateAction, useEffect, useState} from "react"
 import {UniqueSymbol} from "./uniqueSymbol"
 import {Categorized} from "./categorized"
 import {Dropdown} from "primereact/dropdown";
-import {SEAttribute, PredefinedRenderer, Render, RenderType} from "../RendererObjects.ts";
+import {SEAttribute, PredefinedRenderer, Render, RenderType} from "../rendererUtils";
 import {ColorRamp} from "./rampColors.ts";
 import {Button} from "primereact/button";
 import {Graduated} from "./graduated.tsx";

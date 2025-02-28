@@ -17,13 +17,13 @@ import {
     Render,
     RenderType,
     Row
-} from "../RendererObjects.ts";
-import {SEAttribute} from "../RendererObjects.ts";
+} from "../rendererUtils";
 import {FlatStyle} from "ol/style/flat";
 import {MyColorPicker} from "./myColorPicker.tsx";
 import {Slider} from "primereact/slider";
 import {useTranslation} from "react-i18next";
 import "./categorized.css"
+import {SEAttribute} from "../rendererUtils";
 
 interface Props {
     attr: SEAttribute[]

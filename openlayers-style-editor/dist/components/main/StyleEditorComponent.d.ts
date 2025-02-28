@@ -1,6 +1,6 @@
 import { default as React, Dispatch, SetStateAction } from 'react';
-import { PredefinedRenderer, Render } from './RendererObjects.ts';
-import { ColorRamp } from './components/rampColors.ts';
+import { PredefinedRenderer, Render } from '../../rendererUtils.ts';
+import { ColorRamp } from '../rampColors.ts';
 import { Feature } from 'ol';
 interface Props {
     visible: boolean;

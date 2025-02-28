@@ -1,5 +1,5 @@
 import { default as React, Dispatch, SetStateAction } from 'react';
-import { SEAttribute, PredefinedRenderer, Render } from '../RendererObjects.ts';
+import { SEAttribute, PredefinedRenderer, Render } from '../rendererUtils';
 import { ColorRamp } from './rampColors.ts';
 interface Props {
     attributes: SEAttribute[];

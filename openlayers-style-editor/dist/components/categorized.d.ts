@@ -1,6 +1,6 @@
 import { default as React } from 'react';
 import { ColorRamp } from './rampColors';
-import { PredefinedRenderer, Render, SEAttribute } from '../RendererObjects.ts';
+import { PredefinedRenderer, Render, SEAttribute } from '../rendererUtils';
 interface Props {
     attr: SEAttribute[];
     layerDefaultRenderer: Render;

@@ -1,8 +1,9 @@
 import {defineConfig} from 'vite';
 import react from '@vitejs/plugin-react';
 import dts from 'vite-plugin-dts';
-import path from 'path';
 import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
+import {fileURLToPath} from "node:url";
+import {ModuleFormat} from "node:module";
 
 export default defineConfig(({command}) => {
     if (command === 'serve') {
@@ -18,23 +19,34 @@ export default defineConfig(({command}) => {
     } else {
         // Build config
         return {
-            plugins: [react(), dts(), cssInjectedByJsPlugin()],
+            plugins: [
+                react(),
+                dts({
+                    include: ['src/**/*.ts', 'src/**/*.tsx', 'src/**/*.d.ts'],
+                    insertTypesEntry: true,
+                }),
+                cssInjectedByJsPlugin()
+            ],
             build: {
                 lib: {
-                    entry: path.resolve(__dirname, 'src/index.ts'),
+                    entry: fileURLToPath(new URL('./src/index.ts', import.meta.url)),
+                        // fileURLToPath(new URL('./src/rendererUtils.ts', import.meta.url))],
                     name: 'OpenLayers Style Editor',
-                    fileName: 'openlayers-style-editor',
+                    fileName: (format: ModuleFormat, entryName: string) => `${entryName}.${format}.js`,
                 },
                 rollupOptions: {
-                    external: ['react', 'react-dom'],
+                    external: ['react', 'react-dom', 'ol'],
                     output: {
+                        format: ["es", "umd"],
                         globals: {
                             react: 'React',
-                            'react-dom': 'ReactDOM'
-                        }
-                    }
-                }
+                            'react-dom': 'ReactDOM',
+                        },
+                    },
+                },
+                cssCodeSplit: false,
+                ssr: true
             },
-        };
+        }
     }
 })

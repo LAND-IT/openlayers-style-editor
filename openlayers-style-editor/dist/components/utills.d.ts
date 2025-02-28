@@ -1,3 +1,3 @@
 import { Feature } from 'ol';
-import { SEAttribute } from '../RendererObjects.ts';
+import { SEAttribute } from '../rendererUtils';
 export declare function mapFeaturesToSEAttributes(features: Feature[]): SEAttribute[];

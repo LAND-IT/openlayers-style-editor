@@ -1,13 +1,14 @@
+'use client'
 import {PrimeReactProvider} from "primereact/api";
 import StyleEditorComponent from "./StyleEditorComponent.tsx";
 import {Dispatch, SetStateAction, useEffect} from "react";
-import {PredefinedRenderer, Render} from "./RendererObjects.ts";
+import {PredefinedRenderer, Render} from "../../rendererUtils.ts";
 import {Feature} from "ol";
-import {ColorRamp} from "./components/rampColors.ts";
+import {ColorRamp} from "../rampColors.ts";
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import {I18nextProvider} from "react-i18next";
-import i18n from "../i18n.ts";
+import i18n from "../../i18n.ts";
 
 // import 'primereact/resources/themes/bootstrap4-light-blue/theme.css';
 

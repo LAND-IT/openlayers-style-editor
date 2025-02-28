@@ -1,5 +1,5 @@
 import { Feature } from 'ol';
-import {AttributeTypeEnum, SEAttribute} from "../RendererObjects.ts";
+import {AttributeTypeEnum, SEAttribute} from "../rendererUtils";
 
 export function mapFeaturesToSEAttributes(features: Feature[]): SEAttribute[] {
     const attributeMap: { [key: string]: Set<any> } = {};

@@ -1,10 +1,11 @@
+'use client'
 import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {Dialog} from "primereact/dialog";
-import {SEAttribute, PredefinedRenderer, Render} from "./RendererObjects.ts";
-import {ColorRamp} from "./components/rampColors.ts";
-import {GeometryEditor} from "./components/geometryEditor.tsx";
+import {SEAttribute, PredefinedRenderer, Render} from "../../rendererUtils.ts";
+import {ColorRamp} from "../rampColors.ts";
+import {GeometryEditor} from "../geometryEditor.tsx";
 import {Feature} from "ol";
-import {mapFeaturesToSEAttributes} from "./components/utills.ts";
+import {mapFeaturesToSEAttributes} from "../utills.ts";
 import {useTranslation} from "react-i18next";
 
 
