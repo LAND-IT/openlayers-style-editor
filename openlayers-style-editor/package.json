@@ -40,8 +40,7 @@
     "primeicons": "7.0.0",
     "primereact": "10.9.2",
     "react-best-gradient-color-picker": "3.0.14",
-    "react-i18next": "15.4.1",
-    "vite-plugin-ssr": "^0.4.142"
+    "react-i18next": "15.4.1"
   },
   "devDependencies": {
     "@eslint/js": "9.17.0",

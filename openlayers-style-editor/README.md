@@ -16,6 +16,9 @@
 
 ### ✨ [Demo](https://land-it.github.io/openlayers-style-editor/#/demo)
 
+> [!NOTE]
+> This package is compatible with SSR.
+
 ## Contents
 
 - [Background](#background)
