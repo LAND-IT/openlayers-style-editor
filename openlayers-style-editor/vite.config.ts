@@ -1,9 +1,10 @@
-import {defineConfig} from 'vite';
+import {defineConfig, UserConfig} from 'vite';
 import react from '@vitejs/plugin-react';
 import dts from 'vite-plugin-dts';
 import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 import {fileURLToPath} from "node:url";
 import {ModuleFormat} from "node:module";
+import * as path from "node:path";
 
 export default defineConfig(({command}) => {
     if (command === 'serve') {
@@ -14,8 +15,13 @@ export default defineConfig(({command}) => {
                 watch: {
                     usePolling: true
                 }
-            }
-        };
+            },
+            resolve: {
+                alias: {
+                    "@": fileURLToPath(new URL('./src', import.meta.url)),
+                },
+            },
+        } as UserConfig;
     } else {
         // Build config
         return {
@@ -47,6 +53,11 @@ export default defineConfig(({command}) => {
                 cssCodeSplit: false,
                 ssr: true
             },
-        }
+            resolve: {
+                alias: {
+                    "@": fileURLToPath(new URL('./src', import.meta.url)),
+                },
+            },
+        } as UserConfig
     }
 })

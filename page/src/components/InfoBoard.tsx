@@ -43,7 +43,7 @@ export function InfoBoard(props: Props) {
             </Menu>
 
             <h2>Info</h2>
-            {/*<p>Version: {repoData}</p>*/}
+            <p>Version: {repoData?.latestRelease?.name}</p>
             <div className={"icons"}>
                 <div className={"icon"}> {repoData?.data?.stargazers_count} <Icon icon={"iconamoon:star"}></Icon></div>
                 <div className={"icon"}> {repoData?.data?.forks_count} <Icon icon={"pajamas:fork"}></Icon></div>

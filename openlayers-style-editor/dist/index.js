@@ -1,12 +1,12 @@
 import { jsxs, Fragment, jsx } from "react/jsx-runtime";
 import { PrimeReactProvider } from "primereact/api/api.esm.js";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, createContext, useContext } from "react";
 import { Dialog } from "primereact/dialog/dialog.esm.js";
-import { asString, fromString } from "ol/color.js";
-import { Slider } from "primereact/slider/slider.esm.js";
-import ColorPicker from "react-best-gradient-color-picker";
-import { useTranslation, initReactI18next, I18nextProvider } from "react-i18next";
 import { Button } from "primereact/button/button.esm.js";
+import { useTranslation, initReactI18next, I18nextProvider } from "react-i18next";
+import { fromString, asString } from "ol/color.js";
+import ColorPicker from "react-best-gradient-color-picker";
+import { Slider } from "primereact/slider/slider.esm.js";
 import { Dropdown } from "primereact/dropdown/dropdown.esm.js";
 import { Checkbox } from "primereact/checkbox/checkbox.esm.js";
 import { DataTable } from "primereact/datatable/datatable.esm.js";
@@ -15,24 +15,12 @@ import { Chart } from "primereact/chart/chart.esm.js";
 import { InputNumber } from "primereact/inputnumber/inputnumber.esm.js";
 import { Toast } from "primereact/toast/toast.esm.js";
 import { standardDeviationBuckets, quantileBuckets, jenksBuckets } from "geobuckets/dist/src/index.js";
+import { ScrollPanel } from "primereact/scrollpanel/scrollpanel.esm.js";
+import { Panel } from "primereact/panel/panel.esm.js";
+import { Fieldset } from "primereact/fieldset/fieldset.esm.js";
+import { InputText } from "primereact/inputtext/inputtext.esm.js";
+import { RadioButton } from "primereact/radiobutton/radiobutton.esm.js";
 import i18n from "i18next";
-const MyColorPicker = (props) => {
-  const { color, onChange, hideAlpha } = props;
-  const [visible, setVisible] = useState(false);
-  const { t } = useTranslation();
-  const selectColor = t("color_picker.select_color");
-  return /* @__PURE__ */ jsxs(Fragment, { children: [
-    /* @__PURE__ */ jsx(
-      "div",
-      {
-        style: { backgroundColor: asString(color) },
-        className: "color-picker",
-        onClick: () => setVisible(true)
-      }
-    ),
-    /* @__PURE__ */ jsx(Dialog, { header: selectColor, onHide: () => setVisible(false), visible, children: /* @__PURE__ */ jsx(ColorPicker, { value: asString(color), onChange, hideOpacity: hideAlpha, hideControls: true }) })
-  ] });
-};
 var AttributeTypeEnum = /* @__PURE__ */ ((AttributeTypeEnum2) => {
   AttributeTypeEnum2[AttributeTypeEnum2["STRING"] = 0] = "STRING";
   AttributeTypeEnum2[AttributeTypeEnum2["INTEGER"] = 1] = "INTEGER";
@@ -207,16 +195,31 @@ function getRendererColorAndSizeStroke(renderer) {
 function generateRandomColor() {
   return fromString("#" + (16777216 + Math.random() * 16777215).toString(16).substr(1, 6));
 }
-const UniqueSymbol = (props) => {
-  const { layerCurrentRenderer, applyRenderer, setVisible } = props;
+const MyColorPicker = (props) => {
+  const { color, onChange, hideAlpha } = props;
+  const [visible, setVisible] = useState(false);
+  const { t } = useTranslation();
+  const selectColor = t("color_picker.select_color");
+  return /* @__PURE__ */ jsxs(Fragment, { children: [
+    /* @__PURE__ */ jsx(
+      "div",
+      {
+        style: { backgroundColor: asString(color) },
+        className: "color-picker",
+        onClick: () => setVisible(true)
+      }
+    ),
+    /* @__PURE__ */ jsx(Dialog, { header: selectColor, onHide: () => setVisible(false), visible, children: /* @__PURE__ */ jsx(ColorPicker, { value: asString(color), onChange, hideOpacity: hideAlpha, hideControls: true }) })
+  ] });
+};
+function UniqueSymbolComponent(props) {
+  const { currentStyle, setColor, setBorderColor, setBorderThickness, borderThickness, color, borderColor } = props;
+  const start = "#18d7ba";
+  setColor(currentStyle ? currentStyle["fill-color"] : fromString(start));
   const { t } = useTranslation();
   const fillColorLabel = t("unique_symbol.fill_color");
   const strokeColorLabel = t("categorized.stroke_color");
   const strokeWidthLabel = t("categorized.stroke_width");
-  const concludeLabel = t("common.conclude");
-  const start = "#18d7ba";
-  const currentStyle = layerCurrentRenderer.field ? null : layerCurrentRenderer.rendererOL;
-  const [color, setColor] = useState(currentStyle ? currentStyle["fill-color"] : fromString(start));
   let auxBorder;
   if (currentStyle) {
     if (currentStyle["stroke-color"])
@@ -229,7 +232,7 @@ const UniqueSymbol = (props) => {
   } else {
     auxBorder = fromString("#000000");
   }
-  const [borderColor, setBorderColor] = useState(auxBorder);
+  setBorderColor(auxBorder);
   let auxBorderWidth;
   if (currentStyle) {
     if (currentStyle["stroke-width"] instanceof Array)
@@ -239,60 +242,81 @@ const UniqueSymbol = (props) => {
   } else {
     auxBorderWidth = 0;
   }
-  const [borderThickness, setBorderThickness] = useState(auxBorderWidth);
+  setBorderThickness(auxBorderWidth);
+  return /* @__PURE__ */ jsx(Fragment, { children: /* @__PURE__ */ jsx("div", { className: "container", children: /* @__PURE__ */ jsxs("div", { children: [
+    /* @__PURE__ */ jsxs("div", { className: "flex-row-unique", children: [
+      /* @__PURE__ */ jsx("span", { children: /* @__PURE__ */ jsxs("b", { children: [
+        fillColorLabel,
+        ":"
+      ] }) }),
+      /* @__PURE__ */ jsx("div", { children: color && /* @__PURE__ */ jsx(
+        MyColorPicker,
+        {
+          color,
+          onChange: (e) => setColor(fromString(e))
+        }
+      ) })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { className: "flex-row-unique", children: [
+      /* @__PURE__ */ jsx("span", { children: /* @__PURE__ */ jsxs("b", { children: [
+        strokeColorLabel,
+        ":"
+      ] }) }),
+      /* @__PURE__ */ jsx("div", { children: borderColor && /* @__PURE__ */ jsx(
+        MyColorPicker,
+        {
+          color: borderColor,
+          hideAlpha: true,
+          onChange: (e) => setBorderColor(fromString(e))
+        }
+      ) })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { className: "flex-column-gap-7", children: [
+      /* @__PURE__ */ jsx("span", { children: /* @__PURE__ */ jsxs("b", { children: [
+        strokeWidthLabel,
+        ": "
+      ] }) }),
+      /* @__PURE__ */ jsx(
+        Slider,
+        {
+          max: 10,
+          min: 0,
+          className: "slider-wrapper",
+          value: borderThickness,
+          onChange: (e) => setBorderThickness(e.value)
+        }
+      ),
+      /* @__PURE__ */ jsxs("span", { children: [
+        borderThickness,
+        " px"
+      ] })
+    ] })
+  ] }) }) });
+}
+const UniqueSymbol = (props) => {
+  const { layerCurrentRenderer, applyRenderer, setVisible } = props;
+  const { t } = useTranslation();
+  const concludeLabel = t("common.conclude");
+  const [color, setColor] = useState();
+  const [borderColor, setBorderColor] = useState();
+  const [borderThickness, setBorderThickness] = useState();
+  const currentStyle = layerCurrentRenderer.field ? null : layerCurrentRenderer.rendererOL;
   function createRenderUnique(color2, outlineColor, outlineWidth) {
     return singleColorStyle(color2, outlineColor, outlineWidth);
   }
   return /* @__PURE__ */ jsxs("div", { className: "container", children: [
-    /* @__PURE__ */ jsxs("div", { children: [
-      /* @__PURE__ */ jsxs("div", { className: "flex-row-unique", children: [
-        /* @__PURE__ */ jsx("span", { children: /* @__PURE__ */ jsxs("b", { children: [
-          fillColorLabel,
-          ":"
-        ] }) }),
-        /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(
-          MyColorPicker,
-          {
-            color,
-            onChange: (e) => setColor(fromString(e))
-          }
-        ) })
-      ] }),
-      /* @__PURE__ */ jsxs("div", { className: "flex-row-unique", children: [
-        /* @__PURE__ */ jsx("span", { children: /* @__PURE__ */ jsxs("b", { children: [
-          strokeColorLabel,
-          ":"
-        ] }) }),
-        /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(
-          MyColorPicker,
-          {
-            color: borderColor,
-            hideAlpha: true,
-            onChange: (e) => setBorderColor(fromString(e))
-          }
-        ) })
-      ] }),
-      /* @__PURE__ */ jsxs("div", { className: "flex-column-gap-7", children: [
-        /* @__PURE__ */ jsx("span", { children: /* @__PURE__ */ jsxs("b", { children: [
-          strokeWidthLabel,
-          ": "
-        ] }) }),
-        /* @__PURE__ */ jsx(
-          Slider,
-          {
-            max: 10,
-            min: 0,
-            className: "slider-wrapper",
-            value: borderThickness,
-            onChange: (e) => setBorderThickness(e.value)
-          }
-        ),
-        /* @__PURE__ */ jsxs("span", { children: [
-          borderThickness,
-          " px"
-        ] })
-      ] })
-    ] }),
+    /* @__PURE__ */ jsx(
+      UniqueSymbolComponent,
+      {
+        color,
+        setColor,
+        currentStyle,
+        borderColor,
+        setBorderColor,
+        borderThickness,
+        setBorderThickness
+      }
+    ),
     /* @__PURE__ */ jsx("div", { className: "button-wrapper", children: /* @__PURE__ */ jsx(
       Button,
       {
@@ -1018,8 +1042,8 @@ const Categorized = (props) => {
             selectionMode: rowClick ? void 0 : "checkbox",
             tableStyle: { minWidth: "25rem" },
             selection: table.filter((tr) => tr.visible),
-            onSelectionChange: (e) => {
-              const value = e.value;
+            onSelectionChange: (event) => {
+              const value = event.value;
               changeVisibility(value);
             },
             reorderableRows: true,
@@ -1685,6 +1709,779 @@ const Graduated = (props) => {
     /* @__PURE__ */ jsx(Toast, { ref: toast })
   ] });
 };
+const FilterWidgetContext = createContext(null);
+function FilterWidgetContextProvider({ children, attributes }) {
+  const initial = {
+    title: "",
+    attributes,
+    expressionSet: [
+      {
+        id: 0,
+        conditions: [0],
+        expression: {
+          conditions: [{ attribute: "", op: "", value: "" }],
+          isAll: void 0
+        }
+      }
+    ],
+    expressionsComponents: [0]
+  };
+  const [queryWidget, setQueryWidget] = useState(initial);
+  function setTitle(value) {
+    setQueryWidget({ ...queryWidget, title: value });
+  }
+  function setExpressionSet(value) {
+    setQueryWidget({ ...queryWidget, expressionSet: value });
+  }
+  function setExpressionsComponents(value) {
+    setQueryWidget({ ...queryWidget, expressionsComponents: value });
+  }
+  function setAttributes(value) {
+    setQueryWidget({ ...queryWidget, attributes: value });
+  }
+  function reset() {
+    let aux = initial;
+    setQueryWidget(aux);
+  }
+  function addAttributes(atts) {
+    let aux = queryWidget.attributes;
+    aux.push(...atts);
+    setAttributes(aux);
+  }
+  return /* @__PURE__ */ jsx(
+    FilterWidgetContext.Provider,
+    {
+      value: {
+        queryWidget,
+        setTitle,
+        setExpressionSet,
+        setExpressionsComponents,
+        reset,
+        setAttributes,
+        addAttributes
+      },
+      children
+    }
+  );
+}
+const ConditionOnFilter = (props) => {
+  const { parentID, id, deleteF } = props;
+  const {
+    queryWidget,
+    setExpressionSet
+  } = useContext(FilterWidgetContext);
+  const toast = useRef(null);
+  const [selectedAttribute, setSelectedAttribute] = useState();
+  const [conditionData, setConditionData] = useState(null);
+  const [selectedFunction, setSelectedFunction] = useState();
+  const functionsBooleans = [
+    { name: "Sim", logic: "true" },
+    { name: "Não", logic: "false" }
+  ];
+  const functionsTexts = [
+    { name: "é", logic: "==" },
+    { name: "não é", logic: "!=" },
+    { name: "começa com", logic: "startsWith" },
+    { name: "acaba com", logic: "endsWith" },
+    { name: "contém", logic: "in" },
+    { name: "não contém", logic: "!in" },
+    { name: "é nulo", logic: "null" }
+  ];
+  const functionsNumbers = [
+    { name: "é", logic: "==" },
+    { name: "não é", logic: "!=" },
+    { name: "é pelo menos", logic: ">=" },
+    { name: "é menor que", logic: "<" },
+    { name: "é no máximo", logic: "<=" },
+    { name: "é maior que", logic: ">" },
+    { name: "é nulo", logic: "null" }
+  ];
+  const [selectedValue, setSelectedValue] = useState();
+  const [values, setValues] = useState();
+  useEffect(() => {
+    if (selectedAttribute != void 0) {
+      let aux = queryWidget.attributes.filter((feature) => feature.name == selectedAttribute.name)[0];
+      setValues(aux == null ? void 0 : aux.values.filter((i) => i != null));
+    }
+  }, [queryWidget.attributes, selectedAttribute]);
+  useEffect(() => {
+    const fullExp = queryWidget.expressionSet.find((item) => item.id === parentID);
+    if (!fullExp) return;
+    const conditionIndex = fullExp.conditions.findIndex((c) => c === id);
+    if (conditionIndex === -1) return;
+    const condition = fullExp.expression.conditions[conditionIndex];
+    const foundAttribute = queryWidget.attributes.find((a) => a.name === condition.attribute);
+    if (foundAttribute) {
+      setSelectedAttribute(foundAttribute);
+    }
+    let functionSet;
+    if ((foundAttribute == null ? void 0 : foundAttribute.type) === AttributeTypeEnum.STRING || (foundAttribute == null ? void 0 : foundAttribute.type) === AttributeTypeEnum.JSON) {
+      functionSet = functionsTexts;
+    } else if ((foundAttribute == null ? void 0 : foundAttribute.type) === AttributeTypeEnum.BOOLEAN) {
+      functionSet = functionsBooleans;
+    } else {
+      functionSet = functionsNumbers;
+    }
+    const foundFunction = functionSet.find((f) => f.logic === condition.op);
+    if (foundFunction) {
+      setSelectedFunction(foundFunction);
+    }
+    if (condition.value) {
+      setSelectedValue(condition.value);
+    }
+  }, [queryWidget.expressionSet, queryWidget.attributes, id]);
+  function update(funct, value, attribute) {
+    var _a, _b, _c;
+    let fullExp = queryWidget.expressionSet.find((item) => item.id === parentID);
+    let expression = fullExp.expression;
+    let condition = expression.conditions.at((_a = fullExp.conditions) == null ? void 0 : _a.findIndex((c) => c == id));
+    if (funct) {
+      condition.op = funct.logic;
+    }
+    if (value) {
+      if (value.includes("'") || value.includes('"'))
+        (_b = toast.current) == null ? void 0 : _b.show({
+          severity: "error",
+          summary: "Error",
+          detail: "A condição " + parentID + "." + id + " contém caracteres inválidos."
+        });
+      else {
+        condition.value = value;
+      }
+    }
+    if (attribute) {
+      if (attribute.name != null)
+        condition.attribute = attribute.name;
+      else
+        (_c = toast.current) == null ? void 0 : _c.show({
+          severity: "error",
+          summary: "Error",
+          detail: "A condição tem um atributo inválido"
+        });
+    }
+    queryWidget.expressionSet.splice(
+      queryWidget.expressionSet.findIndex((item) => item.id === parentID),
+      1,
+      { id: parentID, conditions: fullExp.conditions, expression }
+    );
+    setExpressionSet(queryWidget.expressionSet);
+  }
+  return /* @__PURE__ */ jsxs(Fragment, { children: [
+    /* @__PURE__ */ jsxs("div", { style: { position: "relative", paddingBottom: "5px" }, children: [
+      /* @__PURE__ */ jsx("div", { style: { position: "absolute", right: 0 }, children: /* @__PURE__ */ jsx(Button, { icon: "pi pi-times", onClick: () => {
+        return deleteF(id);
+      } }) }),
+      /* @__PURE__ */ jsx(Fieldset, { legend: "Condição " + parentID + "." + id, children: /* @__PURE__ */ jsxs("div", { children: [
+        /* @__PURE__ */ jsx(
+          Dropdown,
+          {
+            value: selectedAttribute,
+            onChange: (e) => {
+              setSelectedFunction(void 0);
+              setSelectedAttribute(e.value);
+              update(void 0, void 0, e.value);
+            },
+            options: queryWidget.attributes,
+            optionLabel: "name",
+            placeholder: "Selecione o atributo",
+            className: "w-full md:w-14rem"
+          }
+        ),
+        /* @__PURE__ */ jsx(
+          Dropdown,
+          {
+            value: selectedFunction,
+            onChange: (e) => {
+              setSelectedFunction(e.value);
+              update(e.value, void 0, void 0);
+            },
+            options: (selectedAttribute == null ? void 0 : selectedAttribute.type) == AttributeTypeEnum.STRING || (selectedAttribute == null ? void 0 : selectedAttribute.type) == AttributeTypeEnum.JSON ? functionsTexts : (selectedAttribute == null ? void 0 : selectedAttribute.type) == AttributeTypeEnum.BOOLEAN ? functionsBooleans : functionsNumbers,
+            disabled: selectedAttribute == void 0,
+            optionLabel: "name",
+            placeholder: "Selecione o operador"
+          }
+        ),
+        (selectedAttribute == null ? void 0 : selectedAttribute.type) != AttributeTypeEnum.BOOLEAN && (selectedFunction == null ? void 0 : selectedFunction.name) != "é nulo" && /* @__PURE__ */ jsx(
+          Dropdown,
+          {
+            value: selectedValue,
+            editable: true,
+            onChange: (e) => {
+              setSelectedValue(e.value);
+              update(void 0, e.value, void 0);
+            },
+            options: (values == null ? void 0 : values.length) < 200 ? values : values == null ? void 0 : values.slice(0, 200),
+            filter: true,
+            placeholder: "Selecione um valor",
+            disabled: selectedFunction == void 0,
+            className: "w-full md:w-14rem"
+          }
+        )
+      ] }) })
+    ] }),
+    /* @__PURE__ */ jsx(Toast, { ref: toast })
+  ] });
+};
+const ExpressionOnFilter = (props) => {
+  const { id } = props;
+  const {
+    queryWidget,
+    setExpressionSet
+  } = useContext(FilterWidgetContext);
+  const [selectedOp, setSelectedOp] = useState(null);
+  const ops = [
+    { name: "Todas verdadeiras" },
+    { name: "Pelo menos uma verdadeira" }
+  ];
+  useEffect(() => {
+    const currentExp2 = queryWidget.expressionSet.find((item) => item.id === id);
+    if ((currentExp2 == null ? void 0 : currentExp2.expression.isAll) !== void 0) {
+      setSelectedOp(currentExp2.expression.isAll ? ops[0] : ops[1]);
+    }
+  }, [queryWidget.expressionSet, id]);
+  const currentExp = queryWidget.expressionSet.find((item) => item.id === id);
+  function addCondition() {
+    var _a, _b;
+    if (currentExp.conditions.length < 10) {
+      let expression = (_a = queryWidget.expressionSet.find((item) => item.id === id)) == null ? void 0 : _a.expression;
+      (_b = expression.conditions) == null ? void 0 : _b.push({
+        attribute: "",
+        op: "",
+        value: ""
+      });
+      queryWidget.expressionSet.splice(
+        queryWidget.expressionSet.findIndex((item) => item.id === id),
+        1,
+        {
+          id,
+          conditions: [...currentExp.conditions, currentExp.conditions.at(currentExp.conditions.length - 1) + 1],
+          expression
+        }
+      );
+      setExpressionSet(queryWidget.expressionSet);
+    }
+  }
+  function deleteCondition(idCond) {
+    var _a, _b;
+    if (currentExp.conditions.length > 1) {
+      let index = currentExp.conditions.findIndex((item) => item === idCond);
+      let expression = (_a = queryWidget.expressionSet.find((item) => item.id === id)) == null ? void 0 : _a.expression;
+      (_b = expression.conditions) == null ? void 0 : _b.splice(index, 1);
+      queryWidget.expressionSet.splice(
+        queryWidget.expressionSet.findIndex((item) => item.id === id),
+        1,
+        {
+          id,
+          conditions: currentExp.conditions.filter((item) => item !== idCond),
+          expression
+        }
+      );
+      setExpressionSet(queryWidget.expressionSet);
+    }
+  }
+  function update(op) {
+    var _a;
+    let expression = (_a = queryWidget.expressionSet.find((item) => item.id === id)) == null ? void 0 : _a.expression;
+    expression.isAll = op === "Todas verdadeiras";
+    queryWidget.expressionSet.splice(queryWidget.expressionSet.findIndex((item) => item.id === id), 1, {
+      id,
+      conditions: currentExp.conditions,
+      expression
+    });
+    setExpressionSet(queryWidget.expressionSet);
+  }
+  return /* @__PURE__ */ jsx(Fragment, { children: /* @__PURE__ */ jsx("div", { style: { position: "relative", paddingBottom: "5px" }, children: /* @__PURE__ */ jsx(Panel, { header: "Expressão " + id, children: /* @__PURE__ */ jsxs("div", { style: { display: "flex", flexDirection: "column" }, children: [
+    /* @__PURE__ */ jsx(ScrollPanel, { style: { width: "100%", height: "90%" }, children: /* @__PURE__ */ jsx("ul", { style: { paddingLeft: "0" }, children: currentExp.conditions.map(
+      (item, index) => /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsx(
+        ConditionOnFilter,
+        {
+          id: item,
+          parentID: id,
+          deleteF: deleteCondition
+        }
+      ) }, index)
+    ) }) }),
+    /* @__PURE__ */ jsxs("div", { style: {
+      display: "flex",
+      flexDirection: "column",
+      width: "230px",
+      gap: "5px"
+    }, children: [
+      /* @__PURE__ */ jsx(Button, { label: "Adicionar Condição", outlined: true, onClick: addCondition }),
+      /* @__PURE__ */ jsx(
+        Dropdown,
+        {
+          style: { paddingBottom: "5px" },
+          value: selectedOp,
+          onChange: (e) => {
+            setSelectedOp(e.value);
+            update(e.value.name);
+          },
+          options: ops,
+          optionLabel: "name",
+          placeholder: "Selecione o operador",
+          className: "w-full md:w-14rem"
+        }
+      )
+    ] })
+  ] }) }) }) });
+};
+const expressions = "_expressions_115p4_1";
+const text = "_text_115p4_13";
+const dialogDimensions = "_dialogDimensions_115p4_51";
+const addExpression = "_addExpression_115p4_61";
+const styles = {
+  expressions,
+  text,
+  dialogDimensions,
+  addExpression
+};
+const FilterWidget = (props) => {
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const { visible, setVisible, filter } = props;
+  const { queryWidget, setTitle, setExpressionSet, setExpressionsComponents, reset } = useContext(FilterWidgetContext);
+  const toast = useRef(null);
+  const [color, setColor] = useState();
+  const [borderColor, setBorderColor] = useState();
+  const [borderThickness, setBorderThickness] = useState();
+  const [isElse, setIsElse] = useState(false);
+  function constructJsonString(operator, attribute, value) {
+    if (value === "") {
+      return `{"==": [{"var": "${attribute}"}, null]}`;
+    }
+    return !isNaN(parseFloat(value)) ? constructJsonStringNumerical(operator, attribute, parseFloat(value)) : constructJsonStringText(operator, attribute, value);
+  }
+  function constructJsonStringNumerical(operator, attribute, value) {
+    const min = value - 1e-3;
+    const max = value + 1e-3;
+    switch (operator) {
+      case "==":
+        return `{
+                "and": [
+                    { "<=": [{ "var": "${attribute}" }, ${max}] },
+                    { ">=": [{ "var": "${attribute}" }, ${min}] }
+                ]
+            }`;
+      case "!=":
+        return `{
+                "!": {
+                    "and": [
+                        { "<=": [{ "var": "${attribute}" }, ${max}] },
+                        { ">=": [{ "var": "${attribute}" }, ${min}] }
+                    ]
+                }
+            }`;
+      case "<":
+        return `{
+                "<": [{ "var": "${attribute}" }, ${max}]
+            }`;
+      case ">":
+        return `{
+                ">": [{ "var": "${attribute}" }, ${min}]
+            }`;
+      default:
+        return `{
+                "${operator}": [{ "var": "${attribute}" }, ${value}]
+            }`;
+    }
+  }
+  function constructJsonStringText(operator, attribute, value) {
+    switch (operator) {
+      // Json-Logic does not have explicit "startsWith" or "endsWith" operators.
+      // Instead, these are implemented using substring extraction and equality checks.
+      case "startsWith":
+        return `{
+                "==": [
+                    { "substr": [{ "var": "${attribute}" }, 0, ${value.length}] },
+                    "${value}"
+                ]
+            }`;
+      case "endsWith":
+        return `{
+                "==": [
+                    { "substr": [{ "var": "${attribute}" }, -${value.length}] },
+                    "${value}"
+                ]
+            }`;
+      //Json-Logic does not have a "!in" operator. Instead, one must negate the "in" operator.
+      case "!in":
+        return `{
+                "!": {
+                    "in": [${JSON.stringify(value)}, { "var": "${attribute}" }]
+                }
+            }`;
+      //no particular case
+      default:
+        return `{
+                "${operator}": [{ "var": "${attribute}" }, "${value}"]
+            }`;
+    }
+  }
+  function buildJsonLogicRule(conditions, isAll) {
+    if (conditions.length === 0) return "";
+    const operator = isAll ? "and" : "or";
+    return `{ "${operator}": [${conditions.join(", ")}] }`;
+  }
+  function generateRulesFromExpression(expression) {
+    const conditionGroups = [];
+    if (!expression || !Array.isArray(expression.conditions)) {
+      return "";
+    }
+    expression.conditions.forEach((condition) => {
+      const { type, op, attribute, value } = condition;
+      const jsonString = constructJsonString(op, attribute, value);
+      conditionGroups.push(jsonString);
+    });
+    return buildJsonLogicRule(conditionGroups, expression.isAll);
+  }
+  function deconstructRule(rule) {
+    const parsedRule = JSON.parse(rule);
+    const isAll = parsedRule.hasOwnProperty("and");
+    const conditions = parsedRule[isAll ? "and" : "or"];
+    const deconstructedConditions = conditions.map((condition) => {
+      const operator = Object.keys(condition)[0];
+      const value = condition[operator];
+      if (operator === "==" && value[0].hasOwnProperty("substr")) {
+        const substr = value[0].substr;
+        const valueString = value[1];
+        if (substr[1] < 0) {
+          return {
+            operator: "endsWith",
+            attribute: substr[0].var,
+            value: valueString
+          };
+        } else {
+          return {
+            operator: "startsWith",
+            attribute: substr[0].var,
+            value: valueString
+          };
+        }
+      }
+      if (operator === "!in") {
+        return {
+          operator: "!in",
+          attribute: value[0].var,
+          value: value[1].toString()
+        };
+      }
+      if (operator === "!") {
+        const innerOperator = Object.keys(value)[0];
+        const innerCondition = value[innerOperator];
+        if (innerOperator === "and") {
+          const subConditions = innerCondition;
+          const firstCondition = subConditions[0];
+          const secondCondition = subConditions[1];
+          const firstOperator = Object.keys(firstCondition)[0];
+          const secondOperator = Object.keys(secondCondition)[0];
+          if (firstOperator === "<=" && secondOperator === ">=") {
+            const firstValue = firstCondition[firstOperator][1];
+            secondCondition[secondOperator][1];
+            const adjustedValue = !isNaN(parseFloat(firstValue)) ? firstValue - 1e-3 : firstValue;
+            return {
+              operator: "!=",
+              attribute: firstCondition[firstOperator][0].var,
+              value: adjustedValue
+            };
+          }
+        } else if (innerOperator === "in") {
+          return {
+            operator: "!in",
+            attribute: innerCondition[1].var,
+            value: innerCondition[0]
+          };
+        }
+      }
+      if (operator === "and") {
+        const subConditions = value;
+        if (subConditions.length === 2) {
+          const firstCondition = subConditions[0];
+          const secondCondition = subConditions[1];
+          const firstOperator = Object.keys(firstCondition)[0];
+          const secondOperator = Object.keys(secondCondition)[0];
+          if (firstOperator === "<=" && secondOperator === ">=") {
+            const firstValue = firstCondition[firstOperator][1];
+            const adjustedValue = !isNaN(parseFloat(firstValue)) ? firstValue - 1e-3 : firstValue;
+            return {
+              operator: "==",
+              attribute: firstCondition[firstOperator][0].var,
+              value: adjustedValue
+            };
+          }
+        }
+      }
+      if (operator === "==") {
+        const max = value[1];
+        if (max === null) {
+          return {
+            operator: "null",
+            attribute: value[0].var
+          };
+        }
+        return {
+          operator: "==",
+          attribute: value[0].var,
+          value: !isNaN(parseFloat(max)) ? max - 1e-3 : max
+        };
+      }
+      if (operator === "!=") {
+        return {
+          operator: "!=",
+          attribute: value[0].var,
+          value: value[1].toString()
+        };
+      }
+      if (operator === "in") {
+        return {
+          operator: "in",
+          attribute: value[0].var,
+          value: value[1].toString()
+        };
+      }
+      if (operator === ">=") {
+        const max = value[1];
+        return {
+          operator: ">=",
+          attribute: value[0].var,
+          value: max
+        };
+      }
+      if (operator === "<=") {
+        const max = value[1];
+        return {
+          operator: "<=",
+          attribute: value[0].var,
+          value: max
+        };
+      }
+      if (operator === "<") {
+        const max = value[1];
+        return {
+          operator: "<",
+          attribute: value[0].var,
+          value: max + 1e-3
+        };
+      }
+      if (operator === ">") {
+        const max = value[1];
+        return {
+          operator: ">",
+          attribute: value[0].var,
+          value: max + 1e-3
+        };
+      }
+      return {};
+    });
+    return {
+      isAll,
+      conditions: deconstructedConditions
+    };
+  }
+  useEffect(() => {
+    if (!filter) {
+      setIsDataLoaded(true);
+      return;
+    }
+    setTitle(filter.name);
+    queryWidget.title = filter.name;
+    if (filter) {
+      const allConditions = [];
+      const deconstructed = deconstructRule(filter.filterJson);
+      deconstructed.conditions.forEach((condition) => {
+        allConditions.push({
+          attribute: condition.attribute || "",
+          op: condition.operator || "==",
+          value: condition.value
+        });
+      });
+      const unifiedExpression = {
+        id: 0,
+        conditions: allConditions.map((_, index) => index),
+        expression: {
+          conditions: allConditions,
+          isAll: filter.isAll
+        }
+      };
+      setExpressionSet([unifiedExpression]);
+    }
+    if (queryWidget.title === filter.name && queryWidget.expressionSet.length > 0) {
+      setIsDataLoaded(true);
+    }
+  }, [filter]);
+  useEffect(() => {
+    setExpressionsComponents(queryWidget.expressionSet.map((exp) => exp.id));
+  }, [queryWidget.expressionSet]);
+  function addPolygons() {
+    var _a, _b;
+    if (queryWidget.title === "") {
+      (_a = toast.current) == null ? void 0 : _a.show({
+        severity: "info",
+        summary: "Info",
+        detail: "Título não pode ser vazio!"
+      });
+      return;
+    }
+    const exps = queryWidget.expressionSet;
+    if (exps.length === 0) {
+      (_b = toast.current) == null ? void 0 : _b.show({
+        severity: "info",
+        summary: "Info",
+        detail: "Tenha pelo menos uma expressão!"
+      });
+      return;
+    }
+    let hasToStop = false;
+    exps.forEach((tuple, expIndex) => {
+      var _a2, _b2;
+      if (tuple.expression.isAll == void 0) {
+        (_a2 = toast.current) == null ? void 0 : _a2.show({
+          severity: "info",
+          summary: "Info",
+          detail: "Selecione se a expressão " + tuple.id + ' é "E" ou "OU"'
+        });
+        hasToStop = true;
+        return;
+      }
+      (_b2 = tuple.expression.conditions) == null ? void 0 : _b2.forEach((cond, index) => {
+        var _a3, _b3, _c;
+        if (cond.attribute == "") {
+          (_a3 = toast.current) == null ? void 0 : _a3.show({
+            severity: "info",
+            summary: "Info",
+            detail: "Selecione um atributo para a condição " + expIndex + "." + index
+          });
+          hasToStop = true;
+          return;
+        }
+        if (cond.op == "") {
+          (_b3 = toast.current) == null ? void 0 : _b3.show({
+            severity: "info",
+            summary: "Info",
+            detail: "Selecione uma função para a condição " + expIndex + "." + index
+          });
+          hasToStop = true;
+          return;
+        }
+        let aux = cond.op == "null" || (cond.op == "true" || cond.op == "false");
+        if (cond.value == void 0 && !aux) {
+          (_c = toast.current) == null ? void 0 : _c.show({
+            severity: "info",
+            summary: "Info",
+            detail: "Selecione um valor para a condição " + expIndex + "." + index
+          });
+          hasToStop = true;
+          return;
+        }
+      });
+    });
+    if (!hasToStop) {
+      let res2 = queryWidget.expressionSet.map((tuple) => tuple.expression);
+      generateRulesFromExpression(res2[0]);
+      ({
+        name: queryWidget.title,
+        isAll: queryWidget.expressionSet[0].expression.isAll,
+        symbol: {
+          type: RenderType.Unique
+        }
+      });
+    }
+  }
+  function close() {
+    reset();
+    setVisible(false);
+  }
+  return isDataLoaded ? /* @__PURE__ */ jsxs(Fragment, { children: [
+    /* @__PURE__ */ jsxs(
+      Dialog,
+      {
+        header: "Adicionar Filtro",
+        visible,
+        className: styles.dialogDimensions,
+        onHide: () => close(),
+        children: [
+          /* @__PURE__ */ jsx("div", { className: styles.text, children: /* @__PURE__ */ jsxs("span", { className: "p-float-label", children: [
+            /* @__PURE__ */ jsx(
+              InputText,
+              {
+                id: "title",
+                value: queryWidget.title,
+                onChange: (e) => setTitle(e.target.value)
+              }
+            ),
+            /* @__PURE__ */ jsx("label", { htmlFor: "title", children: "Nome" })
+          ] }) }),
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsxs("div", { className: "flex align-items-center", children: [
+              /* @__PURE__ */ jsx(RadioButton, { inputId: "filter1", name: "filterType", value: "Filtro", onChange: (e) => setIsElse(false), checked: !isElse }),
+              /* @__PURE__ */ jsx("label", { htmlFor: "filter1", children: "Filtro" })
+            ] }),
+            /* @__PURE__ */ jsxs("div", { className: "flex align-items-center", children: [
+              /* @__PURE__ */ jsx(RadioButton, { inputId: "filter2", name: "filterType", value: "Todas as restantes geometrias", onChange: (e) => setIsElse(true), checked: isElse }),
+              /* @__PURE__ */ jsx("label", { htmlFor: "filter2", children: "Todas as restantes geometrias" })
+            ] })
+          ] }),
+          /* @__PURE__ */ jsx(
+            UniqueSymbolComponent,
+            {
+              color,
+              setColor,
+              borderColor,
+              setBorderColor,
+              currentStyle: filter == null ? void 0 : filter.symbol.rendererOL,
+              borderThickness,
+              setBorderThickness
+            }
+          ),
+          /* @__PURE__ */ jsx(ScrollPanel, { children: /* @__PURE__ */ jsx("ul", { className: styles.expressions, style: { paddingLeft: "0" }, children: queryWidget.expressionsComponents.map(
+            (item, index) => /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsx(
+              ExpressionOnFilter,
+              {
+                id: item
+              }
+            ) }, index)
+          ) }) }),
+          /* @__PURE__ */ jsx("div", { className: styles.addExpression, children: /* @__PURE__ */ jsx(Button, { label: "Concluir", onClick: addPolygons }) })
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsx(Toast, { ref: toast })
+  ] }) : null;
+};
+function BasedOnRules() {
+  const [rules, setRules] = useState([]);
+  const [selectedRule, setSelectedRule] = useState();
+  const [showDialog, setShowDialog] = useState(false);
+  const { t } = useTranslation();
+  const nameLabel = t("based_on_rules.name");
+  const columns = [
+    { field: "name", header: nameLabel },
+    { field: "isElse", header: "Name" },
+    { field: "symbol", header: "Category" }
+  ];
+  function addFilter(filter) {
+    setRules([...rules, filter]);
+  }
+  return /* @__PURE__ */ jsxs(Fragment, { children: [
+    /* @__PURE__ */ jsxs("div", { className: "container-bor", children: [
+      /* @__PURE__ */ jsxs("div", { className: "bor-buttons", children: [
+        /* @__PURE__ */ jsx(Button, { label: "Add Rule", icon: "pi pi-plus", outlined: true, onClick: () => setShowDialog(true) }),
+        /* @__PURE__ */ jsx(Button, { label: "Remove Rule", icon: "pi pi-minus", outlined: true }),
+        /* @__PURE__ */ jsx(Button, { label: "Edit Rule", icon: "pi pi-pencil", outlined: true })
+      ] }),
+      /* @__PURE__ */ jsx(
+        DataTable,
+        {
+          value: rules,
+          selectionMode: "single",
+          selection: selectedRule,
+          onSelectionChange: (e) => setSelectedRule(e.value),
+          children: columns.map((col, i) => /* @__PURE__ */ jsx(Column, { field: col.field, header: col.header }, col.field))
+        }
+      )
+    ] }),
+    /* @__PURE__ */ jsx(FilterWidget, { visible: showDialog, setVisible: setShowDialog, filter: void 0, setFilter: addFilter })
+  ] });
+}
 const GeometryEditor = (props) => {
   const {
     layerCurrentRenderer,
@@ -1703,12 +2500,14 @@ const GeometryEditor = (props) => {
   const resetStyle = t("common.reset_style");
   const selectStyle = t("common.select_type");
   const styleType = t("common.style_type");
+  const basedOnRules = t("common.based_on_rules");
   const [attr, setAttr] = useState(props.attributes);
   const [currentRenderer, setCurrentRenderer] = useState(layerCurrentRenderer);
   const options = [
     { label: uniqueSymbol, code: 0 },
     { label: categorized2, code: 1 },
-    { label: graduated2, code: 2 }
+    { label: graduated2, code: 2 },
+    { label: basedOnRules, code: 3 }
   ];
   const [activeIndex, setActiveIndex] = useState(layerCurrentRenderer.type == RenderType.Categorized ? options[1] : layerCurrentRenderer.type == RenderType.Graduated ? options[2] : options[0]);
   useEffect(() => {
@@ -1778,7 +2577,8 @@ const GeometryEditor = (props) => {
         layerCurrentRenderer,
         numbersLocale
       }
-    )
+    ),
+    (activeIndex == null ? void 0 : activeIndex.code) == 3 && /* @__PURE__ */ jsx(FilterWidgetContextProvider, { attributes: attr, children: /* @__PURE__ */ jsx(BasedOnRules, {}) })
   ] }) });
 };
 function mapFeaturesToSEAttributes(features) {
@@ -1873,13 +2673,14 @@ const StyleEditorComponent = (props) => {
     }
   ) });
 };
-const common$1 = { "style_editor": "Editor de Estilos", "reset_style": "Repor Estilo", "conclude": "Concluir", "unique_symbol": "Símbolo Único", "categorized": "Categorizado", "graduated": "Graduado", "null": "Nulo", "select_type": "Selecionar um tipo de estilo", "style_type": "Tipo de Estilo" };
+const common$1 = { "style_editor": "Editor de Estilos", "reset_style": "Repor Estilo", "conclude": "Concluir", "unique_symbol": "Símbolo Único", "categorized": "Categorizado", "graduated": "Graduado", "null": "Nulo", "select_type": "Selecionar um tipo de estilo", "style_type": "Tipo de Estilo", "based_on_rules": "Baseado em regras" };
 const errors$1 = { "error_ramps_same_name": "Existem rampas com o mesmo nome: ", "error_diff": "A diferença entre os valores máximo e mínimo deve ser maior do que 0, é: ", "error_sum": "A soma das contagens dos intervalos deve ser igual ao número de valores", "error_sum2": "A soma das contagens está incorreta: ", "error_values": "Os valores dos intervalos devem ser crescentes." };
 const categorized$1 = { "predefined_styles": "Estilos Pré-definidos", "color_ramps": "Rampas de Cores", "stroke_color": "Cor do Contorno", "stroke_width": "Largura do Contorno", "attribute": "Atributo", "select_attribute": "Selecionar um atributo", "update_colors": "Atualizar cores", "color_opacity": "Opacidade da Cor", "colors_spectrum": "Espetro de Cores", "select_spectrum": "Selecionar um espetro", "custom_style": "Estilo Personalizado", "reverse_colors": "Inverter cores", "color_style": "Estilo de Cores" };
 const unique_symbol$1 = { "fill_color": "Cor de Preenchimento" };
 const color_picker$1 = { "select_color": "Selecionar uma cor" };
 const graduated$1 = { "amount_values": "Quantidade de valores (%)", "values": "Valores", "amount": "Quantidade (%)", "select_mode": "Selecionar um modo", "which_mode": "Qual modo escolher?", "interval_size": "Tamanho do intervalo", "classes_number": "Nº de classes", "invert_colors": "Inverter cores do espetro", "gradient_intervals": "Intervalos de Gradiente", "value": "Valor", "preview": "Pré-visualização", "min_value": "Valor Mínimo", "max_value": "Valor Máximo", "color": "Cor", "mode": "Modo" };
 const graduate_modes$1 = { "EqualInterval": "Intervalos Iguais", "Quantile": "Quantil", "NaturalBreaks": "Quebras Naturais (Jenks)", "DefinedInterval": "Intervalos Definidos", "Manual": "Manual", "GeometricInterval": "Intervalo Geométrico", "StandardDeviation": "Desvio Padrão" };
+const based_on_rules$1 = { "name": "Nome" };
 const translationPT = {
   common: common$1,
   errors: errors$1,
@@ -1887,15 +2688,17 @@ const translationPT = {
   unique_symbol: unique_symbol$1,
   color_picker: color_picker$1,
   graduated: graduated$1,
-  graduate_modes: graduate_modes$1
+  graduate_modes: graduate_modes$1,
+  based_on_rules: based_on_rules$1
 };
-const common = { "style_editor": "Style Editor", "reset_style": "Reset Style", "conclude": "Apply", "unique_symbol": "Unique Symbol", "categorized": "Categorized", "graduated": "Graduated", "null": "Null", "select_type": "Select a style type", "style_type": "Style Type" };
+const common = { "style_editor": "Style Editor", "reset_style": "Reset Style", "conclude": "Apply", "unique_symbol": "Unique Symbol", "categorized": "Categorized", "graduated": "Graduated", "null": "Null", "select_type": "Select a style type", "style_type": "Style Type", "based_on_rules": "Based on rules" };
 const errors = { "error_ramps_same_name": "There are ramps with the same name: ", "error_diff": "The difference between the max and min values must be greater than 0, it is: ", "error_sum": "The sum of the counts of the intervals must be equal to the number of values", "error_sum2": "The sum of the counts is wrong: ", "error_values": "The interval values must be increasing." };
 const categorized = { "predefined_styles": "Predefined Styles", "color_ramps": "Color Ramps", "stroke_color": "Stroke Color", "stroke_width": "Stroke Width", "attribute": "Attribute", "select_attribute": "Select an attribute", "update_colors": "Update colors", "color_opacity": "Color Opacity", "colors_spectrum": "Colors Spectrum", "select_spectrum": "Select a spectrum", "custom_style": "Custom Style", "reverse_colors": "Reverse colors", "color_style": "Color Style" };
 const unique_symbol = { "fill_color": "Fill Color" };
 const color_picker = { "select_color": "Select a color" };
 const graduated = { "amount_values": "Amount of values (%)", "values": "Values", "amount": "Amount (%)", "select_mode": "Select a mode", "which_mode": "Which mode to choose?", "interval_size": "Interval size", "classes_number": "Number of classes", "invert_colors": "Invert colors of the spectrum", "gradient_intervals": "Gradient Intervals", "value": "Value", "preview": "Preview", "min_value": "Minimum Value", "max_value": "Maximum Value", "color": "Color", "mode": "Mode" };
 const graduate_modes = { "EqualInterval": "Equal Intervals", "Quantile": "Quantile", "NaturalBreaks": "Natural Breaks (Jenks)", "DefinedInterval": "Defined Intervals", "Manual": "Manual", "GeometricInterval": "Geometric Interval", "StandardDeviation": "Standard Deviation" };
+const based_on_rules = { "name": "Name" };
 const translationEN = {
   common,
   errors,
@@ -1903,7 +2706,8 @@ const translationEN = {
   unique_symbol,
   color_picker,
   graduated,
-  graduate_modes
+  graduate_modes,
+  based_on_rules
 };
 i18n.use(initReactI18next).init({
   lng: "en",

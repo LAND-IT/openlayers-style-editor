@@ -8,7 +8,8 @@
     "graduated": "Graduated",
     "null": "Null",
     "select_type": "Select a style type",
-    "style_type": "Style Type"
+    "style_type": "Style Type",
+    "based_on_rules": "Based on rules"
   },
   "errors": {
     "error_ramps_same_name": "There are ramps with the same name: ",
@@ -63,5 +64,8 @@
     "Manual": "Manual",
     "GeometricInterval": "Geometric Interval",
     "StandardDeviation": "Standard Deviation"
+  },
+  "based_on_rules": {
+    "name": "Name"
   }
 }

@@ -8,6 +8,8 @@ import {Button} from "primereact/button";
 import {Graduated} from "./graduated.tsx";
 import {useTranslation} from "react-i18next";
 import "./geometryEditor.css"
+import {BasedOnRules} from "./basedOnRules.tsx";
+import {FilterWidgetContextProvider} from "./filters/filterWidgetContext.tsx";
 
 interface Props {
     attributes: SEAttribute[]
@@ -42,6 +44,7 @@ export const GeometryEditor: React.FC<Props> = (props: Props) => {
     const resetStyle: string = t("common.reset_style" as any)
     const selectStyle: string = t("common.select_type" as any)
     const styleType: string = t("common.style_type" as any)
+    const basedOnRules: string = t("common.based_on_rules" as any)
 
     const [attr, setAttr] = useState<SEAttribute[]>(props.attributes)
 
@@ -50,7 +53,8 @@ export const GeometryEditor: React.FC<Props> = (props: Props) => {
     const options = [
         {label: uniqueSymbol, code: 0},
         {label: categorized, code: 1},
-        {label: graduated, code: 2}
+        {label: graduated, code: 2},
+        {label: basedOnRules, code: 3}
     ]
 
     const [activeIndex, setActiveIndex] = useState<{
@@ -99,6 +103,10 @@ export const GeometryEditor: React.FC<Props> = (props: Props) => {
                         applyRenderer={applyRenderer} moreRamps={moreRamps} setVisible={setVisible}
                         showPreDefinedRamps={showPreDefinedRamps}
                         layerCurrentRenderer={layerCurrentRenderer} numbersLocale={numbersLocale}/>}
+
+                {activeIndex?.code == 3 && <FilterWidgetContextProvider attributes={attr}>
+                    <BasedOnRules/>
+                </FilterWidgetContextProvider>}
             </div>
         </>
     )

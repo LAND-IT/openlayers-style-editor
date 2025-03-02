@@ -384,13 +384,13 @@ export const Categorized: React.FC<Props> = (props: Props) => {
                                          onClick={() => revertColors()}/>
                         </div>
                         <div className={"table-container"}>
-                            <DataTable
+                            <DataTable<TableRow[]>
                                 value={table}
                                 selectionMode={rowClick ? undefined : "checkbox"}
                                 tableStyle={{minWidth: "25rem"}}
                                 selection={table.filter((tr) => tr.visible)!}
-                                onSelectionChange={(e: DataTableSelectionMultipleChangeEvent<TableRow[]>) => {
-                                    const value = e.value as TableRow[]
+                                onSelectionChange={(event: DataTableSelectionMultipleChangeEvent<TableRow[]>) => {
+                                    const value = event.value as TableRow[]
                                     changeVisibility(value)
                                 }}
                                 reorderableRows

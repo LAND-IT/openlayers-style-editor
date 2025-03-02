@@ -1,5 +1,5 @@
 <p align="center"><img src="https://land-it.github.io/openlayers-style-editor/favicons/android-chrome-192x192.png"></p>
-<h1 align="center">Welcome to <code>openlayers-style-editor</code></h1>
+<h1 align="center">Welcome to OpenLayers Style Editor</h1>
 
 ![](https://img.shields.io/npm/v/openlayers-style-editor.svg)
 ![](https://img.shields.io/npm/dw/openlayers-style-editor)

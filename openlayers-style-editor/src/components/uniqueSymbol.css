@@ -7,6 +7,14 @@
     padding-top: 10px;
 }
 
+.container2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /*height: 100%;*/
+    padding-top: 10px;
+}
+
 /* Row Flex Layout */
 .flex-row-unique {
     display: flex;
