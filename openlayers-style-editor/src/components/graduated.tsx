@@ -6,12 +6,17 @@ import {Chart} from "primereact/chart";
 import {InputNumber} from "primereact/inputnumber";
 import {Button, Button as PrimeButton} from "primereact/button";
 import {
-    SEAttribute, AttributeTypeEnum, ColorRampDropdownItem, ColorRampItem, getGraduatedStyle,
+    AttributeTypeEnum,
+    ColorRampDropdownItem,
+    ColorRampItem,
+    getGraduatedStyle,
     getRendererColorAndSizeStroke,
     getRendererOpacity,
+    GraduatedModes,
     Render,
     RenderType,
-    Row, GraduatedModes
+    Row,
+    SEAttribute
 } from "../rendererUtils";
 import {ColorRamp, colorRamps, generateGradient, getColorRampString, Stop} from "./rampColors.ts";
 import {FlatStyle} from "ol/style/flat";

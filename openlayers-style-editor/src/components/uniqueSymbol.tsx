@@ -25,7 +25,8 @@ export const UniqueSymbol: React.FC<UniqueSymbolProps> = (props: UniqueSymbolPro
     const [borderColor, setBorderColor] = useState<Color>()
     const [borderThickness, setBorderThickness] = useState<number>()
 
-    const currentStyle: FlatStyle | null = layerCurrentRenderer.field ? null : layerCurrentRenderer.rendererOL as FlatStyle;
+    const currentStyle: FlatStyle | null = layerCurrentRenderer.type != RenderType.Unique ? null :
+        layerCurrentRenderer.rendererOL as FlatStyle;
 
     function createRenderUnique(color: Color, outlineColor: Color, outlineWidth: number) {
         return singleColorStyle(color, outlineColor, outlineWidth);

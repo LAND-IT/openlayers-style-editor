@@ -37,6 +37,7 @@
     "chart.js": "4.4.8",
     "geobuckets": "0.0.3",
     "i18next": "24.2.2",
+    "json-logic-js": "^2.0.5",
     "primeicons": "7.0.0",
     "primereact": "10.9.2",
     "react-best-gradient-color-picker": "3.0.14",

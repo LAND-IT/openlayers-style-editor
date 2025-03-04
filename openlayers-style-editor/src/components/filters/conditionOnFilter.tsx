@@ -2,8 +2,7 @@ import {Dropdown} from "primereact/dropdown";
 import {Fieldset} from "primereact/fieldset";
 import {useContext, useEffect, useRef, useState} from "react";
 import {FilterWidgetContext, FilterWidgetContextType} from "./filterWidgetContext"
-import {RxCross1} from "react-icons/rx";
-import {AttributeTypeEnum, SEAttribute} from "../../rendererUtils.ts";
+import {AttributeTypeEnum, SEAttribute} from "@/rendererUtils.ts";
 import {Button} from "primereact/button";
 import {Toast} from "primereact/toast";
 
@@ -149,12 +148,13 @@ export const ConditionOnFilter = (props: Props) => {
                     return deleteF(id)
                 }}/>
             </div>
-            <Fieldset legend={"Condição " + parentID + "." + id}>
+            <Fieldset legend={"Condição " + (id + 1)}>
                 <div>
                     <Dropdown value={selectedAttribute}
                               onChange={(e) => {
                                   setSelectedFunction(undefined)
                                   setSelectedAttribute(e.value);
+                                  setSelectedValue(undefined)
                                   update(undefined, undefined, e.value)
                               }}
                               options={queryWidget.attributes} optionLabel="name"
@@ -162,6 +162,8 @@ export const ConditionOnFilter = (props: Props) => {
                     <Dropdown value={selectedFunction}
                               onChange={(e) => {
                                   setSelectedFunction(e.value);
+                                  if (e.value.logic == "null")
+                                      setSelectedValue(undefined)
                                   update(e.value, undefined, undefined)
                               }}
                               options={(selectedAttribute?.type == AttributeTypeEnum.STRING ||

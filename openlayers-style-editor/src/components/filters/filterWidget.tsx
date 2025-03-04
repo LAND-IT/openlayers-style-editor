@@ -18,11 +18,12 @@ interface Props {
     setVisible: Dispatch<SetStateAction<boolean>>;
     filter: FilterRule | undefined;
     setFilter: Dispatch<SetStateAction<FilterRule | undefined>>;
+    canBeElse: boolean;
 }
 
 export const FilterWidget = (props: Props) => {
     const [isDataLoaded, setIsDataLoaded] = useState<boolean>(false);
-    const {visible, setVisible, filter, setFilter} = props;
+    const {visible, setVisible, filter, setFilter, canBeElse} = props;
     const {queryWidget, setTitle, setExpressionSet, setExpressionsComponents, reset} =
         useContext(FilterWidgetContext) as FilterWidgetContextType;
 
@@ -43,46 +44,9 @@ export const FilterWidget = (props: Props) => {
     }
 
     function constructJsonStringNumerical(operator: string, attribute: string, value: number): string {
-        const min = value - 0.001;
-        const max = value + 0.001;
-
-        // It seems there is an issue concerning equality checks with Json-Logic Java: https://github.com/jamsesso/json-logic-java/issues/38
-        // Therefore, a workaround is used by creating a range with a small tolerance (±0.001) to handle equality and inequality comparisons.
-
-        switch (operator) {
-            case "==":
-                return `{
-                "and": [
-                    { "<=": [{ "var": "${attribute}" }, ${max}] },
-                    { ">=": [{ "var": "${attribute}" }, ${min}] }
-                ]
-            }`;
-
-            case "!=":
-                return `{
-                "!": {
-                    "and": [
-                        { "<=": [{ "var": "${attribute}" }, ${max}] },
-                        { ">=": [{ "var": "${attribute}" }, ${min}] }
-                    ]
-                }
-            }`;
-
-            case "<":
-                return `{
-                "<": [{ "var": "${attribute}" }, ${max}]
-            }`;
-
-            case ">":
-                return `{
-                ">": [{ "var": "${attribute}" }, ${min}]
-            }`;
-
-            default:
-                return `{
+        return `{
                 "${operator}": [{ "var": "${attribute}" }, ${value}]
             }`;
-        }
     }
 
     function constructJsonStringText(operator: string, attribute: string, value: string): string {
@@ -111,11 +75,10 @@ export const FilterWidget = (props: Props) => {
                     "in": [${JSON.stringify(value)}, { "var": "${attribute}" }]
                 }
             }`;
+
             //no particular case
             default:
-                return `{
-                "${operator}": [{ "var": "${attribute}" }, "${value}"]
-            }`;
+                return `{"${operator}": ["${value}", { "var": "${attribute}" }]}`;
         }
     }
 
@@ -124,7 +87,6 @@ export const FilterWidget = (props: Props) => {
         const operator = isAll ? "and" : "or";
         return `{ "${operator}": [${conditions.join(", ")}] }`;
     }
-
 
     function generateRulesFromExpression(expression: any): string {
         const conditionGroups: string[] = []
@@ -170,133 +132,38 @@ export const FilterWidget = (props: Props) => {
                 }
             }
 
-            if (operator === "!in") {
-                return {
-                    operator: "!in",
-                    attribute: value[0].var,
-                    value: value[1].toString(),
-                };
-            }
-
             if (operator === "!") {
                 const innerOperator = Object.keys(value)[0];
                 const innerCondition = value[innerOperator];
-
-                if (innerOperator === "and") {
-                    const subConditions = innerCondition;
-
-                    const firstCondition = subConditions[0];
-                    const secondCondition = subConditions[1];
-
-                    const firstOperator = Object.keys(firstCondition)[0];
-                    const secondOperator = Object.keys(secondCondition)[0];
-
-                    if (firstOperator === "<=" && secondOperator === ">=") {
-                        const firstValue = firstCondition[firstOperator][1];
-                        const secondValue = secondCondition[secondOperator][1];
-
-                        const adjustedValue = !isNaN(parseFloat(firstValue)) ? firstValue - 0.001 : firstValue;
-
-                        return {
-                            operator: "!=",
-                            attribute: firstCondition[firstOperator][0].var,
-                            value: adjustedValue,
-                        };
-                    }
-                } else if (innerOperator === "in") {
-                    return {
-                        operator: "!in",
-                        attribute: innerCondition[1].var,
-                        value: innerCondition[0],
-                    };
-                }
+                return {
+                    operator: "!in",
+                    attribute: innerCondition[1].var,
+                    value: innerCondition[0],
+                };
             }
-            if (operator === "and") {
-                const subConditions = value;
-                if (subConditions.length === 2) {
-                    const firstCondition = subConditions[0];
-                    const secondCondition = subConditions[1];
-                    const firstOperator = Object.keys(firstCondition)[0];
-                    const secondOperator = Object.keys(secondCondition)[0];
-                    if (firstOperator === "<=" && secondOperator === ">=") {
-                        const firstValue = firstCondition[firstOperator][1];
-                        const adjustedValue = !isNaN(parseFloat(firstValue)) ? firstValue - 0.001 : firstValue;
-                        return {
-                            operator: "==",
-                            attribute: firstCondition[firstOperator][0].var,
-                            value: adjustedValue,
-                        };
-                    }
-                }
-            }
+
             if (operator === "==") {
-                const max = value[1];
+                const max = value[0];
                 if (max === null) {
                     return {
                         operator: "null",
-                        attribute: value[0].var
+                        attribute: value[1].var
                     };
                 }
-                return {
-                    operator: "==",
-                    attribute: value[0].var,
-                    value: !isNaN(parseFloat(max)) ? max - 0.001 : max,
-                };
             }
 
-            if (operator === "!=") {
+            const max = value[0];
+            if (max.hasOwnProperty("var"))
                 return {
-                    operator: "!=",
-                    attribute: value[0].var,
-                    value: value[1].toString(),
+                    operator: operator,
+                    attribute: max.var,
+                    value: value[1],
                 };
-            }
-
-            if (operator === "in") {
-                return {
-                    operator: "in",
-                    attribute: value[0].var,
-                    value: value[1].toString(),
-                };
-            }
-
-            if (operator === ">=") {
-                const max = value[1];
-                return {
-                    operator: ">=",
-                    attribute: value[0].var,
-                    value: max,
-                };
-            }
-
-            if (operator === "<=") {
-                const max = value[1];
-                return {
-                    operator: "<=",
-                    attribute: value[0].var,
-                    value: max,
-                };
-            }
-
-            if (operator === "<") {
-                const max = value[1];
-                return {
-                    operator: "<",
-                    attribute: value[0].var,
-                    value: max + 0.001,
-                };
-            }
-            if (operator === ">") {
-                const max = value[1];
-                return {
-                    operator: ">",
-                    attribute: value[0].var,
-                    value: max + 0.001,
-                };
-            }
-
-
-            return {};
+            return {
+                operator: operator,
+                attribute: value[1].var,
+                value: max,
+            };
         });
 
         return {
@@ -312,12 +179,13 @@ export const FilterWidget = (props: Props) => {
         }
 
         setTitle(filter.name);
+        setIsElse(filter.isElse)
         queryWidget.title = filter.name;
 
-        if (filter) {
+        if (filter && !filter.isElse) {
             const allConditions: any[] = [];
 
-            const deconstructed = deconstructRule(filter.filterJson);
+            const deconstructed = deconstructRule(filter.filterJson!);
             deconstructed.conditions.forEach((condition: any) => {
                 allConditions.push({
                     attribute: condition.attribute || "",
@@ -358,74 +226,89 @@ export const FilterWidget = (props: Props) => {
             return
         }
 
-        const exps = queryWidget.expressionSet
-        if (exps.length === 0) {
-            toast.current?.show({
-                severity: 'info',
-                summary: 'Info',
-                detail: 'Tenha pelo menos uma expressão!'
-            });
-            return;
-        }
-
         let hasToStop = false
-        exps.forEach((tuple, expIndex) => {
-            if (tuple.expression.isAll == undefined) {
+
+        if (!isElse) {
+            const exps = queryWidget.expressionSet
+            if (exps.length === 0) {
                 toast.current?.show({
                     severity: 'info',
                     summary: 'Info',
-                    detail: 'Selecione se a expressão ' + tuple.id + ' é "E" ou "OU"'
+                    detail: 'Tenha pelo menos uma expressão!'
                 });
-                hasToStop = true
-                return
+                return;
             }
-            tuple.expression.conditions?.forEach((cond, index) => {
-                if (cond.attribute == "") {
+
+            exps.forEach((tuple, expIndex) => {
+                if (tuple.expression.isAll == undefined) {
                     toast.current?.show({
                         severity: 'info',
                         summary: 'Info',
-                        detail: 'Selecione um atributo para a condição ' + expIndex + '.' + index
+                        detail: 'Selecione se a expressão ' + tuple.id + ' é "E" ou "OU"'
                     });
                     hasToStop = true
                     return
                 }
+                tuple.expression.conditions?.forEach((cond, index) => {
+                    if (cond.attribute == "") {
+                        toast.current?.show({
+                            severity: 'info',
+                            summary: 'Info',
+                            detail: 'Selecione um atributo para a condição ' + expIndex + '.' + index
+                        });
+                        hasToStop = true
+                        return
+                    }
 
-                if (cond.op == "") {
-                    toast.current?.show({
-                        severity: 'info',
-                        summary: 'Info',
-                        detail: 'Selecione uma função para a condição ' + expIndex + '.' + index
-                    });
-                    hasToStop = true
-                    return
-                }
+                    if (cond.op == "") {
+                        toast.current?.show({
+                            severity: 'info',
+                            summary: 'Info',
+                            detail: 'Selecione uma função para a condição ' + expIndex + '.' + index
+                        });
+                        hasToStop = true
+                        return
+                    }
 
-                let aux = cond.op == 'null' ||
-                    (cond.op == 'true' || cond.op == 'false')
+                    let aux = cond.op == 'null' ||
+                        (cond.op == 'true' || cond.op == 'false')
 
-                if (cond.value == undefined && !aux) {
-                    toast.current?.show({
-                        severity: 'info',
-                        summary: 'Info',
-                        detail: 'Selecione um valor para a condição ' + expIndex + '.' + index
-                    });
-                    hasToStop = true
-                    return
-                }
+                    if (cond.value == undefined && !aux) {
+                        toast.current?.show({
+                            severity: 'info',
+                            summary: 'Info',
+                            detail: 'Selecione um valor para a condição ' + expIndex + '.' + index
+                        });
+                        hasToStop = true
+                        return
+                    }
+                });
             });
-        });
+        }
 
         if (!hasToStop) {
-            let res2 = queryWidget.expressionSet.map((tuple) => tuple.expression);
-            let rule = generateRulesFromExpression(res2[0]);
-            const dto: FilterRule = {
-                name: queryWidget.title,
-                filterJson: rule,
-                isAll: queryWidget.expressionSet[0].expression.isAll!,
-                isElse: isElse,
-                symbol: {
-                    type: RenderType.Unique,
-                    rendererOL: singleColorStyle(color!, borderColor, borderThickness!)
+            let dto: FilterRule
+            if (isElse)
+                dto = {
+                    name: queryWidget.title,
+                    isElse: isElse,
+                    symbol: {
+                        type: RenderType.Unique,
+                        rendererOL: singleColorStyle(color!, borderColor, borderThickness!)
+                    }
+                }
+            else {
+                let res2 = queryWidget.expressionSet.map((tuple) => tuple.expression);
+                let rule = generateRulesFromExpression(res2[0]);
+                dto = {
+                    name: queryWidget.title,
+                    filterJson: rule,
+                    isAll: queryWidget.expressionSet[0].expression.isAll!,
+                    isElse: isElse,
+                    symbol: {
+                        type: RenderType.Unique,
+                        rendererOL: singleColorStyle(color!, borderColor, borderThickness!)
+                    }
                 }
             }
             setFilter(dto);
@@ -435,6 +318,7 @@ export const FilterWidget = (props: Props) => {
 
     function close() {
         reset();
+        setIsElse(false);
         setVisible(false);
     }
 
@@ -450,11 +334,15 @@ export const FilterWidget = (props: Props) => {
                         <label htmlFor="title">Nome</label>
                     </span>
                     <div className="flex align-items-center">
-                        <RadioButton inputId="filter1" name="filterType" value="Filtro" onChange={(e) => setIsElse(false)} checked={!isElse} />
+                        <RadioButton inputId="filter1" name="filterType" value="Filtro"
+                                     onChange={(e) => setIsElse(false)} checked={!isElse}/>
                         <label htmlFor="filter1">Filtro</label>
                     </div>
                     <div className="flex align-items-center">
-                        <RadioButton inputId="filter2" name="filterType" value="Todas as restantes geometrias" onChange={(e) => setIsElse(true)} checked={isElse} />
+                        <RadioButton inputId="filter2" name="filterType" value="Todas as restantes geometrias"
+                                     disabled={!canBeElse}
+                                     onChange={(e) => setIsElse(true)}
+                                     checked={isElse}/>
                         <label htmlFor="filter2">Todas as restantes geometrias</label>
                     </div>
                 </div>
@@ -464,7 +352,7 @@ export const FilterWidget = (props: Props) => {
                 <UniqueSymbolComponent color={color} setColor={setColor} borderColor={borderColor}
                                        setBorderColor={setBorderColor} currentStyle={filter?.symbol.rendererOL}
                                        borderThickness={borderThickness} setBorderThickness={setBorderThickness}/>
-                <ScrollPanel>
+                {!isElse && <ScrollPanel>
                     <ul className={styles.expressions} style={{paddingLeft: "0"}}>
                         {queryWidget.expressionsComponents.map((item, index) =>
                             <li key={index}><ExpressionOnFilter
@@ -472,7 +360,7 @@ export const FilterWidget = (props: Props) => {
                             </li>
                         )}
                     </ul>
-                </ScrollPanel>
+                </ScrollPanel>}
                 <div className={styles.addExpression}>
                     <Button label="Concluir" onClick={addPolygons}/>
                 </div>

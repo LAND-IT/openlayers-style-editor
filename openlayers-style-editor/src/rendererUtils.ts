@@ -1,6 +1,7 @@
 import {Color, fromString} from "ol/color";
 import {FlatStyle} from "ol/style/flat";
 import {Stop} from "./components/rampColors.ts";
+import {FilterRule} from "@/components/basedOnRules.tsx";
 
 //https://openlayers.org/en/latest/apidoc/module-ol_style_expressions.html
 
@@ -25,6 +26,7 @@ export interface Render {
     field?: string | null
     graduatedType?: GraduatedModes
     rendererOL: FlatStyle
+    filters?: FilterRule[]
 }
 
 export enum RenderType {
@@ -46,7 +48,6 @@ export enum GraduatedModes {
     GeometricInterval = "GeometricInterval",
     StandardDeviation = "StandardDeviation",
 }
-
 
 
 export interface PredefinedRenderer {
@@ -163,14 +164,14 @@ export function changeRendererOpacity(renderer: Render, opacity: number): Render
             color[3] = opacity / 100
             newAux[i] = color
         }
-        console.log(renderer)
+
         newRenderer = {
             ...renderer, rendererOL: {
                 ...renderer.rendererOL,
                 ["fill-color"]: (renderer.rendererOL["fill-color"]! as any[]).slice(0, 3).concat(newAux)
             }
         } as Render
-        console.log(newRenderer)
+
         // newRenderer.rendererOL["fill-color"] = (renderer.rendererOL["fill-color"]! as any[]).slice(0, 3).concat(newAux)
     }
     if (renderer.type == RenderType.Graduated) {
@@ -228,4 +229,42 @@ export function getRendererColorAndSizeStroke(renderer: Render): { color: Color,
 
 export function generateRandomColor() {
     return fromString('#' + (0x1000000 + Math.random() * 0xffffff).toString(16).substr(1, 6))
+}
+
+export function getByRulesStyle(filters: { filter: FilterRule, ids: number[] }[], idFieldName: string, elseFilter?: FilterRule): FlatStyle {
+    let fillColorArray = []
+    let strokeColorArray = []
+    let strokeWidthArray = []
+    fillColorArray.push('case')
+    strokeColorArray.push('case')
+    strokeWidthArray.push('case')
+    filters.forEach(filter => {
+        let fillColor = getStyleColorsAndValues(filter.filter.symbol.rendererOL, RenderType.Unique)[0].color
+        fillColorArray.push(['in', ['get',  idFieldName], filter.ids])
+        fillColorArray.push(fillColor)
+
+        let stroke = getRendererColorAndSizeStroke(filter.filter.symbol)
+        strokeColorArray.push(['in', ['get', idFieldName], filter.ids])
+        strokeColorArray.push(stroke.color)
+        strokeWidthArray.push(['in', ['get', idFieldName], filter.ids])
+        strokeWidthArray.push(stroke.size)
+    })
+
+    if (elseFilter) {
+        let fillColor = getStyleColorsAndValues(elseFilter.symbol.rendererOL, RenderType.Unique)[0].color
+        fillColorArray.push(fillColor)
+        let stroke = getRendererColorAndSizeStroke(elseFilter.symbol)
+        strokeColorArray.push(stroke.color)
+        strokeWidthArray.push(stroke.size)
+    } else {
+        fillColorArray.push(fromString('#ffffff'))
+        strokeColorArray.push(fromString('#000000'))
+        strokeWidthArray.push(1)
+    }
+
+    return ({
+        'stroke-color': strokeColorArray,
+        'stroke-width': strokeWidthArray,
+        'fill-color': fillColorArray
+    })
 }

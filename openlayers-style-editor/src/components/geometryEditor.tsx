@@ -2,7 +2,7 @@ import React, {Dispatch, SetStateAction, useEffect, useState} from "react"
 import {UniqueSymbol} from "./uniqueSymbol"
 import {Categorized} from "./categorized"
 import {Dropdown} from "primereact/dropdown";
-import {SEAttribute, PredefinedRenderer, Render, RenderType} from "../rendererUtils";
+import {PredefinedRenderer, Render, RenderType, SEAttribute} from "../rendererUtils";
 import {ColorRamp} from "./rampColors.ts";
 import {Button} from "primereact/button";
 import {Graduated} from "./graduated.tsx";
@@ -10,6 +10,7 @@ import {useTranslation} from "react-i18next";
 import "./geometryEditor.css"
 import {BasedOnRules} from "./basedOnRules.tsx";
 import {FilterWidgetContextProvider} from "./filters/filterWidgetContext.tsx";
+import {Feature} from "ol";
 
 interface Props {
     attributes: SEAttribute[]
@@ -22,6 +23,7 @@ interface Props {
     moreRamps?: ColorRamp[]
     predefinedStyles: PredefinedRenderer[],
     numbersLocale: string
+    features: Feature[]
 }
 
 export const GeometryEditor: React.FC<Props> = (props: Props) => {
@@ -34,7 +36,8 @@ export const GeometryEditor: React.FC<Props> = (props: Props) => {
         showPreDefinedRamps,
         applyRenderer,
         setVisible,
-        numbersLocale
+        numbersLocale,
+        features
     } = props;
 
     const {t} = useTranslation();
@@ -61,11 +64,13 @@ export const GeometryEditor: React.FC<Props> = (props: Props) => {
         label: string,
         code: number
     }>(layerCurrentRenderer.type == RenderType.Categorized ?
-        options[1] : layerCurrentRenderer.type == RenderType.Graduated ? options[2] : options[0])
+        options[1] : layerCurrentRenderer.type == RenderType.Graduated ? options[2] :
+            layerCurrentRenderer.type == RenderType.ByRules ? options[3] : options[0])
 
     useEffect(() => {
         setActiveIndex(currentRenderer.type == RenderType.Categorized ?
-            options[1] : currentRenderer.type == RenderType.Graduated ? options[2] : options[0])
+            options[1] : currentRenderer.type == RenderType.Graduated ? options[2] :
+                layerCurrentRenderer.type == RenderType.ByRules ? options[3] : options[0])
     }, [currentRenderer]);
 
     return (
@@ -105,7 +110,9 @@ export const GeometryEditor: React.FC<Props> = (props: Props) => {
                         layerCurrentRenderer={layerCurrentRenderer} numbersLocale={numbersLocale}/>}
 
                 {activeIndex?.code == 3 && <FilterWidgetContextProvider attributes={attr}>
-                    <BasedOnRules/>
+                    <BasedOnRules applyRenderer={applyRenderer}
+                                  layerCurrentRenderer={layerCurrentRenderer}
+                                  setVisible={setVisible} features={features}/>
                 </FilterWidgetContextProvider>}
             </div>
         </>

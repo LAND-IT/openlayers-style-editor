@@ -8,7 +8,8 @@ import {Color, fromString} from "ol/color";
 import {Button, Button as PrimeButton} from "primereact/button";
 import {
     ColorRampDropdownItem,
-    ColorRampItem, generateRandomColor,
+    ColorRampItem,
+    generateRandomColor,
     getCategorizedStyle,
     getRendererColorAndSizeStroke,
     getRendererOpacity,
@@ -16,14 +17,14 @@ import {
     PredefinedRenderer,
     Render,
     RenderType,
-    Row
+    Row,
+    SEAttribute
 } from "../rendererUtils";
 import {FlatStyle} from "ol/style/flat";
 import {MyColorPicker} from "./myColorPicker.tsx";
 import {Slider} from "primereact/slider";
 import {useTranslation} from "react-i18next";
 import "./categorized.css"
-import {SEAttribute} from "../rendererUtils";
 
 interface Props {
     attr: SEAttribute[]

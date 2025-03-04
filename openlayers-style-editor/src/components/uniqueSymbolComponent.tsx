@@ -1,7 +1,7 @@
 import {MyColorPicker} from "@/components/myColorPicker.tsx";
 import {Color, fromString} from "ol/color";
 import {Slider} from "primereact/slider";
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {FlatStyle} from "ol/style/flat";
 import {useTranslation} from "react-i18next";
 import "./uniqueSymbol.css"

@@ -1,7 +1,7 @@
 'use client'
 import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {Dialog} from "primereact/dialog";
-import {SEAttribute, PredefinedRenderer, Render} from "../../rendererUtils.ts";
+import {PredefinedRenderer, Render, SEAttribute} from "@/rendererUtils.ts";
 import {ColorRamp} from "../rampColors.ts";
 import {GeometryEditor} from "../geometryEditor.tsx";
 import {Feature} from "ol";
@@ -66,6 +66,7 @@ const StyleEditorComponent: React.FC<Props> = (props: Props) => {
                                 layerCurrentRenderer={layerCurrentRenderer} applyRenderer={applyRenderer}
                                 setVisible={setVisible} layerDefaultRenderer={layerDefaultRenderer}
                                 moreRamps={moreRamps} numbersLocale={numbersLocale}
+                                features={features}
                                 predefinedStyles={predefinedStyles ? predefinedStyles : []} showPreDefinedRamps={showPreDefinedRamps}/>}
         </Dialog>
     </>

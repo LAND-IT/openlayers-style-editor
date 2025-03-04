@@ -1,4 +1,4 @@
-import { Feature } from 'ol';
+import {Feature} from 'ol';
 import {AttributeTypeEnum, SEAttribute} from "../rendererUtils";
 
 export function mapFeaturesToSEAttributes(features: Feature[]): SEAttribute[] {

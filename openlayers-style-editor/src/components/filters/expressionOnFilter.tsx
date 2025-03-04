@@ -83,7 +83,7 @@ export const ExpressionOnFilter = (props: Props) => {
 
     return <>
         <div style={{position: "relative", paddingBottom: "5px"}}>
-            <Panel header={"Expressão " + id}>
+            <Panel header={"Expressão"}>
                 <div style={{display: "flex", flexDirection: "column"}}>
                     <ScrollPanel style={{width: '100%', height: '90%'}}>
                         <ul style={{paddingLeft: "0"}}>
