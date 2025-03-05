@@ -10,11 +10,13 @@ import {
     getRendererColorAndSizeStroke,
     getStyleColorsAndValues,
     Render,
-    RenderType
+    RenderType, SEAttribute
 } from "@/rendererUtils";
 import {asString} from "ol/color";
 import jsonLogic from "json-logic-js";
 import {Feature} from "ol";
+import {Dropdown} from "primereact/dropdown";
+import {Geometry} from "ol/geom";
 
 export interface FilterRule {
     name: string
@@ -35,17 +37,19 @@ interface Props {
     features: Feature[]
     applyRenderer: (renderer: Render) => void
     layerCurrentRenderer: Render
+    attributes: SEAttribute[]
 }
 
 export function BasedOnRules(props: Props) {
 
-    const {setVisible, features, applyRenderer, layerCurrentRenderer} = props
+    const {setVisible, features, applyRenderer, layerCurrentRenderer, attributes} = props
 
     const [rules, setRules] = useState<FilterRule[]>(layerCurrentRenderer.type == RenderType.ByRules ?
         layerCurrentRenderer.filters ? layerCurrentRenderer.filters : [] : [])
     const [selectedRule, setSelectedRule] = useState<FilterRule>()
     const [showDialog, setShowDialog] = useState<boolean>(false)
     const [isAdding, setIsAdding] = useState<boolean>(false)
+    const [selectedAttribute, setSelectedAttribute] = useState<SEAttribute>()
 
     const {t} = useTranslation();
     const nameLabel: string = t("based_on_rules.name" as any)
@@ -88,10 +92,40 @@ export function BasedOnRules(props: Props) {
         setSelectedRule(undefined)
     }
 
-    //TODO traduções; deixar o user escolher o atributo ID; apresentar melhor a expressão; ID ser string
+    function hasUniqueIDs(features: Feature<Geometry>[], IDAttribute: SEAttribute): boolean {
+        const idSet = new Set<string | number>();
+
+        for (const feature of features) {
+            const id = feature.get(IDAttribute.name);
+
+            if (id === undefined || id === null) {
+                return false;
+            }
+
+            if (idSet.has(id)) {
+                return false;
+            }
+
+            idSet.add(id);
+        }
+        return true;
+    }
+
+    //TODO traduções; apresentar melhor a expressão; ID ser string
 
     return <>
         <div className={"container-bor"}>
+            <div className={"bor-id"}>
+                <Dropdown options={attributes} optionLabel={"name"} value={selectedAttribute}
+                          placeholder={"Select the ID attribute"}
+                          onChange={(e) => setSelectedAttribute(e.value)}/>
+
+                {selectedAttribute && !hasUniqueIDs(features, selectedAttribute) &&
+                    <div className={"bor-id"}>
+                        <i className={"pi pi-exclamation-triangle"} style={{ color: 'orange' }}/>
+                        <span><b>IDs are not unique</b></span>
+                    </div>}
+            </div>
             <div className={"bor-buttons"}>
                 <Button label="Add Rule" icon="pi pi-plus" outlined={true} onClick={() => {
                     setIsAdding(true);
@@ -103,7 +137,7 @@ export function BasedOnRules(props: Props) {
                         setSelectedRule(undefined)
                     }
                 }}/>
-                <Button label="Edit Rule" disabled={!selectedRule}  icon="pi pi-pencil" outlined={true} onClick={() => {
+                <Button label="Edit Rule" disabled={!selectedRule} icon="pi pi-pencil" outlined={true} onClick={() => {
                     if (selectedRule) {
                         setIsAdding(false);
                         setShowDialog(true)
@@ -120,6 +154,7 @@ export function BasedOnRules(props: Props) {
             </DataTable>
             <div className={"footer-container"}>
                 <Button label={concludeLabel}
+                        disabled={selectedAttribute && !hasUniqueIDs(features, selectedAttribute)}
                         onClick={() => {
                             let appliedFilters: { filter: FilterRule, ids: number[] }[] = []
                             let aux = rules.filter(r => !r.isElse)
@@ -136,7 +171,7 @@ export function BasedOnRules(props: Props) {
                             applyRenderer({
                                 type: RenderType.ByRules,
                                 filters: rules,
-                                rendererOL: getByRulesStyle(appliedFilters, "id", rules.find(r => r.isElse))
+                                rendererOL: getByRulesStyle(appliedFilters, selectedAttribute.name, rules.find(r => r.isElse))
                             })
                             setVisible(false)
                         }}/></div>

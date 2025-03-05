@@ -112,7 +112,7 @@ export const GeometryEditor: React.FC<Props> = (props: Props) => {
                 {activeIndex?.code == 3 && <FilterWidgetContextProvider attributes={attr}>
                     <BasedOnRules applyRenderer={applyRenderer}
                                   layerCurrentRenderer={layerCurrentRenderer}
-                                  setVisible={setVisible} features={features}/>
+                                  setVisible={setVisible} features={features} attributes={attr}/>
                 </FilterWidgetContextProvider>}
             </div>
         </>
