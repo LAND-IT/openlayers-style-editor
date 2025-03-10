@@ -1,0 +1,40 @@
+.starting {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    width: 100%;
+    padding-left: 90px;
+    padding-right: 90px;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: start;
+    width: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: calc(99.5vh - 75px);
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.menu{
+    width:20vw;
+}
+
+.active{
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.content a {
+    color: green;
+    font-weight: bold;
+}
+
+.content a:hover {
+    color: green;
+    font-weight: bold;
+}

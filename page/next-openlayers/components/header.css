@@ -1,0 +1,52 @@
+.header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+    width: 99.9vw;
+    padding: 10px 80px 10px 10px;
+    background-color: var(--primary-color-soft);
+    margin-bottom: 5px;
+}
+
+.left{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.image{
+    height: 6vh;
+}
+
+.right{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-right: 20px;
+    margin-right: 80px
+}
+
+.github {
+    background-color: black;
+    border-radius: 70px;
+    height: 100px;
+    width: 100px;
+    position: fixed;
+    right: -40px;
+    top: -40px;
+}
+
+.github:hover {
+    cursor: pointer;
+}
+
+.github-icon{
+    position: fixed;
+    right: 15px;
+    top: 15px;
+    color: #fff;
+    rotate: 45deg;
+    width: 24px;
+    height: 24px;
+}

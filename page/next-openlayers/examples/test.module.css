@@ -1,0 +1,11 @@
+.map {
+    width: 90vw;
+    height: 80vh
+}
+
+.demo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+} 
