@@ -6,10 +6,10 @@ import {Feature, Map, View} from "ol";
 import VectorSource from "ol/source/Vector";
 import WebGLVectorLayer from "ol/layer/WebGLVector";
 import {GeoJSON} from "ol/format";
-import styles from "./test.module.css";
 import {Button} from "primereact/button";
 import {Render, RenderType, StyleEditor} from "openlayers-style-editor";
 import {Header} from "../components/Header";
+import styles from "./test.module.css";
 
 
 

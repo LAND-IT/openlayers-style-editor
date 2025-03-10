@@ -1,9 +1,10 @@
 .icons{
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: left;
     margin-top: 10px;
     margin-bottom: 10px;
+    gap: 35px;
 }
 
 .icon{
