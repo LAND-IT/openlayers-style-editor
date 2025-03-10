@@ -1,0 +1,28 @@
+.icons{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.icon{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+}
+
+.iconAnimation{
+    transition: transform 0.3s ease-in-out, rotate 0.5s ease-in-out;
+}
+
+.iconAnimation:hover{
+    transform: scale(1.1);
+    rotate: 360deg;
+}
+
+.active{
+    font-weight: bold;
+    text-decoration: underline;
+}

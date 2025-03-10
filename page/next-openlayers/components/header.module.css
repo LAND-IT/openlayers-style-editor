@@ -41,7 +41,7 @@
     cursor: pointer;
 }
 
-.github-icon{
+.githubIcon{
     position: fixed;
     right: 15px;
     top: 15px;
@@ -49,4 +49,11 @@
     rotate: 45deg;
     width: 24px;
     height: 24px;
+    transition: rotate 0.3s ease-in-out;
+}
+
+.githubIcon:hover{
+    cursor: pointer;
+    rotate: 0deg;
+    transition: rotate 0.3s ease-in-out;
 }

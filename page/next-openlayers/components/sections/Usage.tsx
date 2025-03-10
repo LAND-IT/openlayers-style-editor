@@ -1,10 +1,10 @@
-import './usage.css'
+import styles from './usage.module.css'
 import {CopyBlock} from "react-code-blocks";
 import {atomOneLight} from "react-code-blocks";
 
 export function Usage() {
     return (
-        <div className={"usage"}>
+        <div className={styles.usage}>
             <span>Firstly it is necessary to import the styles of the package.
                 This can be done by adding the following code snippet to your index/main file.</span>
 

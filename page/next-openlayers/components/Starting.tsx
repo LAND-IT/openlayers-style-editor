@@ -3,7 +3,7 @@ import {Header} from "./Header";
 import {useEffect, useState} from "react";
 import {Card} from "primereact/card";
 import {Background} from "./sections/Background";
-import './starting.css';
+import styles from './starting.module.css';
 import {Presentation} from "./sections/Presentation";
 import {Installation} from "./sections/Installation";
 import {Usage} from "./sections/Usage";
@@ -71,14 +71,14 @@ export function Starting(props: Props) {
     return (
         <div>
             <Header/>
-            <div className={"starting"}>
+            <div className={styles.starting}>
 
                 <InfoBoard activeSection={activeSection} sections={sections} setActiveSection={setActiveSection}/>
 
                 {/* Conteúdo principal */}
-                <div id={"content"} className="content">
+                <div id={"content"} className={styles.content}>
                     {sections.map((section) => (
-                        <Card key={section.id} title={section.label} id={section.id} className="section">
+                        <Card key={section.id} title={section.label} id={section.id} className={styles.section}>
                             {section.body}
                         </Card>
                     ))}

@@ -97,8 +97,8 @@ export function Test() {
 
     return (
         <>
-            <Header/>
             <div className={styles.demo}>
+                <Header/>
                 <span><b>Ecoregions of the Earth</b></span>
                 <div id={"viewID"} className={styles.map}></div>
                 <Button onClick={() => setVisible(true)}>

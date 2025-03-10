@@ -3,7 +3,8 @@ import React, {useEffect, useState} from "react";
 import {getContributorsAndLatestVersion, RepoInfo, Contributor} from "./requests";
 import {Avatar} from "primereact/avatar";
 import {Icon} from "@iconify/react";
-import "./infoBoard.css";
+import styles from "./infoBoard.module.css";
+import "./infoBoard.css"
 
 interface Props {
     sections: { id: string, label: string, body: React.ReactNode }[]
@@ -21,7 +22,7 @@ export function InfoBoard(props: Props) {
         label: sec.label,
         template: () => <a
             href={`#${sec.id}`}
-            className={activeSection == sec.id ? "active" : ""}
+            className={activeSection == sec.id ? styles.active : ""}
             onClick={() => setActiveSection(sec.id)}
         >
             {sec.label}
@@ -44,10 +45,10 @@ export function InfoBoard(props: Props) {
 
             <h2>Info</h2>
             {/*<p>Version: {repoData}</p>*/}
-            <div className={"icons"}>
-                <div className={"icon"}> {repoData?.data?.stargazers_count} <Icon icon={"iconamoon:star"}></Icon></div>
-                <div className={"icon"}> {repoData?.data?.forks_count} <Icon icon={"pajamas:fork"}></Icon></div>
-                <div className={"icon"}>{repoData?.data?.open_issues_count} <Icon icon={"octicon:issue-opened-16"}></Icon></div>
+            <div className={styles.icons}>
+                <div className={styles.icon}> {repoData?.data?.stargazers_count} <Icon className={styles.iconAnimation} icon={"iconamoon:star"}></Icon></div>
+                <div className={styles.icon}> {repoData?.data?.forks_count} <Icon className={styles.iconAnimation} icon={"pajamas:fork"}></Icon></div>
+                <div className={styles.icon}>{repoData?.data?.open_issues_count} <Icon className={styles.iconAnimation} icon={"octicon:issue-opened-16"}></Icon></div>
             </div>
             <p>Last Update: {(repoData?.data?.updated_at as string)?.split("T")[0]}</p>
             <p>License: {repoData?.data?.license?.name}</p>
