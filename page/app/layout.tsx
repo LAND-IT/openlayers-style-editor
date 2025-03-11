@@ -9,11 +9,9 @@ const seoTags = [
   "OpenLayers Style Editor",
   "Map Styling Tool",
   "OpenLayers Map Customization",
-  "Online Map Editor",
   "OpenLayers Layer Styling",
-  "Map Design Tool",
   "Layer Style Editor",
-  "OpenLayers CSS Editor",
+  "OpenLayers",
   "Web Map Styling",
   "Geospatial Visualization Tool"
 ];
