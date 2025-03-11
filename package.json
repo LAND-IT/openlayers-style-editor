@@ -10,6 +10,6 @@
     "lerna": "^8.1.9"
   },
   "scripts": {
-    "build": "cd page && tsc -b && vite build"
+    "build": "cd page && next build"
   }
 }
