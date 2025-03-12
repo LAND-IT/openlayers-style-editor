@@ -22,9 +22,6 @@ export const metadata: Metadata = {
   keywords: seoTags,
   authors: [{ name: "LAND IT Team", url: "https://land-it.github.io" }],
   creator: "LAND IT Team",  
-  icons: {
-    icon: "/favicon.ico",
-  },
   robots: {
     index: true,
     follow: true,
