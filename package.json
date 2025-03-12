@@ -1,10 +1,17 @@
 {
   "name": "openlayers-style-editor-root",
+  "private": true,
   "version": "indiferent",
-  "workspaces": [
-    "page",
-    "openlayers-style-editor"
-  ],
+  "workspaces": {
+    "packages": [
+      "page",
+      "openlayers-style-editor"
+    ],
+    "nohoist": [
+      "**/react",
+      "**/react-dom"
+    ]
+  },
   "dependencies": {
     "nx": "19.4.3",
     "lerna": "^8.1.9"
