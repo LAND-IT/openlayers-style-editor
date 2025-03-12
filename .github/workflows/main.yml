@@ -37,8 +37,11 @@ jobs:
           cache: 'npm'
       - name: Install yarn
         run: npm install -g yarn
-      - name: Install dependencies
-        run: yarn install
+      - name: Clean cache and install dependencies
+        run: |
+          yarn cache clean
+          rm -rf node_modules
+          yarn install --frozen-lockfile
       - name: Build
         run: yarn build
       - name: Setup Pages
