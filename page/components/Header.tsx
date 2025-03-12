@@ -13,7 +13,7 @@ export function Header() {
                     <Link href="/">
                         <Image 
                             className={styles.image} 
-                            src={'/favicons/android-chrome-512x512.png'}
+                            src={`${process.env.NODE_ENV === 'production' ? '/openlayers-style-editor' : ''}/favicons/android-chrome-512x512.png`}
                             alt={"logo"} 
                             width={55}
                             height={55}
