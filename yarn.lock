@@ -1024,51 +1024,6 @@
   resolved "https://registry.npmjs.org/@nx/nx-darwin-arm64/-/nx-darwin-arm64-19.4.3.tgz"
   integrity sha512-aostkFmS8HPgnJS3Po55AqtU+O09LC4R79UBa/Pnxjtb7GGM3T7Gk8349RTc/wEWIRi1pS6Yk0GgT3FS59WF3g==
 
-"@nx/nx-darwin-x64@19.4.3":
-  version "19.4.3"
-  resolved "https://registry.npmjs.org/@nx/nx-darwin-x64/-/nx-darwin-x64-19.4.3.tgz"
-  integrity sha512-aZUEHq0gn+OHYmN0tEQ4yQsx6l5tlCwl0EJIGUaps9o6XunjPnw5qKpmy/aw804HF6pqjSuWMqVWwh3RuAvSJQ==
-
-"@nx/nx-freebsd-x64@19.4.3":
-  version "19.4.3"
-  resolved "https://registry.npmjs.org/@nx/nx-freebsd-x64/-/nx-freebsd-x64-19.4.3.tgz"
-  integrity sha512-RDlLUoG1aT9u9Acz8jjsgoaRkge+uTOG11JYUjgDidJ/avB0zgLOpjhLUUH53NLgt5Fc53RDZqzfytzXB/lr9Q==
-
-"@nx/nx-linux-arm-gnueabihf@19.4.3":
-  version "19.4.3"
-  resolved "https://registry.npmjs.org/@nx/nx-linux-arm-gnueabihf/-/nx-linux-arm-gnueabihf-19.4.3.tgz"
-  integrity sha512-2hur4cKowYY1D+y017Yog8V2T0tlMkf/hzjjnyxxsbEXCBSo3mwzbNdaLzXh2kSP9f/d4nyHWJY0VJJed06dFw==
-
-"@nx/nx-linux-arm64-gnu@19.4.3":
-  version "19.4.3"
-  resolved "https://registry.npmjs.org/@nx/nx-linux-arm64-gnu/-/nx-linux-arm64-gnu-19.4.3.tgz"
-  integrity sha512-bf46gPM7R83+uhdkVeqd7LjU5p9OeXYzE3B66wOHWZag8LVAwvh73sUQU/G5kjyzYiYlow3R5K6Xo1ZlKcNaJg==
-
-"@nx/nx-linux-arm64-musl@19.4.3":
-  version "19.4.3"
-  resolved "https://registry.npmjs.org/@nx/nx-linux-arm64-musl/-/nx-linux-arm64-musl-19.4.3.tgz"
-  integrity sha512-BwjVuws2wTeaNiXsr5oc7vL/f+GY2nir45P5fHN2pvvHg672SkepYvTqLNPbmpl2R5oY0gAgXtzcq3oWIVz4yg==
-
-"@nx/nx-linux-x64-gnu@19.4.3":
-  version "19.4.3"
-  resolved "https://registry.npmjs.org/@nx/nx-linux-x64-gnu/-/nx-linux-x64-gnu-19.4.3.tgz"
-  integrity sha512-7MT1Q+aH84p5QgmrfPqCm83GHJqJv7vuJd+6whdxvoritfh6YdlVH3P75TVByYNXd1qV/Hwx2+diWlwJ3mXiRg==
-
-"@nx/nx-linux-x64-musl@19.4.3":
-  version "19.4.3"
-  resolved "https://registry.npmjs.org/@nx/nx-linux-x64-musl/-/nx-linux-x64-musl-19.4.3.tgz"
-  integrity sha512-LYLQct984GqPMvColo5JyXVsrmsI8vlO64NkUSdCuxgd+qkLbLWpjrH0fPmkaunylrKRBFfIk+2EOV4h/xPgtw==
-
-"@nx/nx-win32-arm64-msvc@19.4.3":
-  version "19.4.3"
-  resolved "https://registry.npmjs.org/@nx/nx-win32-arm64-msvc/-/nx-win32-arm64-msvc-19.4.3.tgz"
-  integrity sha512-pDCZ/dqL2AZOghzP+wDFQsI6P407K4jvHif9L5UviRmLMBfiqwvjhfYdJOouRij/h42mkDjahynN2yls3aqyGg==
-
-"@nx/nx-win32-x64-msvc@19.4.3":
-  version "19.4.3"
-  resolved "https://registry.npmjs.org/@nx/nx-win32-x64-msvc/-/nx-win32-x64-msvc-19.4.3.tgz"
-  integrity sha512-rfttenQwx17D4vXchReaAuWRlxweoxNoYIBpiu8Wg47gNXX36dsTG8VZmJ3T96h7aLUT/lmZ9MmqoItzRQrjeQ==
-
 "@octokit/auth-token@^4.0.0":
   version "4.0.0"
   resolved "https://registry.npmjs.org/@octokit/auth-token/-/auth-token-4.0.0.tgz"
@@ -5782,8 +5737,8 @@ open@^8.4.0:
     is-docker "^2.1.1"
     is-wsl "^2.2.0"
 
-openlayers-style-editor@0.1.4, "openlayers-style-editor@file:/Users/mbm/Documents/Trabalho/Projetos/styles-editor/openlayers-style-editor":
-  version "0.1.4"
+openlayers-style-editor@0.1.5, "openlayers-style-editor@file:/Users/mbm/Documents/Trabalho/Projetos/styles-editor/openlayers-style-editor":
+  version "0.1.5"
   resolved "file:openlayers-style-editor"
   dependencies:
     chart.js "4.4.8"
@@ -5986,7 +5941,7 @@ pacote@^18.0.0, pacote@^18.0.6:
     dotenv "^16.4.7"
     next "15.2.1"
     ol "^10.4.0"
-    openlayers-style-editor "0.1.4"
+    openlayers-style-editor "0.1.5"
     primereact "^10.9.2"
     prism-react-renderer "^2.4.1"
     react "^18.3.1"

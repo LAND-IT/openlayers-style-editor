@@ -15,7 +15,7 @@
     "dotenv": "^16.4.7",
     "next": "15.2.1",
     "ol": "^10.4.0",
-    "openlayers-style-editor": "0.1.4",
+    "openlayers-style-editor": "0.1.5",
     "primereact": "^10.9.2",
     "prism-react-renderer": "^2.4.1",
     "react": "^18.3.1",
