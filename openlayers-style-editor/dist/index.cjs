@@ -120,8 +120,13 @@
       let aux = renderer.rendererOL["fill-color"];
       aux = [...aux];
       aux[3] = opacity / 100;
-      newRenderer = { ...renderer };
-      newRenderer.rendererOL["fill-color"] = aux;
+      newRenderer = {
+        ...renderer,
+        rendererOL: {
+          ...renderer.rendererOL,
+          ["fill-color"]: aux
+        }
+      };
     }
     if (renderer.type == "Categorized") {
       let aux = renderer.rendererOL["fill-color"].slice(3);
@@ -131,7 +136,6 @@
         color[3] = opacity / 100;
         newAux[i] = color;
       }
-      console.log(renderer);
       newRenderer = {
         ...renderer,
         rendererOL: {
@@ -139,7 +143,6 @@
           ["fill-color"]: renderer.rendererOL["fill-color"].slice(0, 3).concat(newAux)
         }
       };
-      console.log(newRenderer);
     }
     if (renderer.type == "Graduated") {
       let aux = renderer.rendererOL["fill-color"].slice(4);
@@ -149,8 +152,13 @@
         color[3] = opacity / 100;
         newAux[i] = color;
       }
-      newRenderer = { ...renderer };
-      newRenderer.rendererOL["fill-color"] = renderer.rendererOL["fill-color"].slice(0, 4).concat(newAux);
+      newRenderer = {
+        ...renderer,
+        rendererOL: {
+          ...renderer.rendererOL,
+          ["fill-color"]: renderer.rendererOL["fill-color"].slice(0, 4).concat(newAux)
+        }
+      };
     }
     return newRenderer;
   }
