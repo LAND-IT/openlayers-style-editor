@@ -48,7 +48,6 @@ export enum GraduatedModes {
 }
 
 
-
 export interface PredefinedRenderer {
     name: string
     renderer: Row[]
@@ -152,8 +151,12 @@ export function changeRendererOpacity(renderer: Render, opacity: number): Render
         let aux = renderer.rendererOL["fill-color"]! as Color
         aux = [...aux]
         aux[3] = opacity / 100
-        newRenderer = {...renderer} as Render
-        newRenderer.rendererOL["fill-color"] = aux
+        newRenderer = {
+            ...renderer, rendererOL: {
+                ...renderer.rendererOL,
+                ["fill-color"]: aux
+            }
+        } as Render
     }
     if (renderer.type == RenderType.Categorized) {
         let aux = (renderer.rendererOL["fill-color"]! as any[]).slice(3) as any[]
@@ -163,14 +166,12 @@ export function changeRendererOpacity(renderer: Render, opacity: number): Render
             color[3] = opacity / 100
             newAux[i] = color
         }
-        console.log(renderer)
         newRenderer = {
             ...renderer, rendererOL: {
                 ...renderer.rendererOL,
                 ["fill-color"]: (renderer.rendererOL["fill-color"]! as any[]).slice(0, 3).concat(newAux)
             }
         } as Render
-        console.log(newRenderer)
         // newRenderer.rendererOL["fill-color"] = (renderer.rendererOL["fill-color"]! as any[]).slice(0, 3).concat(newAux)
     }
     if (renderer.type == RenderType.Graduated) {
@@ -181,8 +182,12 @@ export function changeRendererOpacity(renderer: Render, opacity: number): Render
             color[3] = opacity / 100
             newAux[i] = color
         }
-        newRenderer = {...renderer} as Render
-        newRenderer.rendererOL["fill-color"] = (renderer.rendererOL["fill-color"]! as any[]).slice(0, 4).concat(newAux)
+        newRenderer = {
+            ...renderer, rendererOL: {
+                ...renderer.rendererOL,
+                ["fill-color"]: (renderer.rendererOL["fill-color"]! as any[]).slice(0, 4).concat(newAux)
+            }
+        } as Render
     }
     return newRenderer
 }

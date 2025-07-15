@@ -1,6 +1,6 @@
 {
   "name": "openlayers-style-editor",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "type": "module",
   "description": "A style editor extension for OpenLayers currently working with WebGL Vector Layers",
   "homepage": "https://land-it.github.io/openlayers-style-editor/",
