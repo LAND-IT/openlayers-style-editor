@@ -831,7 +831,7 @@ const Categorized = (props) => {
       });
       setTable(tableUpdated);
     } else if (colorRamp.value.length > 0) {
-      const style = getCategorizedStyle(selectedAttr?.name, colorRamp.value);
+      const style = getCategorizedStyle(selectedAttr == null ? void 0 : selectedAttr.name, colorRamp.value);
       const colors = getStyleColorsAndValues(style, RenderType.Categorized);
       const tableUpdated = [];
       table.forEach(({ value, visible }) => {
@@ -1076,8 +1076,8 @@ const Categorized = (props) => {
         onClick: () => {
           applyRenderer({
             type: RenderType.Categorized,
-            field: selectedAttr?.name,
-            rendererOL: getCategorizedStyle(selectedAttr?.name, table.filter((row) => row.value != nullText && row.visible).map((tr) => ({
+            field: selectedAttr == null ? void 0 : selectedAttr.name,
+            rendererOL: getCategorizedStyle(selectedAttr == null ? void 0 : selectedAttr.name, table.filter((row) => row.value != nullText && row.visible).map((tr) => ({
               value: tr.value,
               color: tr.color
             })), borderColor, borderThickness, table.find((row) => row.value == nullText).color)
@@ -1131,7 +1131,8 @@ const Graduated = (props) => {
   const locale = numbersLocale;
   const toast = useRef(null);
   const showToast = (message, severity) => {
-    toast.current?.show({ severity, summary: "Error", detail: message });
+    var _a;
+    (_a = toast.current) == null ? void 0 : _a.show({ severity, summary: "Error", detail: message });
   };
   const currentRender = layerCurrentRenderer.type != RenderType.Graduated ? [] : layerCurrentRenderer.rendererOL["fill-color"];
   const valuesAndColors = [];
@@ -1272,7 +1273,7 @@ const Graduated = (props) => {
   }
   async function calculateStopsByMode(mode, nClasses, intervalSize2) {
     let stops2 = [];
-    let values = selectedAttr?.values.map(Number) || [];
+    let values = (selectedAttr == null ? void 0 : selectedAttr.values.map(Number)) || [];
     values = values.filter((v) => !isNaN(v) && v != null);
     const min = Math.min(...values);
     const max = Math.max(...values);
@@ -1326,7 +1327,7 @@ const Graduated = (props) => {
   }
   useEffect(() => {
     if (stops.length > 0) {
-      let values = selectedAttr?.values.map(Number) || [];
+      let values = (selectedAttr == null ? void 0 : selectedAttr.values.map(Number)) || [];
       values = values.filter((v) => !isNaN(v) && v != null);
       setIntervals(countNumbers(values || []));
     }
@@ -1369,7 +1370,7 @@ const Graduated = (props) => {
                 if (context.tick) {
                   const value = Number.parseInt(context.tick.label);
                   const interval = stops.map((stop) => intervals.find((i) => i.min <= stop.value && stop.value < i.max));
-                  return interval.find((i) => i?.min <= value && value < i.max) ? "#ea1010" : "rgba(0,0,0,0)";
+                  return interval.find((i) => (i == null ? void 0 : i.min) <= value && value < i.max) ? "#ea1010" : "rgba(0,0,0,0)";
                 } else
                   return "rgba(0,0,0,0)";
               },
@@ -1568,6 +1569,7 @@ const Graduated = (props) => {
               ] }),
               stops.map(
                 (value, index) => {
+                  var _a, _b;
                   return /* @__PURE__ */ jsxs("div", { className: "flex-row-small-small-gap", children: [
                     /* @__PURE__ */ jsx(
                       InputNumber,
@@ -1576,7 +1578,7 @@ const Graduated = (props) => {
                         allowEmpty: false,
                         locale,
                         min: stops[0].value,
-                        max: index < stops.length - 1 ? stops[index + 1]?.value - 1e-3 : stops[stops.length]?.value,
+                        max: index < stops.length - 1 ? ((_a = stops[index + 1]) == null ? void 0 : _a.value) - 1e-3 : (_b = stops[stops.length]) == null ? void 0 : _b.value,
                         disabled: index === 0 || selectedMode != GraduatedModes.Manual || index === stops.length - 1,
                         onChange: (e) => {
                           const aux = [...stops];
@@ -1702,8 +1704,8 @@ const Graduated = (props) => {
                 applyRenderer({
                   type: RenderType.Graduated,
                   graduatedType: selectedMode,
-                  field: selectedAttr?.name,
-                  rendererOL: getGraduatedStyle(selectedAttr?.name, stops, borderColor, borderThickness)
+                  field: selectedAttr == null ? void 0 : selectedAttr.name,
+                  rendererOL: getGraduatedStyle(selectedAttr == null ? void 0 : selectedAttr.name, stops, borderColor, borderThickness)
                 });
                 setVisible(false);
               }
@@ -1774,7 +1776,7 @@ const GeometryEditor = (props) => {
         }
       )
     ] }),
-    activeIndex?.code == 0 && /* @__PURE__ */ jsx(
+    (activeIndex == null ? void 0 : activeIndex.code) == 0 && /* @__PURE__ */ jsx(
       UniqueSymbol,
       {
         layerCurrentRenderer: currentRenderer,
@@ -1783,7 +1785,7 @@ const GeometryEditor = (props) => {
         setVisible
       }
     ),
-    activeIndex?.code == 1 && /* @__PURE__ */ jsx(
+    (activeIndex == null ? void 0 : activeIndex.code) == 1 && /* @__PURE__ */ jsx(
       Categorized,
       {
         attr,
@@ -1796,7 +1798,7 @@ const GeometryEditor = (props) => {
         showPreDefinedRamps
       }
     ),
-    activeIndex?.code == 2 && /* @__PURE__ */ jsx(
+    (activeIndex == null ? void 0 : activeIndex.code) == 2 && /* @__PURE__ */ jsx(
       Graduated,
       {
         attr,

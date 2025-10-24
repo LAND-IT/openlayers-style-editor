@@ -1,7 +1,7 @@
 {
   "name": "page",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "homepage": "https://land-it.github.io/openlayers-style-editor/",
   "scripts": {
@@ -12,33 +12,33 @@
   },
   "dependencies": {
     "@types/react-syntax-highlighter": "^15.5.13",
-    "dotenv": "^16.4.7",
-    "next": "15.2.1",
-    "ol": "^10.4.0",
-    "openlayers-style-editor": "0.1.5",
-    "primereact": "^10.9.2",
+    "dotenv": "17.2.3",
+    "next": "16.0.0",
+    "ol": "10.6.1",
+    "openlayers-style-editor": "0.1.6",
+    "primereact": "10.9.7",
     "prism-react-renderer": "^2.4.1",
     "react": "^18.3.1",
     "react-code-blocks": "^0.1.6",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^7.2.0",
-    "react-syntax-highlighter": "^15.6.1"
+    "react-router-dom": "7.9.4",
+    "react-syntax-highlighter": "16.0.0"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@eslint/js": "^9.17.0",
-    "@iconify/react": "^5.2.0",
-    "@types/node": "^20",
+    "@eslint/eslintrc": "3.3.1",
+    "@eslint/js": "9.38.0",
+    "@iconify/react": "6.0.2",
+    "@types/node": "24.9.1",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "5.1.0",
     "eslint": "^9.17.0",
-    "eslint-config-next": "15.2.1",
-    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-config-next": "16.0.0",
+    "eslint-plugin-react-hooks": "7.0.0",
     "eslint-plugin-react-refresh": "^0.4.16",
     "gh-pages": "^6.3.0",
-    "globals": "^15.14.0",
-    "typescript": "~5.6.2",
+    "globals": "16.4.0",
+    "typescript": "5.9.3",
     "typescript-eslint": "^8.18.2"
   }
 }
