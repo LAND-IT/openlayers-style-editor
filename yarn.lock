@@ -5807,7 +5807,7 @@ openlayers-style-editor@0.1.6:
     react-i18next "16.2.0"
 
 "openlayers-style-editor@file:/Users/mbm/Documents/Trabalho/Projetos/styles-editor/openlayers-style-editor":
-  version "0.1.7"
+  version "0.1.8"
   resolved "file:openlayers-style-editor"
   dependencies:
     chart.js "4.5.1"

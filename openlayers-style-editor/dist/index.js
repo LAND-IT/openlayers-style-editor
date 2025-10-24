@@ -60,10 +60,11 @@ var GraduatedModes = /* @__PURE__ */ ((GraduatedModes2) => {
   return GraduatedModes2;
 })(GraduatedModes || {});
 function getCategorizedStyle(attribute, colors, outlineColor, outlineWidth, defaultColor) {
-  if (outlineWidth == 0 && outlineColor != void 0)
-    outlineColor[3] = 0;
-  else if (outlineWidth != void 0 && outlineWidth > 0 && outlineColor)
-    outlineColor[3] = 1;
+  let outlineColorCopy = outlineColor ? [...outlineColor] : void 0;
+  if (outlineWidth == 0 && outlineColorCopy != void 0)
+    outlineColorCopy[3] = 0;
+  else if (outlineWidth != void 0 && outlineWidth > 0 && outlineColorCopy)
+    outlineColorCopy[3] = 1;
   let aux = [];
   aux.push("match");
   aux.push(["get", attribute]);
@@ -77,23 +78,24 @@ function getCategorizedStyle(attribute, colors, outlineColor, outlineWidth, defa
       "case",
       ["==", ["var", "highlightedId"], ["id"]],
       "white",
-      outlineColor || "#000000"
+      outlineColorCopy || "#000000"
     ],
     "stroke-width": ["case", ["==", ["var", "highlightedId"], ["id"]], 2, outlineWidth == void 0 ? 1 : outlineWidth],
     "fill-color": aux
   };
 }
 function singleColorStyle(color, outlineColor, outlineWidth) {
-  if (outlineWidth == 0 && outlineColor != void 0)
-    outlineColor[3] = 0;
-  else if (outlineWidth != void 0 && outlineWidth > 0 && outlineColor)
-    outlineColor[3] = 1;
+  let outlineColorCopy = outlineColor ? [...outlineColor] : void 0;
+  if (outlineWidth == 0 && outlineColorCopy != void 0)
+    outlineColorCopy[3] = 0;
+  else if (outlineWidth != void 0 && outlineWidth > 0 && outlineColorCopy)
+    outlineColorCopy[3] = 1;
   return {
     "stroke-color": [
       "case",
       ["==", ["var", "highlightedId"], ["id"]],
       "white",
-      outlineColor || "#000000"
+      outlineColorCopy || "#000000"
     ],
     "stroke-width": ["case", ["==", ["var", "highlightedId"], ["id"]], 2, outlineWidth == void 0 ? 1 : outlineWidth],
     "stroke-offset": 0,
@@ -108,10 +110,11 @@ function singleColorStyleForLines(color) {
   };
 }
 function getGraduatedStyle(attribute, ramp, outlineColor, outlineWidth) {
-  if (outlineWidth == 0 && outlineColor != void 0)
-    outlineColor[3] = 0;
-  else if (outlineWidth != void 0 && outlineWidth > 0 && outlineColor)
-    outlineColor[3] = 1;
+  let outlineColorCopy = outlineColor ? [...outlineColor] : void 0;
+  if (outlineWidth == 0 && outlineColorCopy != void 0)
+    outlineColorCopy[3] = 0;
+  else if (outlineWidth != void 0 && outlineWidth > 0 && outlineColorCopy)
+    outlineColorCopy[3] = 1;
   let aux = [];
   aux.push("interpolate");
   aux.push(["linear"]);
@@ -125,7 +128,7 @@ function getGraduatedStyle(attribute, ramp, outlineColor, outlineWidth) {
       "case",
       ["==", ["var", "highlightedId"], ["id"]],
       "white",
-      outlineColor || "#000000"
+      outlineColorCopy || "#000000"
     ],
     "stroke-width": ["case", ["==", ["var", "highlightedId"], ["id"]], 2, outlineWidth == void 0 ? 1 : outlineWidth],
     "fill-color": aux
