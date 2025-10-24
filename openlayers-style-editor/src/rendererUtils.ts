@@ -69,7 +69,7 @@ export interface ColorRampItem {
 }
 
 export function getCategorizedStyle(attribute: string, colors: Row[], outlineColor?: Color, outlineWidth?: number, defaultColor?: Color): FlatStyle {
-    let outlineColorCopy = outlineColor ? [...outlineColor] : undefined
+    let outlineColorCopy: Color | undefined = outlineColor ? {...outlineColor} : undefined
     if(outlineWidth == 0 && outlineColorCopy != undefined)
         outlineColorCopy[3] = 0
     else if(outlineWidth != undefined && outlineWidth > 0 && outlineColorCopy)
@@ -97,7 +97,7 @@ export function getCategorizedStyle(attribute: string, colors: Row[], outlineCol
 }
 
 export function singleColorStyle(color: Color, outlineColor?: Color, outlineWidth?: number): FlatStyle {
-    let outlineColorCopy = outlineColor ? [...outlineColor] : undefined
+    let outlineColorCopy: Color | undefined = outlineColor ? {...outlineColor} : undefined
     if(outlineWidth == 0 && outlineColorCopy != undefined)
         outlineColorCopy[3] = 0
     else if(outlineWidth != undefined && outlineWidth > 0 && outlineColorCopy)
@@ -125,7 +125,7 @@ export function singleColorStyleForLines(color: Color): FlatStyle {
 }
 
 export function getGraduatedStyle(attribute: string, ramp: Row[], outlineColor?: Color, outlineWidth?: number): FlatStyle {
-    let outlineColorCopy = outlineColor ? [...outlineColor] : undefined
+    let outlineColorCopy: Color | undefined = outlineColor ? {...outlineColor} : undefined
     if(outlineWidth == 0 && outlineColorCopy != undefined)
         outlineColorCopy[3] = 0
     else if(outlineWidth != undefined && outlineWidth > 0 && outlineColorCopy)
