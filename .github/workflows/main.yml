@@ -33,19 +33,24 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
+      - name: Install yarn
+        run: npm install -g yarn
+      - name: Clean cache and install dependencies
+        run: |
+          yarn cache clean
+          rm -rf node_modules
+          yarn install --frozen-lockfile
       - name: Build
-        run: npm run build
+        run: yarn build
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload dist folder
-          path: './page/dist'
+          path: './page/out'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

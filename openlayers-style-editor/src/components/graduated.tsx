@@ -554,7 +554,11 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
                                 <div className={"color-picker-wrapper"}>
                                     <span><b>{strokeColorLabel}:</b></span>
                                     <div>
-                                        <MyColorPicker color={borderColor} hideAlpha={true}
+                                        <MyColorPicker color={(() => {
+                                            if (borderColor.at(3)! < 1)
+                                                return [borderColor[0], borderColor[1], borderColor[2], 1]
+                                            return borderColor
+                                        })()} hideAlpha={true}
                                                        onChange={(e: string) => setBorderColor(fromString(e))}/>
                                     </div>
                                 </div>

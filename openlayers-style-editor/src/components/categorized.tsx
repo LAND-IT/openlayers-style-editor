@@ -336,7 +336,11 @@ export const Categorized: React.FC<Props> = (props: Props) => {
                             <div className={"stroke-color-container"}>
                                 <span><b>{strokeColorLabel}:</b></span>
                                 <div>
-                                    <MyColorPicker color={borderColor} hideAlpha={true}
+                                    <MyColorPicker color={(() => {
+                                        if (borderColor.at(3)! < 1)
+                                            return [borderColor[0], borderColor[1], borderColor[2], 1]
+                                        return borderColor
+                                    })()} hideAlpha={true}
                                                    onChange={(e: string) => setBorderColor(fromString(e))}/>
                                 </div>
                             </div>
@@ -387,7 +391,7 @@ export const Categorized: React.FC<Props> = (props: Props) => {
                         <div className={"table-container"}>
                             <DataTable<TableRow[]>
                                 value={table}
-                                selectionMode={rowClick ? undefined : "checkbox"}
+                                selectionMode={rowClick ? null : "checkbox"}
                                 tableStyle={{minWidth: "25rem"}}
                                 selection={table.filter((tr) => tr.visible)!}
                                 onSelectionChange={(event: DataTableSelectionMultipleChangeEvent<TableRow[]>) => {
