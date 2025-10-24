@@ -46,6 +46,10 @@
     return GraduatedModes2;
   })(GraduatedModes || {});
   function getCategorizedStyle(attribute, colors, outlineColor, outlineWidth, defaultColor) {
+    if (outlineWidth == 0 && outlineColor != void 0)
+      outlineColor[3] = 0;
+    else if (outlineWidth != void 0 && outlineWidth > 0 && outlineColor)
+      outlineColor[3] = 1;
     let aux = [];
     aux.push("match");
     aux.push(["get", attribute]);
@@ -61,11 +65,15 @@
         "white",
         outlineColor || "#000000"
       ],
-      "stroke-width": ["case", ["==", ["var", "highlightedId"], ["id"]], 2, outlineWidth || 1],
+      "stroke-width": ["case", ["==", ["var", "highlightedId"], ["id"]], 2, outlineWidth == void 0 ? 1 : outlineWidth],
       "fill-color": aux
     };
   }
   function singleColorStyle(color, outlineColor, outlineWidth) {
+    if (outlineWidth == 0 && outlineColor != void 0)
+      outlineColor[3] = 0;
+    else if (outlineWidth != void 0 && outlineWidth > 0 && outlineColor)
+      outlineColor[3] = 1;
     return {
       "stroke-color": [
         "case",
@@ -73,7 +81,7 @@
         "white",
         outlineColor || "#000000"
       ],
-      "stroke-width": ["case", ["==", ["var", "highlightedId"], ["id"]], 2, outlineWidth || 1],
+      "stroke-width": ["case", ["==", ["var", "highlightedId"], ["id"]], 2, outlineWidth == void 0 ? 1 : outlineWidth],
       "stroke-offset": 0,
       "fill-color": color
     };
@@ -86,6 +94,10 @@
     };
   }
   function getGraduatedStyle(attribute, ramp, outlineColor, outlineWidth) {
+    if (outlineWidth == 0 && outlineColor != void 0)
+      outlineColor[3] = 0;
+    else if (outlineWidth != void 0 && outlineWidth > 0 && outlineColor)
+      outlineColor[3] = 1;
     let aux = [];
     aux.push("interpolate");
     aux.push(["linear"]);
@@ -101,7 +113,7 @@
         "white",
         outlineColor || "#000000"
       ],
-      "stroke-width": ["case", ["==", ["var", "highlightedId"], ["id"]], 2, outlineWidth || 1],
+      "stroke-width": ["case", ["==", ["var", "highlightedId"], ["id"]], 2, outlineWidth == void 0 ? 1 : outlineWidth],
       "fill-color": aux
     };
   }
@@ -260,7 +272,11 @@
           /* @__PURE__ */ jsxRuntime.jsx("div", { children: /* @__PURE__ */ jsxRuntime.jsx(
             MyColorPicker,
             {
-              color: borderColor,
+              color: (() => {
+                if (borderColor.at(3) < 1)
+                  return [borderColor[0], borderColor[1], borderColor[2], 1];
+                return borderColor;
+              })(),
               hideAlpha: true,
               onChange: (e) => setBorderColor(color_js.fromString(e))
             }
@@ -801,7 +817,7 @@
         });
         setTable(tableUpdated);
       } else if (colorRamp.value.length > 0) {
-        const style = getCategorizedStyle(selectedAttr == null ? void 0 : selectedAttr.name, colorRamp.value);
+        const style = getCategorizedStyle(selectedAttr?.name, colorRamp.value);
         const colors = getStyleColorsAndValues(style, RenderType.Categorized);
         const tableUpdated = [];
         table.forEach(({ value, visible }) => {
@@ -908,7 +924,11 @@
               /* @__PURE__ */ jsxRuntime.jsx("div", { children: /* @__PURE__ */ jsxRuntime.jsx(
                 MyColorPicker,
                 {
-                  color: borderColor,
+                  color: (() => {
+                    if (borderColor.at(3) < 1)
+                      return [borderColor[0], borderColor[1], borderColor[2], 1];
+                    return borderColor;
+                  })(),
                   hideAlpha: true,
                   onChange: (e) => setBorderColor(color_js.fromString(e))
                 }
@@ -1009,7 +1029,7 @@
             datatable_esm_js.DataTable,
             {
               value: table,
-              selectionMode: rowClick ? void 0 : "checkbox",
+              selectionMode: rowClick ? null : "checkbox",
               tableStyle: { minWidth: "25rem" },
               selection: table.filter((tr) => tr.visible),
               onSelectionChange: (e) => {
@@ -1042,8 +1062,8 @@
           onClick: () => {
             applyRenderer({
               type: RenderType.Categorized,
-              field: selectedAttr == null ? void 0 : selectedAttr.name,
-              rendererOL: getCategorizedStyle(selectedAttr == null ? void 0 : selectedAttr.name, table.filter((row) => row.value != nullText && row.visible).map((tr) => ({
+              field: selectedAttr?.name,
+              rendererOL: getCategorizedStyle(selectedAttr?.name, table.filter((row) => row.value != nullText && row.visible).map((tr) => ({
                 value: tr.value,
                 color: tr.color
               })), borderColor, borderThickness, table.find((row) => row.value == nullText).color)
@@ -1097,8 +1117,7 @@
     const locale = numbersLocale;
     const toast = react.useRef(null);
     const showToast = (message, severity) => {
-      var _a;
-      (_a = toast.current) == null ? void 0 : _a.show({ severity, summary: "Error", detail: message });
+      toast.current?.show({ severity, summary: "Error", detail: message });
     };
     const currentRender = layerCurrentRenderer.type != RenderType.Graduated ? [] : layerCurrentRenderer.rendererOL["fill-color"];
     const valuesAndColors = [];
@@ -1239,7 +1258,7 @@
     }
     async function calculateStopsByMode(mode, nClasses, intervalSize2) {
       let stops2 = [];
-      let values = (selectedAttr == null ? void 0 : selectedAttr.values.map(Number)) || [];
+      let values = selectedAttr?.values.map(Number) || [];
       values = values.filter((v) => !isNaN(v) && v != null);
       const min = Math.min(...values);
       const max = Math.max(...values);
@@ -1293,7 +1312,7 @@
     }
     react.useEffect(() => {
       if (stops.length > 0) {
-        let values = (selectedAttr == null ? void 0 : selectedAttr.values.map(Number)) || [];
+        let values = selectedAttr?.values.map(Number) || [];
         values = values.filter((v) => !isNaN(v) && v != null);
         setIntervals(countNumbers(values || []));
       }
@@ -1336,7 +1355,7 @@
                   if (context.tick) {
                     const value = Number.parseInt(context.tick.label);
                     const interval = stops.map((stop) => intervals.find((i) => i.min <= stop.value && stop.value < i.max));
-                    return interval.find((i) => (i == null ? void 0 : i.min) <= value && value < i.max) ? "#ea1010" : "rgba(0,0,0,0)";
+                    return interval.find((i) => i?.min <= value && value < i.max) ? "#ea1010" : "rgba(0,0,0,0)";
                   } else
                     return "rgba(0,0,0,0)";
                 },
@@ -1535,7 +1554,6 @@
                 ] }),
                 stops.map(
                   (value, index) => {
-                    var _a, _b;
                     return /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex-row-small-small-gap", children: [
                       /* @__PURE__ */ jsxRuntime.jsx(
                         inputnumber_esm_js.InputNumber,
@@ -1544,7 +1562,7 @@
                           allowEmpty: false,
                           locale,
                           min: stops[0].value,
-                          max: index < stops.length - 1 ? ((_a = stops[index + 1]) == null ? void 0 : _a.value) - 1e-3 : (_b = stops[stops.length]) == null ? void 0 : _b.value,
+                          max: index < stops.length - 1 ? stops[index + 1]?.value - 1e-3 : stops[stops.length]?.value,
                           disabled: index === 0 || selectedMode != GraduatedModes.Manual || index === stops.length - 1,
                           onChange: (e) => {
                             const aux = [...stops];
@@ -1579,7 +1597,11 @@
                 /* @__PURE__ */ jsxRuntime.jsx("div", { children: /* @__PURE__ */ jsxRuntime.jsx(
                   MyColorPicker,
                   {
-                    color: borderColor,
+                    color: (() => {
+                      if (borderColor.at(3) < 1)
+                        return [borderColor[0], borderColor[1], borderColor[2], 1];
+                      return borderColor;
+                    })(),
                     hideAlpha: true,
                     onChange: (e) => setBorderColor(color_js.fromString(e))
                   }
@@ -1666,8 +1688,8 @@
                   applyRenderer({
                     type: RenderType.Graduated,
                     graduatedType: selectedMode,
-                    field: selectedAttr == null ? void 0 : selectedAttr.name,
-                    rendererOL: getGraduatedStyle(selectedAttr == null ? void 0 : selectedAttr.name, stops, borderColor, borderThickness)
+                    field: selectedAttr?.name,
+                    rendererOL: getGraduatedStyle(selectedAttr?.name, stops, borderColor, borderThickness)
                   });
                   setVisible(false);
                 }
@@ -1738,7 +1760,7 @@
           }
         )
       ] }),
-      (activeIndex == null ? void 0 : activeIndex.code) == 0 && /* @__PURE__ */ jsxRuntime.jsx(
+      activeIndex?.code == 0 && /* @__PURE__ */ jsxRuntime.jsx(
         UniqueSymbol,
         {
           layerCurrentRenderer: currentRenderer,
@@ -1747,7 +1769,7 @@
           setVisible
         }
       ),
-      (activeIndex == null ? void 0 : activeIndex.code) == 1 && /* @__PURE__ */ jsxRuntime.jsx(
+      activeIndex?.code == 1 && /* @__PURE__ */ jsxRuntime.jsx(
         Categorized,
         {
           attr,
@@ -1760,7 +1782,7 @@
           showPreDefinedRamps
         }
       ),
-      (activeIndex == null ? void 0 : activeIndex.code) == 2 && /* @__PURE__ */ jsxRuntime.jsx(
+      activeIndex?.code == 2 && /* @__PURE__ */ jsxRuntime.jsx(
         Graduated,
         {
           attr,

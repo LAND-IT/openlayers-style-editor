@@ -69,6 +69,10 @@ export interface ColorRampItem {
 }
 
 export function getCategorizedStyle(attribute: string, colors: Row[], outlineColor?: Color, outlineWidth?: number, defaultColor?: Color): FlatStyle {
+    if(outlineWidth == 0 && outlineColor != undefined)
+        outlineColor[3] = 0
+    else if(outlineWidth != undefined && outlineWidth > 0 && outlineColor)
+        outlineColor[3] = 1
 
     let aux = []
     aux.push('match')
@@ -86,12 +90,17 @@ export function getCategorizedStyle(attribute: string, colors: Row[], outlineCol
             'white',
             outlineColor || '#000000'
         ],
-        'stroke-width': ['case', ['==', ['var', 'highlightedId'], ['id']], 2, outlineWidth || 1],
+        'stroke-width': ['case', ['==', ['var', 'highlightedId'], ['id']], 2, outlineWidth == undefined ? 1 : outlineWidth],
         'fill-color': aux
     })
 }
 
 export function singleColorStyle(color: Color, outlineColor?: Color, outlineWidth?: number): FlatStyle {
+    if(outlineWidth == 0 && outlineColor != undefined)
+        outlineColor[3] = 0
+    else if(outlineWidth != undefined && outlineWidth > 0 && outlineColor)
+        outlineColor[3] = 1
+
     return ({
         'stroke-color': [
             'case',
@@ -99,7 +108,7 @@ export function singleColorStyle(color: Color, outlineColor?: Color, outlineWidt
             'white',
             outlineColor || '#000000'
         ],
-        'stroke-width': ['case', ['==', ['var', 'highlightedId'], ['id']], 2, outlineWidth || 1],
+        'stroke-width': ['case', ['==', ['var', 'highlightedId'], ['id']], 2, outlineWidth == undefined ? 1 : outlineWidth],
         "stroke-offset": 0,
         'fill-color': color
     })
@@ -114,6 +123,10 @@ export function singleColorStyleForLines(color: Color): FlatStyle {
 }
 
 export function getGraduatedStyle(attribute: string, ramp: Row[], outlineColor?: Color, outlineWidth?: number): FlatStyle {
+    if(outlineWidth == 0 && outlineColor != undefined)
+        outlineColor[3] = 0
+    else if(outlineWidth != undefined && outlineWidth > 0 && outlineColor)
+        outlineColor[3] = 1
     let aux = []
     aux.push('interpolate')
     aux.push(['linear'])
@@ -130,7 +143,7 @@ export function getGraduatedStyle(attribute: string, ramp: Row[], outlineColor?:
             'white',
             outlineColor || '#000000'
         ],
-        'stroke-width': ['case', ['==', ['var', 'highlightedId'], ['id']], 2, outlineWidth || 1],
+        'stroke-width': ['case', ['==', ['var', 'highlightedId'], ['id']], 2, outlineWidth == undefined ? 1 : outlineWidth],
         'fill-color': aux
     })
 }

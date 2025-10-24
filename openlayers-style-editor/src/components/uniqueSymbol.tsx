@@ -19,7 +19,7 @@ export const UniqueSymbol: React.FC<UniqueSymbolProps> = (props: UniqueSymbolPro
 
     const {layerCurrentRenderer, applyRenderer, setVisible} = props;
 
-    const { t } = useTranslation();
+    const {t} = useTranslation();
     const fillColorLabel: string = t("unique_symbol.fill_color" as any)
     const strokeColorLabel: string = t("categorized.stroke_color" as any)
     const strokeWidthLabel: string = t("categorized.stroke_width" as any)
@@ -44,7 +44,7 @@ export const UniqueSymbol: React.FC<UniqueSymbolProps> = (props: UniqueSymbolPro
     const [borderColor, setBorderColor] = useState<Color>(auxBorder);
     let auxBorderWidth;
     if (currentStyle) {
-        if(currentStyle["stroke-width"] instanceof Array)
+        if (currentStyle["stroke-width"] instanceof Array)
             auxBorderWidth = (currentStyle["stroke-width"]! as any[])[3] as number;
         else
             auxBorderWidth = currentStyle["stroke-width"] as number;
@@ -70,7 +70,12 @@ export const UniqueSymbol: React.FC<UniqueSymbolProps> = (props: UniqueSymbolPro
                 <div className={"flex-row-unique"}>
                     <span><b>{strokeColorLabel}:</b></span>
                     <div>
-                        <MyColorPicker color={borderColor} hideAlpha={true}
+                        <MyColorPicker color={(() => {
+                            if (borderColor.at(3)! < 1)
+                                return [borderColor[0], borderColor[1], borderColor[2], 1]
+                            return borderColor
+                        })()}
+                                       hideAlpha={true}
                                        onChange={(e: string) => setBorderColor(fromString(e))}/>
                     </div>
                 </div>
