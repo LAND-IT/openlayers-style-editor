@@ -3,7 +3,7 @@ import {useEffect, useRef, useState} from "react";
 import TileLayer from "ol/layer/Tile";
 import {OSM} from "ol/source";
 import {Feature, Map, View} from "ol";
-import VectorSource from "ol/source/Vector";
+import VectorSource, {VectorSourceEvent} from "ol/source/Vector";
 import WebGLVectorLayer from "ol/layer/WebGLVector";
 import {GeoJSON} from "ol/format";
 import {Button} from "primereact/button";
@@ -62,7 +62,10 @@ export function Test() {
 
         // Set target and register event listener
         map.setTarget("viewID");
-        vectorSource.on('featuresloadend', function () {
+        vectorSource.on('featuresloadend', function (event: VectorSourceEvent<any>) {
+            event.features!.forEach((feature, index) => {
+                feature.set("id", index); // Assign unique ID
+            });
             const features = vectorSource.getFeatures();
             setFeatures(features);
         });
