@@ -1,7 +1,7 @@
-import {Color, fromString} from "ol/color";
-import {FlatStyle} from "ol/style/flat";
-import {Stop} from "./components/rampColors.ts";
-import {FilterRule} from "@/components/basedOnRules.tsx";
+import { Color, fromString } from "ol/color";
+import { FlatStyle } from "ol/style/flat";
+import { Stop } from "./components/rampColors.ts";
+import { FilterRule } from "@/components/basedOnRules.tsx";
 
 //https://openlayers.org/en/latest/apidoc/module-ol_style_expressions.html
 
@@ -71,10 +71,10 @@ export interface ColorRampItem {
 }
 
 export function getCategorizedStyle(attribute: string, colors: Row[], outlineColor?: Color, outlineWidth?: number, defaultColor?: Color): FlatStyle {
-    let outlineColorCopy: Color | undefined = outlineColor ? {...outlineColor} : undefined
-    if(outlineWidth == 0 && outlineColorCopy != undefined)
+    let outlineColorCopy: Color | undefined = outlineColor ? [...outlineColor] : undefined
+    if (outlineWidth == 0 && outlineColorCopy != undefined)
         outlineColorCopy[3] = 0
-    else if(outlineWidth != undefined && outlineWidth > 0 && outlineColorCopy)
+    else if (outlineWidth != undefined && outlineWidth > 0 && outlineColorCopy)
         outlineColorCopy[3] = 1
 
     let aux = []
@@ -99,10 +99,10 @@ export function getCategorizedStyle(attribute: string, colors: Row[], outlineCol
 }
 
 export function singleColorStyle(color: Color, outlineColor?: Color, outlineWidth?: number): FlatStyle {
-    let outlineColorCopy: Color | undefined = outlineColor ? {...outlineColor} : undefined
-    if(outlineWidth == 0 && outlineColorCopy != undefined)
+    let outlineColorCopy: Color | undefined = outlineColor ? [...outlineColor] : undefined
+    if (outlineWidth == 0 && outlineColorCopy != undefined)
         outlineColorCopy[3] = 0
-    else if(outlineWidth != undefined && outlineWidth > 0 && outlineColorCopy)
+    else if (outlineWidth != undefined && outlineWidth > 0 && outlineColorCopy)
         outlineColorCopy[3] = 1
 
     return ({
@@ -127,10 +127,10 @@ export function singleColorStyleForLines(color: Color): FlatStyle {
 }
 
 export function getGraduatedStyle(attribute: string, ramp: Row[], outlineColor?: Color, outlineWidth?: number): FlatStyle {
-    let outlineColorCopy: Color | undefined = outlineColor ? {...outlineColor} : undefined
-    if(outlineWidth == 0 && outlineColorCopy != undefined)
+    let outlineColorCopy: Color | undefined = outlineColor ? [...outlineColor] : undefined
+    if (outlineWidth == 0 && outlineColorCopy != undefined)
         outlineColorCopy[3] = 0
-    else if(outlineWidth != undefined && outlineWidth > 0 && outlineColorCopy)
+    else if (outlineWidth != undefined && outlineWidth > 0 && outlineColorCopy)
         outlineColorCopy[3] = 1
 
     let aux = []
@@ -142,7 +142,7 @@ export function getGraduatedStyle(attribute: string, ramp: Row[], outlineColor?:
         aux.push(stop.color)
     })
 
-    return ({
+    const res = ({
         'stroke-color': [
             'case',
             ['==', ['var', 'highlightedId'], ['id']],
@@ -152,6 +152,8 @@ export function getGraduatedStyle(attribute: string, ramp: Row[], outlineColor?:
         'stroke-width': ['case', ['==', ['var', 'highlightedId'], ['id']], 2, outlineWidth == undefined ? 1 : outlineWidth],
         'fill-color': aux
     })
+
+    return res
 }
 
 export function getRendererOpacity(renderer: Render) {
@@ -217,7 +219,7 @@ export function getStyleColorsAndValues(style: FlatStyle, type: RenderType): Row
 
         for (let i = 2; i < style["fill-color"]!.length - 1; i += 2) {
             colors.push({
-                value: style["fill-color"]![i] as string,
+                value: style["fill-color"]![i] as string | number,
                 color: style["fill-color"]![i + 1] as Color
             })
         }
@@ -229,7 +231,7 @@ export function getStyleColorsAndValues(style: FlatStyle, type: RenderType): Row
     if (type == RenderType.Graduated) {
         for (let i = 3; i < style["fill-color"]!.length - 1; i += 2) {
             colors.push({
-                value: style["fill-color"]![i] as string,
+                value: style["fill-color"]![i] as string | number,
                 color: style["fill-color"]![i + 1] as Color
             })
         }
@@ -239,7 +241,7 @@ export function getStyleColorsAndValues(style: FlatStyle, type: RenderType): Row
         })
     }
     if (type == RenderType.Unique)
-        colors = [{value: "Único", color: style["fill-color"]! as Color}]
+        colors = [{ value: "Único", color: style["fill-color"]! as Color }]
     return colors
 }
 
@@ -254,30 +256,53 @@ export function generateRandomColor() {
     return fromString('#' + (0x1000000 + Math.random() * 0xffffff).toString(16).substr(1, 6))
 }
 
-export function getByRulesStyle(filters: { filter: FilterRule, ids: number[] }[], idFieldName: string, elseFilter?: FilterRule): FlatStyle {
-    let fillColorArray = []
-    let strokeColorArray = []
-    let strokeWidthArray = []
-    fillColorArray.push('case')
-    strokeColorArray.push('case')
-    strokeWidthArray.push('case')
-    filters.forEach(filter => {
-        let fillColor = getStyleColorsAndValues(filter.filter.symbol.rendererOL, RenderType.Unique)[0].color
-        fillColorArray.push(['in', ['get',  idFieldName], filter.ids])
-        fillColorArray.push(fillColor)
+export function getByRulesStyle(filters: { filter: FilterRule, ids: (string | number)[] }[], idFieldName: string, elseFilter?: FilterRule): FlatStyle {
+    console.log(filters)
+    if (filters.length === 0 || filters.filter(f => f.ids.length > 0).length == 0) {
+        if (elseFilter) {
+            let fillColor = getStyleColorsAndValues(elseFilter.symbol.rendererOL, RenderType.Unique)[0].color;
+            let stroke = getRendererColorAndSizeStroke(elseFilter.symbol);
+            return {
+                'stroke-color': Object.values(stroke.color),
+                'stroke-width': stroke.size,
+                'fill-color': fillColor,
+                '_rules': filters.map(f => ({expression: f.filter.friendlyExpression, render: f.filter.symbol}))
+            } as any;
+        } else {
+            return {
+                'stroke-color': fromString('#000000'),
+                'stroke-width': 1,
+                'fill-color': fromString('#ffffff'),
+                '_rules': filters.map(f => ({expression: f.filter.friendlyExpression, render: f.filter.symbol}))
+            } as any;
+        }
+    }
 
-        let stroke = getRendererColorAndSizeStroke(filter.filter.symbol)
-        strokeColorArray.push(['in', ['get', idFieldName], filter.ids])
-        strokeColorArray.push(stroke.color)
-        strokeWidthArray.push(['in', ['get', idFieldName], filter.ids])
-        strokeWidthArray.push(stroke.size)
+    let fillColorArray: any[] = ['case'];
+    let strokeColorArray: any[] = ['case'];
+    let strokeWidthArray: any[] = ['case'];
+
+    filters.forEach(filter => {
+        if (filter.ids.length > 0) {
+            let fillColor = getStyleColorsAndValues(filter.filter.symbol.rendererOL, RenderType.Unique)[0].color
+            let cond = ['in', ['get', idFieldName], filter.ids];
+
+            fillColorArray.push(cond);
+            fillColorArray.push(fillColor);
+
+            let stroke = getRendererColorAndSizeStroke(filter.filter.symbol)
+            strokeColorArray.push(cond);
+            strokeColorArray.push(Object.values(stroke.color));
+            strokeWidthArray.push(cond);
+            strokeWidthArray.push(stroke.size);
+        }
     })
 
     if (elseFilter) {
         let fillColor = getStyleColorsAndValues(elseFilter.symbol.rendererOL, RenderType.Unique)[0].color
         fillColorArray.push(fillColor)
         let stroke = getRendererColorAndSizeStroke(elseFilter.symbol)
-        strokeColorArray.push(stroke.color)
+        strokeColorArray.push(Object.values(stroke.color))
         strokeWidthArray.push(stroke.size)
     } else {
         fillColorArray.push(fromString('#ffffff'))
@@ -285,9 +310,14 @@ export function getByRulesStyle(filters: { filter: FilterRule, ids: number[] }[]
         strokeWidthArray.push(1)
     }
 
-    return ({
+    const res = ({
         'stroke-color': strokeColorArray,
         'stroke-width': strokeWidthArray,
-        'fill-color': fillColorArray
+        'fill-color': fillColorArray,
+        '_rules': filters.map(f => ({expression: f.filter.friendlyExpression, render: f.filter.symbol}))
     })
+
+    console.log(res)
+
+    return res
 }

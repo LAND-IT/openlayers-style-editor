@@ -52,7 +52,7 @@ export function UniqueSymbolComponent(props: Props) {
             else
                 auxBorderWidth = currentStyle["stroke-width"] as number;
         } else {
-            auxBorderWidth = 0;
+            auxBorderWidth = 1;
         }
         setBorderThickness(auxBorderWidth);
     }, []);

@@ -324,7 +324,7 @@ export const Categorized: React.FC<Props> = (props: Props) => {
                     <Dropdown
                         value={selectedAttr}
                         onChange={(e: DropdownChangeEvent) => changeAttribute(e)}
-                        options={attr}
+                        options={attr.filter((a) => a.values && a.values.length > 0 && a.values.length < 200)}
                         optionLabel={"name"}
                         itemTemplate={(option: SEAttribute) => <span>{option.name} ({option.values.length})</span>}
                         placeholder={selectAttributeLabel}
@@ -393,6 +393,7 @@ export const Categorized: React.FC<Props> = (props: Props) => {
                                 value={table}
                                 selectionMode={rowClick ? null : "checkbox"}
                                 tableStyle={{minWidth: "25rem"}}
+                                dataKey={"value"}
                                 selection={table.filter((tr) => tr.visible)!}
                                 onSelectionChange={(event: DataTableSelectionMultipleChangeEvent<TableRow[]>) => {
                                     const value = event.value as TableRow[]

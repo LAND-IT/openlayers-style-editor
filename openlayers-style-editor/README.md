@@ -46,7 +46,7 @@ This Style Editor for OpenLayers allows the user to change the style of layers. 
 
 - **Unique Symbol:** Allows the user to change the layer's color, opacity, and stroke.
 - **Categorized:** Allows the user to change the layer's color, opacity, and stroke based on the values of an attribute.
-- **Graduated:** Allows the user to change the layer's color, opacity, and stroke based on a numeric attribute and the
+- **Quantitative:** Allows the user to change the layer's color, opacity, and stroke based on a numeric attribute and the
   mode used to group its values. This package has six modes implemented, some of them are implemented using the
   [GeoBuckets](https://www.npmjs.com/package/geobuckets) package. The implemented modes are:
     - Manual
@@ -57,6 +57,12 @@ This Style Editor for OpenLayers allows the user to change the style of layers. 
     - Standard Deviation
 
 A detailed explanation of each mode can be found [here](https://resources.arcgis.com/en/help/main/10.2/index.html#//00s50000001r000000).
+
+- **Based on Rules:** Allows the user to change the layer's color, opacity, and stroke based on rules defined by the user. Each rule is composed by a name, a filter, and a renderer. The filter is a logical expression that defines which features will be styled with the renderer of the rule.
+
+## License
+
+This project is licensed under the MIT License.
 
 ## Installation
 
@@ -134,8 +140,7 @@ const [renderer, setRenderer] = useState<Render>(defaultRender);
 
 ## TODOs
 
-- [ ] Add the condition style type
-- [ ] Add a license
+- [ ] Add more types of renderers, such as heatmap and icon renderers.
 
 ## Show your support
 

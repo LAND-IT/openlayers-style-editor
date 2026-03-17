@@ -282,7 +282,6 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
             }
             case GraduatedModes.DefinedInterval: {
                 const interval = range / intervalSize
-                console.log("interval", interval, intervalSize)
                 for (let i = 0; i <= interval; i++) {
                     stops.push({value: min + intervalSize * i, color: fromString("rgb(0,0,0)")})
                 }
@@ -458,6 +457,10 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
                         <span className={"auto-width-span"}><b>{classesNumberLabel}:</b></span>
 
                         <InputNumber value={classNo}
+                                     min={0}
+                                     max={50}
+                                     inputMode={"numeric"}
+                                     maxFractionDigits={0}
                                      locale={locale}
                                      onChange={async (e) => {
                                          setClassNo(e.value as number)
@@ -522,16 +525,17 @@ export const Graduated: React.FC<GraduatedProps> = (props: GraduatedProps) => {
                                                 <InputNumber placeholder={valueLabel}
                                                              allowEmpty={false}
                                                              locale={locale}
+                                                             inputMode={"numeric"}
                                                              min={stops[0].value as number}
-                                                             max={index < (stops.length - 1 as number) ?
-                                                                 (stops[index + 1]?.value as number) - 0.001 : (stops[stops.length]?.value as number)}
+                                                             maxFractionDigits={3}
+                                                             max={stops[stops.length - 1].value as number}
                                                              disabled={index === 0 || selectedMode != GraduatedModes.Manual || index === stops.length - 1}
                                                              onChange={(e) => {
                                                                  const aux = [...stops]
                                                                  aux[index].value = e.value as number
                                                                  setStops(aux)
                                                              }}
-                                                             value={value.value as number}
+                                                             value={stops[index].value as number}
                                                 />
 
                                                 <MyColorPicker

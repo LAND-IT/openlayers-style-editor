@@ -1,11 +1,12 @@
-import React, {useState} from "react"
-import {Color} from "ol/color";
+import React, {useState, useEffect} from "react"
+import {Color, fromString} from "ol/color";
+import {Slider} from "primereact/slider";
+import {MyColorPicker} from "./myColorPicker.tsx";
 import {Button} from "primereact/button";
 import {FlatStyle} from "ol/style/flat";
 import {useTranslation} from "react-i18next";
 import "./uniqueSymbol.css"
 import {Render, RenderType, singleColorStyle} from "../rendererUtils";
-import {UniqueSymbolComponent} from "@/components/uniqueSymbolComponent.tsx";
 
 interface UniqueSymbolProps {
     layerDefaultRenderer: Render
@@ -24,35 +25,49 @@ export const UniqueSymbol: React.FC<UniqueSymbolProps> = (props: UniqueSymbolPro
     const strokeWidthLabel: string = t("categorized.stroke_width" as any)
     const concludeLabel: string = t("common.conclude" as any)
 
-    const [color, setColor] = useState<Color>()
-    const [borderColor, setBorderColor] = useState<Color>()
-    const [borderThickness, setBorderThickness] = useState<number>()
+    const start = "#18d7ba";
 
-    const currentStyle: FlatStyle | null = layerCurrentRenderer.field ? null : layerCurrentRenderer.rendererOL as FlatStyle;
-    const [color, setColor] = useState<Color>(currentStyle ? currentStyle["fill-color"]! as Color : fromString(start));
-    let auxBorder;
-    if (currentStyle) {
-        if (currentStyle["stroke-color"])
-            if (currentStyle["stroke-color"]![0] == "case")
-                auxBorder = currentStyle["stroke-color"]![3] as Color;
+    const getStatesFromRenderer = (renderer: Render) => {
+        const currentStyle = renderer.field ? null : renderer.rendererOL as FlatStyle;
+        const color = currentStyle && currentStyle["fill-color"] ? currentStyle["fill-color"] as Color : fromString(start);
+        
+        let auxBorder;
+        if (currentStyle) {
+            if (currentStyle["stroke-color"])
+                if (currentStyle["stroke-color"]![0] == "case")
+                    auxBorder = currentStyle["stroke-color"]![3] as Color;
+                else
+                    auxBorder = currentStyle["stroke-color"] as Color;
             else
-                auxBorder = currentStyle["stroke-color"] as Color;
-        else
+                auxBorder = fromString("#000000");
+        } else {
             auxBorder = fromString("#000000");
-    } else {
-        auxBorder = fromString("#000000");
-    }
-    const [borderColor, setBorderColor] = useState<Color>(auxBorder);
-    let auxBorderWidth;
-    if (currentStyle) {
-        if (currentStyle["stroke-width"] instanceof Array)
-            auxBorderWidth = (currentStyle["stroke-width"]! as any[])[3] as number;
-        else
-            auxBorderWidth = currentStyle["stroke-width"] as number;
-    } else {
-        auxBorderWidth = 0;
-    }
-    const [borderThickness, setBorderThickness] = useState<number>(auxBorderWidth);
+        }
+
+        let auxBorderWidth;
+        if (currentStyle) {
+            if (currentStyle["stroke-width"] instanceof Array)
+                auxBorderWidth = (currentStyle["stroke-width"]! as any[])[3] as number;
+            else
+                auxBorderWidth = currentStyle["stroke-width"] as number;
+        } else {
+            auxBorderWidth = 0;
+        }
+        
+        return { color, auxBorder, auxBorderWidth };
+    };
+
+    const initialStates = getStatesFromRenderer(layerCurrentRenderer);
+    const [color, setColor] = useState<Color>(initialStates.color);
+    const [borderColor, setBorderColor] = useState<Color>(initialStates.auxBorder);
+    const [borderThickness, setBorderThickness] = useState<number>(initialStates.auxBorderWidth);
+
+    useEffect(() => {
+        const states = getStatesFromRenderer(layerCurrentRenderer);
+        setColor(states.color);
+        setBorderColor(states.auxBorder);
+        setBorderThickness(states.auxBorderWidth);
+    }, [layerCurrentRenderer]);
 
     function createRenderUnique(color: Color, outlineColor: Color, outlineWidth: number) {
         return singleColorStyle(color, outlineColor, outlineWidth);
@@ -92,7 +107,7 @@ export const UniqueSymbol: React.FC<UniqueSymbolProps> = (props: UniqueSymbolPro
                         onClick={() => {
                             applyRenderer({
                                 type: RenderType.Unique,
-                                rendererOL: createRenderUnique(color!, borderColor!, borderThickness!)
+                                rendererOL: createRenderUnique(color, borderColor, borderThickness)
                             })
                             setVisible(false)
                         }}/>

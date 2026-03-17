@@ -5,6 +5,7 @@ import {FilterWidgetContext, FilterWidgetContextType} from "./filterWidgetContex
 import {AttributeTypeEnum, SEAttribute} from "@/rendererUtils.ts";
 import {Button} from "primereact/button";
 import {Toast} from "primereact/toast";
+import {useTranslation} from "react-i18next";
 
 interface Props {
     parentID: number
@@ -21,6 +22,7 @@ export const ConditionOnFilter = (props: Props) => {
     } = useContext(FilterWidgetContext) as FilterWidgetContextType
 
     const toast = useRef<Toast | null>(null);
+    const {t} = useTranslation();
 
     const [selectedAttribute, setSelectedAttribute] =
         useState<SEAttribute>();
@@ -29,28 +31,28 @@ export const ConditionOnFilter = (props: Props) => {
         useState<{ name: string, logic: string }>();
 
     const functionsBooleans: { name: string, logic: string }[] = [
-        {name: 'Sim', logic: "true"},
-        {name: 'Não', logic: "false"},
+        {name: t('filters.yes' as any), logic: "true"},
+        {name: t('filters.no' as any), logic: "false"},
     ]
 
     const functionsTexts = [
-        {name: 'é', logic: "=="},
-        {name: 'não é', logic: "!="},
-        {name: 'começa com', logic: "startsWith"},
-        {name: 'acaba com', logic: "endsWith"},
-        {name: 'contém', logic: "in"},
-        {name: 'não contém', logic: "!in"},
-        {name: 'é nulo', logic: "null"}
+        {name: t('filters.is' as any), logic: "=="},
+        {name: t('filters.is_not' as any), logic: "!="},
+        {name: t('filters.starts_with' as any), logic: "startsWith"},
+        {name: t('filters.ends_with' as any), logic: "endsWith"},
+        {name: t('filters.contains' as any), logic: "in"},
+        {name: t('filters.does_not_contain' as any), logic: "!in"},
+        {name: t('filters.is_null' as any), logic: "null"}
     ];
 
     const functionsNumbers = [
-        {name: 'é', logic: "=="},
-        {name: 'não é', logic: "!="},
-        {name: 'é pelo menos', logic: ">="},
-        {name: 'é menor que', logic: "<"},
-        {name: 'é no máximo', logic: "<="},
-        {name: 'é maior que', logic: ">"},
-        {name: 'é nulo', logic: "null"}
+        {name: t('filters.is' as any), logic: "=="},
+        {name: t('filters.is_not' as any), logic: "!="},
+        {name: t('filters.is_at_least' as any), logic: ">="},
+        {name: t('filters.is_less_than' as any), logic: "<"},
+        {name: t('filters.is_at_most' as any), logic: "<="},
+        {name: t('filters.is_greater_than' as any), logic: ">"},
+        {name: t('filters.is_null' as any), logic: "null"}
     ];
 
 
@@ -118,7 +120,7 @@ export const ConditionOnFilter = (props: Props) => {
                 toast.current?.show({
                     severity: 'error',
                     summary: 'Error',
-                    detail: 'A condição ' + parentID + "." + id + " contém caracteres inválidos."
+                    detail: t('filters.invalid_chars_error' as any, {id: parentID + "." + id})
                 });
             else {
                 condition.value = value
@@ -132,7 +134,7 @@ export const ConditionOnFilter = (props: Props) => {
                 toast.current?.show({
                     severity: 'error',
                     summary: 'Error',
-                    detail: 'A condição tem um atributo inválido'
+                    detail: t('filters.invalid_attribute_error' as any)
                 });
         }
 
@@ -148,7 +150,7 @@ export const ConditionOnFilter = (props: Props) => {
                     return deleteF(id)
                 }}/>
             </div>
-            <Fieldset legend={"Condição " + (id + 1)}>
+            <Fieldset legend={t('filters.condition' as any) + (id + 1)}>
                 <div>
                     <Dropdown value={selectedAttribute}
                               onChange={(e) => {
@@ -158,7 +160,7 @@ export const ConditionOnFilter = (props: Props) => {
                                   update(undefined, undefined, e.value)
                               }}
                               options={queryWidget.attributes} optionLabel="name"
-                              placeholder="Selecione o atributo" className="w-full md:w-14rem"/>
+                              placeholder={t('filters.select_attribute' as any)} className="w-full md:w-14rem"/>
                     <Dropdown value={selectedFunction}
                               onChange={(e) => {
                                   setSelectedFunction(e.value);
@@ -173,14 +175,16 @@ export const ConditionOnFilter = (props: Props) => {
 
                               disabled={selectedAttribute == undefined}
                               optionLabel="name"
-                              placeholder="Selecione o operador"/>
-                    {((selectedAttribute?.type != AttributeTypeEnum.BOOLEAN) && selectedFunction?.name != "é nulo") &&
-                        <Dropdown value={selectedValue} editable onChange={(e) => {
-                            setSelectedValue(e.value);
-                            update(undefined, e.value, undefined)
-                        }}
+                              placeholder={t('filters.select_operator' as any)}/>
+                    {((selectedAttribute?.type != AttributeTypeEnum.BOOLEAN) && selectedFunction?.name != t('filters.is_null' as any)) &&
+                        <Dropdown value={selectedValue} editable
+                                  maxLength={150}
+                                  onChange={(e) => {
+                                      setSelectedValue(e.value);
+                                      update(undefined, e.value, undefined)
+                                  }}
                                   options={values?.length! < 200 ? values : values?.slice(0, 200)}
-                                  filter placeholder="Selecione um valor"
+                                  filter placeholder={t('filters.select_value' as any)}
                                   disabled={selectedFunction == undefined}
                                   className="w-full md:w-14rem"/>}
                 </div>

@@ -5,6 +5,7 @@ import {ScrollPanel} from "primereact/scrollpanel";
 import {FilterWidgetContext, FilterWidgetContextType} from "./filterWidgetContext";
 import {ConditionOnFilter} from "./conditionOnFilter";
 import {Button} from "primereact/button";
+import {useTranslation} from "react-i18next";
 
 interface Props {
     id: number
@@ -18,10 +19,12 @@ export const ExpressionOnFilter = (props: Props) => {
         setExpressionSet
     } = useContext(FilterWidgetContext) as FilterWidgetContextType
 
+    const {t} = useTranslation();
+
     const [selectedOp, setSelectedOp] = useState(null);
     const ops = [
-        {name: 'Todas verdadeiras'},
-        {name: 'Pelo menos uma verdadeira'}
+        {name: t('filters.all_true' as any)},
+        {name: t('filters.any_true' as any)}
     ];
 
     useEffect(() => {
@@ -72,7 +75,7 @@ export const ExpressionOnFilter = (props: Props) => {
 
     function update(op: string) {
         let expression = queryWidget.expressionSet.find(item => item.id === id)?.expression!
-        expression.isAll = op === 'Todas verdadeiras'
+        expression.isAll = op === t('filters.all_true' as any)
         queryWidget.expressionSet.splice(queryWidget.expressionSet.findIndex(item => item.id === id), 1, {
             id: id,
             conditions: currentExp.conditions,
@@ -83,7 +86,7 @@ export const ExpressionOnFilter = (props: Props) => {
 
     return <>
         <div style={{position: "relative", paddingBottom: "5px"}}>
-            <Panel header={"Expressão"}>
+            <Panel header={t('filters.expression' as any)}>
                 <div style={{display: "flex", flexDirection: "column"}}>
                     <ScrollPanel style={{width: '100%', height: '90%'}}>
                         <ul style={{paddingLeft: "0"}}>
@@ -100,14 +103,14 @@ export const ExpressionOnFilter = (props: Props) => {
                         width: "230px",
                         gap: "5px"
                     }}>
-                        <Button label="Adicionar Condição" outlined={true} onClick={addCondition}/>
+                        <Button label={t('filters.add_condition' as any)} outlined={true} onClick={addCondition}/>
                         <Dropdown style={{paddingBottom: "5px"}} value={selectedOp}
                                   onChange={(e) => {
                                       setSelectedOp(e.value);
                                       update(e.value.name)
                                   }} options={ops}
                                   optionLabel="name"
-                                  placeholder="Selecione o operador" className="w-full md:w-14rem"/>
+                                  placeholder={t('filters.select_operator' as any)} className="w-full md:w-14rem"/>
                     </div>
                 </div>
             </Panel>

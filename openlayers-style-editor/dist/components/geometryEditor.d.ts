@@ -1,6 +1,7 @@
 import { default as React, Dispatch, SetStateAction } from 'react';
-import { SEAttribute, PredefinedRenderer, Render } from '../rendererUtils';
+import { PredefinedRenderer, Render, SEAttribute } from '../rendererUtils';
 import { ColorRamp } from './rampColors.ts';
+import { Feature } from 'ol';
 interface Props {
     attributes: SEAttribute[];
     visible: boolean;
@@ -12,6 +13,7 @@ interface Props {
     moreRamps?: ColorRamp[];
     predefinedStyles: PredefinedRenderer[];
     numbersLocale: string;
+    features: Feature[];
 }
 export declare const GeometryEditor: React.FC<Props>;
 export {};

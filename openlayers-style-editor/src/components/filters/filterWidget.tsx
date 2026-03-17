@@ -12,12 +12,13 @@ import {UniqueSymbolComponent} from "@/components/uniqueSymbolComponent";
 import {Color} from "ol/color";
 import {RenderType, singleColorStyle} from "@/rendererUtils";
 import {RadioButton} from "primereact/radiobutton";
+import {useTranslation} from "react-i18next";
 
 interface Props {
     visible: boolean;
     setVisible: Dispatch<SetStateAction<boolean>>;
     filter: FilterRule | undefined;
-    setFilter: Dispatch<SetStateAction<FilterRule | undefined>>;
+    setFilter: (filter: FilterRule) => void;
     canBeElse: boolean;
 }
 
@@ -28,6 +29,7 @@ export const FilterWidget = (props: Props) => {
         useContext(FilterWidgetContext) as FilterWidgetContextType;
 
     const toast = useRef<Toast | null>(null);
+    const {t} = useTranslation();
 
     const [color, setColor] = useState<Color>()
     const [borderColor, setBorderColor] = useState<Color>()
@@ -221,7 +223,7 @@ export const FilterWidget = (props: Props) => {
             toast.current?.show({
                 severity: 'info',
                 summary: 'Info',
-                detail: 'Título não pode ser vazio!'
+                detail: t('filters.title_empty_error' as any)
             });
             return
         }
@@ -234,7 +236,7 @@ export const FilterWidget = (props: Props) => {
                 toast.current?.show({
                     severity: 'info',
                     summary: 'Info',
-                    detail: 'Tenha pelo menos uma expressão!'
+                    detail: t('filters.min_one_expression_error' as any)
                 });
                 return;
             }
@@ -244,7 +246,7 @@ export const FilterWidget = (props: Props) => {
                     toast.current?.show({
                         severity: 'info',
                         summary: 'Info',
-                        detail: 'Selecione se a expressão ' + tuple.id + ' é "E" ou "OU"'
+                        detail: t('filters.select_and_or_error' as any, {id: tuple.id})
                     });
                     hasToStop = true
                     return
@@ -254,7 +256,7 @@ export const FilterWidget = (props: Props) => {
                         toast.current?.show({
                             severity: 'info',
                             summary: 'Info',
-                            detail: 'Selecione um atributo para a condição ' + expIndex + '.' + index
+                            detail: t('filters.select_attribute_error' as any, {id: expIndex + '.' + index})
                         });
                         hasToStop = true
                         return
@@ -264,7 +266,7 @@ export const FilterWidget = (props: Props) => {
                         toast.current?.show({
                             severity: 'info',
                             summary: 'Info',
-                            detail: 'Selecione uma função para a condição ' + expIndex + '.' + index
+                            detail: t('filters.select_function_error' as any, {id: expIndex + '.' + index})
                         });
                         hasToStop = true
                         return
@@ -277,7 +279,7 @@ export const FilterWidget = (props: Props) => {
                         toast.current?.show({
                             severity: 'info',
                             summary: 'Info',
-                            detail: 'Selecione um valor para a condição ' + expIndex + '.' + index
+                            detail: t('filters.select_value_error' as any, {id: expIndex + '.' + index})
                         });
                         hasToStop = true
                         return
@@ -323,27 +325,28 @@ export const FilterWidget = (props: Props) => {
     }
 
     return isDataLoaded ? (<>
-            <Dialog header={"Adicionar Filtro"}
+            <Dialog header={t('filters.add_filter' as any)}
                     visible={visible}
                     className={styles.dialogDimensions}
                     onHide={() => close()}>
                 <div className={styles.text}>{/* style={{marginTop: "25px", alignItems: "center"}}>*/}
                     <span className="p-float-label">
                         <InputText id="title" value={queryWidget.title}
+                                   maxLength={100}
                                    onChange={(e) => setTitle(e.target.value)}/>
-                        <label htmlFor="title">Nome</label>
+                        <label htmlFor="title">{t('filters.name' as any)}</label>
                     </span>
                     <div className="flex align-items-center">
-                        <RadioButton inputId="filter1" name="filterType" value="Filtro"
+                        <RadioButton inputId="filter1" name="filterType" value={t('filters.filter' as any)}
                                      onChange={(e) => setIsElse(false)} checked={!isElse}/>
-                        <label htmlFor="filter1">Filtro</label>
+                        <label htmlFor="filter1">{t('filters.filter' as any)}</label>
                     </div>
                     <div className="flex align-items-center">
-                        <RadioButton inputId="filter2" name="filterType" value="Todas as restantes geometrias"
+                        <RadioButton inputId="filter2" name="filterType" value={t('filters.all_other_geometries' as any)}
                                      disabled={!canBeElse}
                                      onChange={(e) => setIsElse(true)}
                                      checked={isElse}/>
-                        <label htmlFor="filter2">Todas as restantes geometrias</label>
+                        <label htmlFor="filter2">{t('filters.all_other_geometries' as any)}</label>
                     </div>
                 </div>
                 <div className={"bor-radio-buttons"}>
@@ -361,8 +364,8 @@ export const FilterWidget = (props: Props) => {
                         )}
                     </ul>
                 </ScrollPanel>}
-                <div className={styles.addExpression}>
-                    <Button label="Concluir" onClick={addPolygons}/>
+                <div className={styles.conclude}>
+                    <Button label={t('common.conclude' as any)} onClick={addPolygons}/>
                 </div>
             </Dialog>
             <Toast ref={toast}/>

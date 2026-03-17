@@ -1,9 +1,19 @@
-import { Render } from '../rendererUtils';
+import { Render, SEAttribute } from '../rendererUtils';
+import { Feature } from 'ol';
 export interface FilterRule {
     name: string;
-    filterJson: string;
+    filterJson?: string;
     isElse: boolean;
     symbol: Render;
-    isAll: boolean;
+    isAll?: boolean;
+    friendlyExpression?: string;
 }
-export declare function BasedOnRules(): import("react/jsx-runtime").JSX.Element;
+interface Props {
+    setVisible: (e: boolean) => void;
+    features: Feature[];
+    applyRenderer: (renderer: Render) => void;
+    layerCurrentRenderer: Render;
+    attributes: SEAttribute[];
+}
+export declare function BasedOnRules(props: Props): import("react/jsx-runtime").JSX.Element;
+export {};

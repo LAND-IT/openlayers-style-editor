@@ -51,6 +51,10 @@ export const GeometryEditor: React.FC<Props> = (props: Props) => {
 
     const [attr, setAttr] = useState<SEAttribute[]>(props.attributes)
 
+    useEffect(() => {
+        setAttr(props.attributes)
+    }, [props.attributes])
+
     const [currentRenderer, setCurrentRenderer] = useState<Render>(layerCurrentRenderer)
 
     const options = [
