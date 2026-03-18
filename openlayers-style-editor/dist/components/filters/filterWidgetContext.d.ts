@@ -16,6 +16,7 @@ interface FilterWidgetI {
     }[];
     expressionsComponents: number[];
     attributes: SEAttribute[];
+    idFieldName: string | null;
 }
 export type FilterWidgetContextType = {
     queryWidget: FilterWidgetI;
@@ -36,11 +37,13 @@ export type FilterWidgetContextType = {
     setAttributes: (value: SEAttribute[]) => void;
     reset: () => void;
     addAttributes: (atts: SEAttribute[]) => void;
+    idFieldName: string | null;
 };
 export declare const FilterWidgetContext: import('react').Context<FilterWidgetContextType | null>;
 interface ProviderProps {
     children: ReactNode;
     attributes: SEAttribute[];
+    idFieldName: string | null;
 }
-export declare function FilterWidgetContextProvider({ children, attributes }: ProviderProps): import("react/jsx-runtime").JSX.Element;
+export declare function FilterWidgetContextProvider({ children, attributes, idFieldName }: ProviderProps): import("react/jsx-runtime").JSX.Element;
 export {};

@@ -7,6 +7,7 @@ import ColorPicker from "react-best-gradient-color-picker";
 import { I18nextProvider, initReactI18next, useTranslation } from "react-i18next";
 import { Fragment, jsx, jsxs } from "react/jsx-runtime";
 import { Button } from "primereact/button/button.esm.js";
+import jsonLogic from "json-logic-js";
 import { Dropdown } from "primereact/dropdown/dropdown.esm.js";
 import { Checkbox } from "primereact/checkbox/checkbox.esm.js";
 import { DataTable } from "primereact/datatable/datatable.esm.js";
@@ -20,7 +21,6 @@ import { Panel } from "primereact/panel/panel.esm.js";
 import { Fieldset } from "primereact/fieldset/fieldset.esm.js";
 import { InputText } from "primereact/inputtext/inputtext.esm.js";
 import { RadioButton } from "primereact/radiobutton/radiobutton.esm.js";
-import jsonLogic from "json-logic-js";
 import i18n from "i18next";
 //#region src/components/myColorPicker.tsx
 var MyColorPicker = (props) => {
@@ -184,6 +184,7 @@ function getRendererOpacity(renderer) {
 	if (renderer.type == RenderType.Unique) return renderer.rendererOL["fill-color"][3] * 100;
 	if (renderer.type == RenderType.Categorized) return renderer.rendererOL["fill-color"][3][3] * 100;
 	if (renderer.type == RenderType.Graduated) return renderer.rendererOL["fill-color"][4][3] * 100;
+	if (renderer.type == RenderType.ByRules) return renderer.rendererOL["fill-color"][2][3] * 100;
 	return 100;
 }
 function changeRendererOpacity(renderer, opacity) {
@@ -232,6 +233,24 @@ function changeRendererOpacity(renderer, opacity) {
 			}
 		};
 	}
+	if (renderer.type == RenderType.ByRules) {
+		let newFillColorArray = [...renderer.rendererOL["fill-color"]];
+		for (let i = 2; i < newFillColorArray.length - 1; i += 2) if (Array.isArray(newFillColorArray[i]) && newFillColorArray[i].length === 4) {
+			newFillColorArray[i] = [...newFillColorArray[i]];
+			newFillColorArray[i][3] = opacity / 100;
+		}
+		if (Array.isArray(newFillColorArray[newFillColorArray.length - 1]) && newFillColorArray[newFillColorArray.length - 1].length === 4) {
+			newFillColorArray[newFillColorArray.length - 1] = [...newFillColorArray[newFillColorArray.length - 1]];
+			newFillColorArray[newFillColorArray.length - 1][3] = opacity / 100;
+		}
+		newRenderer = {
+			...renderer,
+			rendererOL: {
+				...renderer.rendererOL,
+				["fill-color"]: newFillColorArray
+			}
+		};
+	}
 	return newRenderer;
 }
 function getStyleColorsAndValues(style, type) {
@@ -271,71 +290,240 @@ function getRendererColorAndSizeStroke(renderer) {
 function generateRandomColor() {
 	return fromString("#" + (16777216 + Math.random() * 16777215).toString(16).substr(1, 6));
 }
-function getByRulesStyle(filters, idFieldName, elseFilter) {
-	console.log(filters);
-	if (filters.length === 0 || filters.filter((f) => f.ids.length > 0).length == 0) if (elseFilter) {
-		let fillColor = getStyleColorsAndValues(elseFilter.symbol.rendererOL, RenderType.Unique)[0].color;
-		let stroke = getRendererColorAndSizeStroke(elseFilter.symbol);
-		return {
-			"stroke-color": Object.values(stroke.color),
-			"stroke-width": stroke.size,
-			"fill-color": fillColor,
-			"_rules": filters.map((f) => ({
-				expression: f.filter.friendlyExpression,
-				render: f.filter.symbol
-			}))
+function jsonLogicToOlExpression(logic, features = [], idFieldName = "") {
+	if (logic === null) return "";
+	if (typeof logic !== "object") return logic;
+	if (Array.isArray(logic)) return ["literal", logic];
+	const operator = Object.keys(logic)[0];
+	const value = logic[operator];
+	if (operator === "var") return ["get", value];
+	if (operator === "and" || operator === "or") {
+		const olOp = operator === "and" ? "all" : "any";
+		if (!Array.isArray(value) || value.length === 0) return true;
+		const children = value.map((v) => {
+			const compiled = jsonLogicToOlExpression(v, features, idFieldName);
+			if (compiled !== null) return compiled;
+			return fallbackToIds(v, features, idFieldName);
+		});
+		if (children.length === 0) return true;
+		if (children.length === 1) return children[0];
+		return [olOp, ...children];
+	}
+	if (operator === "!") {
+		const inner = jsonLogicToOlExpression(value, features, idFieldName);
+		if (inner === null) return null;
+		return ["!", inner];
+	}
+	if ([
+		"==",
+		"===",
+		"!=",
+		"!==",
+		"<",
+		">",
+		"<=",
+		">="
+	].includes(operator) && Array.isArray(value) && value.length === 2) {
+		const arg1 = jsonLogicToOlExpression(value[0], features, idFieldName);
+		const arg2 = jsonLogicToOlExpression(value[1], features, idFieldName);
+		if (arg1 === null || arg2 === null) return null;
+		let olOp = operator;
+		if (operator === "===") olOp = "==";
+		if (operator === "!==") olOp = "!=";
+		return [
+			olOp,
+			arg1 === "" ? "" : arg1,
+			arg2 === "" ? "" : arg2
+		];
+	}
+	if (operator === "in" && Array.isArray(value) && value.length === 2) {
+		const arg1 = jsonLogicToOlExpression(value[0], features, idFieldName);
+		const arg2 = jsonLogicToOlExpression(value[1], features, idFieldName);
+		if (arg1 === null || arg2 === null) return null;
+		if (Array.isArray(arg2) && arg2[0] === "literal" && Array.isArray(arg2[1])) return [
+			operator,
+			arg1,
+			arg2
+		];
+		return null;
+	}
+	if (operator === "true" || operator === "false" || operator === "null") {
+		const attrVal = jsonLogicToOlExpression(Array.isArray(value) ? value[0] : value, features, idFieldName);
+		if (attrVal === null) return null;
+		if (operator === "null") return [
+			"==",
+			attrVal,
+			""
+		];
+		return [
+			"==",
+			attrVal,
+			operator === "true"
+		];
+	}
+	return null;
+}
+function fallbackToIds(logic, features, idFieldName) {
+	if (!idFieldName || !features || features.length === 0) return [
+		"==",
+		1,
+		0
+	];
+	let matchingIds = features.filter((f) => {
+		try {
+			return !!jsonLogic.apply(logic, f.getProperties());
+		} catch (e) {
+			return false;
+		}
+	}).map((f) => f.get(idFieldName)).filter((id) => id !== void 0 && id !== null);
+	const idExpr = ["get", idFieldName];
+	const strings = [];
+	const numbers = [];
+	matchingIds.forEach((id) => {
+		if (typeof id === "string") strings.push(id);
+		else if (typeof id === "number") numbers.push(id);
+	});
+	const conds = [];
+	if (strings.length > 0) conds.push([
+		"in",
+		idExpr,
+		strings
+	]);
+	if (numbers.length > 0) conds.push([
+		"in",
+		idExpr,
+		numbers
+	]);
+	if (conds.length === 0) return [
+		"==",
+		1,
+		0
+	];
+	if (conds.length === 1) return conds[0];
+	return ["any", ...conds];
+}
+function getFriendlyExpression(data) {
+	if (!data.filterJson) return "";
+	try {
+		const parsed = JSON.parse(data.filterJson);
+		const formatCondition = (cond) => {
+			const operator = Object.keys(cond)[0];
+			const value = cond[operator];
+			if (operator === "!" && value.hasOwnProperty("in")) {
+				const innerCondition = value["in"];
+				return `${Array.isArray(innerCondition[1].var) ? innerCondition[1].var[0] : innerCondition[1].var} not in ${JSON.stringify(innerCondition[0])}`;
+			}
+			if (operator === "==" && Array.isArray(value) && value[0] && value[0].hasOwnProperty("substr")) {
+				const substr = value[0].substr;
+				const valueString = value[1];
+				return `${Array.isArray(substr[0].var) ? substr[0].var[0] : substr[0].var} ${substr[1] < 0 ? "endsWith" : "startsWith"} "${valueString}"`;
+			}
+			if (operator === "==" && Array.isArray(value) && value[0] === null) return `${Array.isArray(value[1].var) ? value[1].var[0] : value[1].var} is null`;
+			const max = Array.isArray(value) ? value[0] : null;
+			if (max && max.hasOwnProperty("var")) return `${Array.isArray(max.var) ? max.var[0] : max.var} ${operator} ${JSON.stringify(value[1])}`;
+			if (Array.isArray(value) && value[1] && value[1].hasOwnProperty("var")) return `${Array.isArray(value[1].var) ? value[1].var[0] : value[1].var} ${operator} ${JSON.stringify(max)}`;
+			return JSON.stringify(cond);
 		};
-	} else return {
-		"stroke-color": fromString("#000000"),
-		"stroke-width": 1,
-		"fill-color": fromString("#ffffff"),
-		"_rules": filters.map((f) => ({
-			expression: f.filter.friendlyExpression,
-			render: f.filter.symbol
-		}))
-	};
+		const isAll = parsed.hasOwnProperty("and");
+		const isAny = parsed.hasOwnProperty("or");
+		if (isAll || isAny) {
+			const operator = isAll ? " AND " : " OR ";
+			return parsed[isAll ? "and" : "or"].map(formatCondition).join(operator);
+		} else return formatCondition(parsed);
+	} catch (e) {
+		return data.filterJson;
+	}
+}
+function getByRulesStyle(filters, idFieldName, features, elseFilter) {
+	if (filters.length === 0) {
+		const defaultStyle = {
+			"stroke-color": [
+				0,
+				0,
+				0,
+				1
+			],
+			"stroke-width": 1,
+			"fill-color": [
+				255,
+				255,
+				255,
+				1
+			],
+			"_rules": []
+		};
+		if (elseFilter) {
+			let fillColor = getStyleColorsAndValues(elseFilter.symbol.rendererOL, RenderType.Unique)[0].color;
+			let stroke = getRendererColorAndSizeStroke(elseFilter.symbol);
+			return {
+				...defaultStyle,
+				"stroke-color": stroke.color,
+				"stroke-width": stroke.size,
+				"fill-color": fillColor
+			};
+		}
+		return defaultStyle;
+	}
 	let fillColorArray = ["case"];
 	let strokeColorArray = ["case"];
 	let strokeWidthArray = ["case"];
 	filters.forEach((filter) => {
-		if (filter.ids.length > 0) {
-			let fillColor = getStyleColorsAndValues(filter.filter.symbol.rendererOL, RenderType.Unique)[0].color;
-			let cond = [
-				"in",
-				["get", idFieldName],
-				filter.ids
-			];
-			fillColorArray.push(cond);
-			fillColorArray.push(fillColor);
-			let stroke = getRendererColorAndSizeStroke(filter.filter.symbol);
-			strokeColorArray.push(cond);
-			strokeColorArray.push(Object.values(stroke.color));
-			strokeWidthArray.push(cond);
-			strokeWidthArray.push(stroke.size);
+		let fillColor = getStyleColorsAndValues(filter.symbol.rendererOL, RenderType.Unique)[0].color;
+		let cond = [
+			"==",
+			1,
+			0
+		];
+		try {
+			if (filter.filterJson) {
+				const parsedLogic = JSON.parse(filter.filterJson);
+				const nativeExpression = jsonLogicToOlExpression(parsedLogic, features, idFieldName);
+				if (nativeExpression !== null) cond = nativeExpression;
+				else cond = fallbackToIds(parsedLogic, features, idFieldName);
+			}
+		} catch (e) {
+			console.error("Error creating OL expression", e);
 		}
+		fillColorArray.push(cond);
+		fillColorArray.push(fillColor);
+		let stroke = getRendererColorAndSizeStroke(filter.symbol);
+		strokeColorArray.push(cond);
+		strokeColorArray.push(stroke.color);
+		strokeWidthArray.push(cond);
+		strokeWidthArray.push(stroke.size);
 	});
 	if (elseFilter) {
 		let fillColor = getStyleColorsAndValues(elseFilter.symbol.rendererOL, RenderType.Unique)[0].color;
 		fillColorArray.push(fillColor);
 		let stroke = getRendererColorAndSizeStroke(elseFilter.symbol);
-		strokeColorArray.push(Object.values(stroke.color));
+		strokeColorArray.push(stroke.color);
 		strokeWidthArray.push(stroke.size);
 	} else {
-		fillColorArray.push(fromString("#ffffff"));
-		strokeColorArray.push(fromString("#000000"));
+		fillColorArray.push([
+			255,
+			255,
+			255,
+			1
+		]);
+		strokeColorArray.push([
+			0,
+			0,
+			0,
+			1
+		]);
 		strokeWidthArray.push(1);
 	}
-	const res = {
+	return {
 		"stroke-color": strokeColorArray,
 		"stroke-width": strokeWidthArray,
 		"fill-color": fillColorArray,
 		"_rules": filters.map((f) => ({
-			expression: f.filter.friendlyExpression,
-			render: f.filter.symbol
+			expression: getFriendlyExpression(f),
+			name: f.name,
+			json: f.filterJson,
+			render: f.symbol
 		}))
 	};
-	console.log(res);
-	return res;
 }
 //#endregion
 //#region src/components/uniqueSymbol.tsx
@@ -2074,10 +2262,11 @@ var Graduated = (props) => {
 //#endregion
 //#region src/components/filters/filterWidgetContext.tsx
 var FilterWidgetContext = createContext(null);
-function FilterWidgetContextProvider({ children, attributes }) {
+function FilterWidgetContextProvider({ children, attributes, idFieldName }) {
 	const initial = {
 		title: "",
 		attributes,
+		idFieldName,
 		expressionSet: [{
 			id: 0,
 			conditions: [0],
@@ -2133,7 +2322,8 @@ function FilterWidgetContextProvider({ children, attributes }) {
 			setExpressionsComponents,
 			reset,
 			setAttributes,
-			addAttributes
+			addAttributes,
+			idFieldName
 		},
 		children
 	});
@@ -2142,7 +2332,7 @@ function FilterWidgetContextProvider({ children, attributes }) {
 //#region src/components/filters/conditionOnFilter.tsx
 var ConditionOnFilter = (props) => {
 	const { parentID, id, deleteF } = props;
-	const { queryWidget, setExpressionSet } = useContext(FilterWidgetContext);
+	const { queryWidget, setExpressionSet, idFieldName } = useContext(FilterWidgetContext);
 	const toast = useRef(null);
 	const { t } = useTranslation();
 	const [selectedAttribute, setSelectedAttribute] = useState();
@@ -2163,22 +2353,24 @@ var ConditionOnFilter = (props) => {
 			name: t("filters.is_not"),
 			logic: "!="
 		},
-		{
-			name: t("filters.starts_with"),
-			logic: "startsWith"
-		},
-		{
-			name: t("filters.ends_with"),
-			logic: "endsWith"
-		},
-		{
-			name: t("filters.contains"),
-			logic: "in"
-		},
-		{
-			name: t("filters.does_not_contain"),
-			logic: "!in"
-		},
+		...idFieldName ? [
+			{
+				name: t("filters.starts_with"),
+				logic: "startsWith"
+			},
+			{
+				name: t("filters.ends_with"),
+				logic: "endsWith"
+			},
+			{
+				name: t("filters.contains"),
+				logic: "in"
+			},
+			{
+				name: t("filters.does_not_contain"),
+				logic: "!in"
+			}
+		] : [],
 		{
 			name: t("filters.is_null"),
 			logic: "null"
@@ -2525,19 +2717,19 @@ var FilterWidget = (props) => {
 		switch (operator) {
 			case "startsWith": return `{
                 "==": [
-                    { "substr": [{ "var": "${attribute}" }, 0, ${value.length}] },
+                    { "substr": [{ "var": ["${attribute}", ""] }, 0, ${value.length}] },
                     "${value}"
                 ]
             }`;
 			case "endsWith": return `{
                 "==": [
-                    { "substr": [{ "var": "${attribute}" }, -${value.length}] },
+                    { "substr": [{ "var": ["${attribute}", ""] }, -${value.length}] },
                     "${value}"
                 ]
             }`;
 			case "!in": return `{
                 "!": {
-                    "in": [${JSON.stringify(value)}, { "var": "${attribute}" }]
+                    "in": [${JSON.stringify(value)}, { "var": ["${attribute}", ""] }]
                 }
             }`;
 			default: return `{"${operator}": ["${value}", { "var": "${attribute}" }]}`;
@@ -2560,22 +2752,25 @@ var FilterWidget = (props) => {
 	function deconstructRule(rule) {
 		const parsedRule = JSON.parse(rule);
 		const isAll = parsedRule.hasOwnProperty("and");
+		let conditions = parsedRule[isAll ? "and" : "or"];
+		if (!conditions) conditions = [parsedRule];
 		return {
 			isAll,
-			conditions: parsedRule[isAll ? "and" : "or"].map((condition) => {
+			conditions: conditions.map((condition) => {
 				const operator = Object.keys(condition)[0];
 				const value = condition[operator];
 				if (operator === "==" && value[0].hasOwnProperty("substr")) {
 					const substr = value[0].substr;
 					const valueString = value[1];
+					const attributeName = Array.isArray(substr[0].var) ? substr[0].var[0] : substr[0].var;
 					if (substr[1] < 0) return {
 						operator: "endsWith",
-						attribute: substr[0].var,
+						attribute: attributeName,
 						value: valueString
 					};
 					else return {
 						operator: "startsWith",
-						attribute: substr[0].var,
+						attribute: attributeName,
 						value: valueString
 					};
 				}
@@ -2583,25 +2778,25 @@ var FilterWidget = (props) => {
 					const innerCondition = value[Object.keys(value)[0]];
 					return {
 						operator: "!in",
-						attribute: innerCondition[1].var,
+						attribute: Array.isArray(innerCondition[1].var) ? innerCondition[1].var[0] : innerCondition[1].var,
 						value: innerCondition[0]
 					};
 				}
 				if (operator === "==") {
 					if (value[0] === null) return {
 						operator: "null",
-						attribute: value[1].var
+						attribute: Array.isArray(value[1].var) ? value[1].var[0] : value[1].var
 					};
 				}
 				const max = value[0];
 				if (max.hasOwnProperty("var")) return {
 					operator,
-					attribute: max.var,
+					attribute: Array.isArray(max.var) ? max.var[0] : max.var,
 					value: value[1]
 				};
 				return {
 					operator,
-					attribute: value[1].var,
+					attribute: Array.isArray(value[1].var) ? value[1].var[0] : value[1].var,
 					value: max
 				};
 			})
@@ -2810,18 +3005,23 @@ var FilterWidget = (props) => {
 //#endregion
 //#region src/components/basedOnRules.tsx
 function BasedOnRules(props) {
-	const { setVisible, features, applyRenderer, layerCurrentRenderer, attributes } = props;
-	const [rules, setRules] = useState(layerCurrentRenderer.type == RenderType.ByRules ? layerCurrentRenderer.filters ? layerCurrentRenderer.filters : [] : []);
+	const { setVisible, applyRenderer, layerCurrentRenderer, features, idFieldName } = props;
+	const [rules, setRules] = useState(() => {
+		if (layerCurrentRenderer.type == RenderType.ByRules) {
+			if (layerCurrentRenderer.filters && layerCurrentRenderer.filters.length > 0) return layerCurrentRenderer.filters;
+			else if (layerCurrentRenderer.rendererOL._rules) return layerCurrentRenderer.rendererOL._rules.map((r, index) => ({
+				name: r.name || r.expression,
+				filterJson: r.json,
+				isElse: index === layerCurrentRenderer.rendererOL._rules.length - 1,
+				symbol: r.render,
+				isAll: false
+			}));
+		}
+		return [];
+	});
 	const [selectedRule, setSelectedRule] = useState();
 	const [showDialog, setShowDialog] = useState(false);
 	const [isAdding, setIsAdding] = useState(false);
-	const [selectedAttribute, setSelectedAttribute] = useState(attributes.find((a) => a.name === layerCurrentRenderer.field));
-	useEffect(() => {
-		if (!selectedAttribute && layerCurrentRenderer.field && attributes.length > 0) {
-			const attr = attributes.find((a) => a.name === layerCurrentRenderer.field);
-			if (attr) setSelectedAttribute(attr);
-		}
-	}, [attributes, layerCurrentRenderer.field]);
 	const { t } = useTranslation();
 	const nameLabel = t("based_on_rules.name");
 	const typeLabel = t("based_on_rules.type");
@@ -2829,8 +3029,6 @@ function BasedOnRules(props) {
 	const expressionLabel = t("based_on_rules.expression");
 	const allOtherGeometriesLabel = t("based_on_rules.all_other_geometries");
 	const filterLabel = t("based_on_rules.filter");
-	const selectIdAttributeLabel = t("based_on_rules.select_id_attribute");
-	const idsNotUniqueLabel = t("based_on_rules.ids_not_unique");
 	const addRuleLabel = t("based_on_rules.add_rule");
 	const removeRuleLabel = t("based_on_rules.remove_rule");
 	const editRuleLabel = t("based_on_rules.edit_rule");
@@ -2867,38 +3065,6 @@ function BasedOnRules(props) {
 			body: (data) => getFriendlyExpression(data)
 		}
 	];
-	function getFriendlyExpression(data) {
-		if (!data.filterJson) return "";
-		try {
-			const parsed = JSON.parse(data.filterJson);
-			const formatCondition = (cond) => {
-				const operator = Object.keys(cond)[0];
-				const value = cond[operator];
-				if (operator === "!" && value.hasOwnProperty("in")) {
-					const innerCondition = value["in"];
-					return `${innerCondition[1].var} not in ${JSON.stringify(innerCondition[0])}`;
-				}
-				if (operator === "==" && Array.isArray(value) && value[0] && value[0].hasOwnProperty("substr")) {
-					const substr = value[0].substr;
-					const valueString = value[1];
-					return `${substr[0].var} ${substr[1] < 0 ? "endsWith" : "startsWith"} "${valueString}"`;
-				}
-				if (operator === "==" && Array.isArray(value) && value[0] === null) return `${value[1].var} is null`;
-				const max = Array.isArray(value) ? value[0] : null;
-				if (max && max.hasOwnProperty("var")) return `${max.var} ${operator} ${JSON.stringify(value[1])}`;
-				if (Array.isArray(value) && value[1] && value[1].hasOwnProperty("var")) return `${value[1].var} ${operator} ${JSON.stringify(max)}`;
-				return JSON.stringify(cond);
-			};
-			const isAll = parsed.hasOwnProperty("and");
-			const isAny = parsed.hasOwnProperty("or");
-			if (isAll || isAny) {
-				const operator = isAll ? " AND " : " OR ";
-				return parsed[isAll ? "and" : "or"].map(formatCondition).join(operator);
-			} else return formatCondition(parsed);
-		} catch (e) {
-			return data.filterJson;
-		}
-	}
 	function addFilter(filter) {
 		setRules([...rules, filter]);
 	}
@@ -2911,35 +3077,9 @@ function BasedOnRules(props) {
 		}
 		setSelectedRule(void 0);
 	}
-	function hasUniqueIDs(features, IDAttribute) {
-		const idSet = /* @__PURE__ */ new Set();
-		for (const feature of features) {
-			const id = feature.get(IDAttribute.name);
-			if (id === void 0 || id === null) return false;
-			if (idSet.has(id)) return false;
-			idSet.add(id);
-		}
-		return true;
-	}
 	return /* @__PURE__ */ jsxs(Fragment, { children: [/* @__PURE__ */ jsxs("div", {
 		className: "container-bor",
 		children: [
-			/* @__PURE__ */ jsxs("div", {
-				className: "bor-id",
-				children: [/* @__PURE__ */ jsx(Dropdown, {
-					options: attributes,
-					optionLabel: "name",
-					value: selectedAttribute,
-					placeholder: selectIdAttributeLabel,
-					onChange: (e) => setSelectedAttribute(e.value)
-				}), selectedAttribute && !hasUniqueIDs(features, selectedAttribute) && /* @__PURE__ */ jsxs("div", {
-					className: "bor-id",
-					children: [/* @__PURE__ */ jsx("i", {
-						className: "pi pi-exclamation-triangle",
-						style: { color: "orange" }
-					}), /* @__PURE__ */ jsx("span", { children: /* @__PURE__ */ jsx("b", { children: idsNotUniqueLabel }) })]
-				})]
-			}),
 			/* @__PURE__ */ jsxs("div", {
 				className: "bor-buttons",
 				children: [
@@ -2978,51 +3118,31 @@ function BasedOnRules(props) {
 					})
 				]
 			}),
-			/* @__PURE__ */ jsx(DataTable, {
+			/* @__PURE__ */ jsxs(DataTable, {
 				value: rules,
 				selectionMode: "single",
 				selection: selectedRule,
 				onSelectionChange: (e) => setSelectedRule(e.value),
-				children: columns.map((col) => /* @__PURE__ */ jsx(Column, {
+				reorderableRows: true,
+				onRowReorder: (e) => setRules(e.value),
+				children: [/* @__PURE__ */ jsx(Column, {
+					rowReorder: true,
+					style: { width: "3rem" }
+				}), columns.map((col) => /* @__PURE__ */ jsx(Column, {
 					field: col.field,
 					header: col.header,
 					body: col.body
-				}, col.field))
+				}, col.field))]
 			}),
 			/* @__PURE__ */ jsx("div", {
 				className: "footer-container",
 				children: /* @__PURE__ */ jsx(Button, {
 					label: concludeLabel,
-					disabled: !selectedAttribute || !hasUniqueIDs(features, selectedAttribute),
 					onClick: () => {
-						const appliedFilters = [];
-						rules.filter((r) => !r.isElse).forEach((filter) => {
-							const res = [];
-							try {
-								const parsedLogic = JSON.parse(filter.filterJson);
-								features.forEach((feature) => {
-									if (jsonLogic.apply(parsedLogic, feature.getProperties())) res.push(feature.get(selectedAttribute.name));
-								});
-							} catch (e) {
-								console.error("Error evaluating jsonLogic rule", e);
-							}
-							appliedFilters.push({
-								filter,
-								ids: res
-							});
-						});
-						const completedFilters = appliedFilters.map((r) => ({
-							ids: [...r.ids],
-							filter: {
-								...r.filter,
-								friendlyExpression: getFriendlyExpression(r.filter)
-							}
-						}));
 						applyRenderer({
 							type: RenderType.ByRules,
-							field: selectedAttribute.name,
 							filters: rules,
-							rendererOL: getByRulesStyle(completedFilters, selectedAttribute.name, rules.find((r) => r.isElse))
+							rendererOL: getByRulesStyle(rules.filter((r) => !r.isElse), idFieldName || "", features, rules.find((r) => r.isElse))
 						});
 						setVisible(false);
 					}
@@ -3076,6 +3196,46 @@ var GeometryEditor = (props) => {
 	useEffect(() => {
 		setActiveIndex(currentRenderer.type == RenderType.Categorized ? options[1] : currentRenderer.type == RenderType.Graduated ? options[2] : layerCurrentRenderer.type == RenderType.ByRules ? options[3] : options[0]);
 	}, [currentRenderer]);
+	function findIdField(features) {
+		if (!features || features.length === 0) return null;
+		const candidates = /* @__PURE__ */ new Set();
+		const sampleSize = Math.min(features.length, 100);
+		for (let i = 0; i < sampleSize; i++) {
+			const props = features[i].getProperties();
+			if (props) Object.keys(props).filter((k) => k !== "geometry").forEach((k) => candidates.add(k));
+		}
+		if (candidates.size === 0) return null;
+		let bestField = null;
+		let maxUniqueness = -1;
+		const perfectCandidates = [];
+		for (const key of Array.from(candidates)) {
+			const uniqueValues = /* @__PURE__ */ new Set();
+			let validCount = 0;
+			for (const feature of features) {
+				const val = feature.get(key);
+				if (val !== null && val !== void 0 && val !== "") {
+					uniqueValues.add(val);
+					validCount++;
+				}
+			}
+			if (validCount === 0) continue;
+			const uniqueness = uniqueValues.size / validCount;
+			if (uniqueness > maxUniqueness || uniqueness === maxUniqueness && validCount > features.length / 2) {
+				maxUniqueness = uniqueness;
+				bestField = key;
+			}
+			if (uniqueness === 1) perfectCandidates.push(key);
+		}
+		if (perfectCandidates.length > 0) {
+			const lowerKeys = perfectCandidates.map((k) => k.toLowerCase());
+			const exactIdMatch = perfectCandidates.find((_, i) => lowerKeys[i] === "id" || lowerKeys[i] === "objectid" || lowerKeys[i] === "fid" || lowerKeys[i] === "uid" || lowerKeys[i] === "uuid");
+			if (exactIdMatch) return exactIdMatch;
+			const partialIdMatch = perfectCandidates.find((_, i) => lowerKeys[i].includes("id") || lowerKeys[i].includes("key"));
+			if (partialIdMatch) return partialIdMatch;
+			return perfectCandidates[0];
+		}
+		return bestField;
+	}
 	return /* @__PURE__ */ jsx(Fragment, { children: /* @__PURE__ */ jsxs("div", {
 		className: "geometry-editor",
 		children: [
@@ -3127,12 +3287,13 @@ var GeometryEditor = (props) => {
 			}),
 			activeIndex?.code == 3 && /* @__PURE__ */ jsx(FilterWidgetContextProvider, {
 				attributes: attr,
+				idFieldName: findIdField(features),
 				children: /* @__PURE__ */ jsx(BasedOnRules, {
 					applyRenderer,
 					layerCurrentRenderer,
 					setVisible,
 					features,
-					attributes: attr
+					idFieldName: findIdField(features)
 				})
 			})
 		]
@@ -3478,4 +3639,4 @@ function StyleEditor(props) {
 	}) });
 }
 //#endregion
-export { AttributeTypeEnum, GraduatedModes, RenderType, StyleEditor, changeRendererOpacity, generateRandomColor, getByRulesStyle, getCategorizedStyle, getGraduatedStyle, getRendererColorAndSizeStroke, getRendererOpacity, getStyleColorsAndValues, singleColorStyle, singleColorStyleForLines };
+export { AttributeTypeEnum, GraduatedModes, RenderType, StyleEditor, changeRendererOpacity, generateRandomColor, getByRulesStyle, getCategorizedStyle, getFriendlyExpression, getGraduatedStyle, getRendererColorAndSizeStroke, getRendererOpacity, getStyleColorsAndValues, singleColorStyle, singleColorStyleForLines };

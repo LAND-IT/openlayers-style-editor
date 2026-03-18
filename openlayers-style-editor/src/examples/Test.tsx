@@ -1,6 +1,6 @@
 import {Button} from "primereact/button";
 import {useEffect, useMemo, useState} from "react";
-import {Render, RenderType} from "../rendererUtils";
+import {getByRulesStyle, Render, RenderType, singleColorStyle} from "../rendererUtils";
 import TileLayer from "ol/layer/Tile";
 import {OSM} from "ol/source";
 import {Feature, Map, View} from "ol";
@@ -9,6 +9,7 @@ import WebGLVectorLayer from "ol/layer/WebGLVector";
 import {GeoJSON} from "ol/format";
 import "./test.css";
 import StyleEditor from "../components/main/StyleEditor";
+import {fromString} from "ol/color";
 
 export function Test() {
 
@@ -22,6 +23,24 @@ export function Test() {
             'stroke-color': [0, 0, 0, 1],
             'stroke-width': 1,
         }
+    }
+
+    const defaultRender2: Render = {
+        type: RenderType.ByRules,
+        rendererOL: getByRulesStyle([{
+                name: "oi",
+                isAll: true,
+                isElse: false,
+                filterJson: "{\"==\" : [ { \"var\" : \"ECO_NAME\" }, \"Northeast Siberian coastal tundra\"]}",
+                symbol: {type: RenderType.Unique,
+                    rendererOL: singleColorStyle(fromString("rgba(0,0,1,0.1)"))}
+            },{name: "oi2",
+                isAll: true,
+                isElse: true,
+                filterJson: null,
+                symbol: {type: RenderType.Unique,
+                    rendererOL: singleColorStyle(fromString("rgba(0,0,1,0.1)"), fromString("darkblue"), 3)}}],
+            "id0", [])
     }
 
     const [renderer, setRenderer] = useState<Render>(defaultRender);

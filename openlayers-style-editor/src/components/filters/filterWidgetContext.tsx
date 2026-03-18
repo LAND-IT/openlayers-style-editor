@@ -17,6 +17,7 @@ interface FilterWidgetI {
     }[],
     expressionsComponents: number[],
     attributes: SEAttribute[],
+    idFieldName: string | null;
 }
 
 export type FilterWidgetContextType = {
@@ -40,6 +41,7 @@ export type FilterWidgetContextType = {
     setAttributes: (value: SEAttribute[]) => void
     reset: () => void
     addAttributes: (atts: SEAttribute[]) => void
+    idFieldName: string | null
 }
 
 export const FilterWidgetContext = createContext<FilterWidgetContextType | null>(null)
@@ -47,13 +49,15 @@ export const FilterWidgetContext = createContext<FilterWidgetContextType | null>
 interface ProviderProps {
     children: ReactNode
     attributes: SEAttribute[]
+    idFieldName: string | null
 }
 
-export function FilterWidgetContextProvider({children, attributes}: ProviderProps) {
+export function FilterWidgetContextProvider({children, attributes, idFieldName}: ProviderProps) {
 
     const initial: FilterWidgetI = {
         title: "",
         attributes: attributes,
+        idFieldName: idFieldName,
         expressionSet: [
             {
                 id: 0,
@@ -113,7 +117,8 @@ export function FilterWidgetContextProvider({children, attributes}: ProviderProp
                 setExpressionsComponents,
                 reset,
                 setAttributes,
-                addAttributes
+                addAttributes,
+                idFieldName
             }}>
             {children}
         </FilterWidgetContext.Provider>

@@ -1,7 +1,14 @@
 import { Color } from 'ol/color';
 import { FlatStyle } from 'ol/style/flat';
 import { Stop } from './components/rampColors.ts';
-import { FilterRule } from './components/basedOnRules.tsx';
+import { Feature } from 'ol';
+export interface FilterRule {
+    name: string;
+    filterJson?: string;
+    isElse: boolean;
+    symbol: Render;
+    isAll?: boolean;
+}
 export declare enum AttributeTypeEnum {
     'STRING' = 0,
     'INTEGER' = 1,
@@ -66,7 +73,5 @@ export declare function getRendererColorAndSizeStroke(renderer: Render): {
     size: number;
 };
 export declare function generateRandomColor(): Color;
-export declare function getByRulesStyle(filters: {
-    filter: FilterRule;
-    ids: (string | number)[];
-}[], idFieldName: string, elseFilter?: FilterRule): FlatStyle;
+export declare function getFriendlyExpression(data: FilterRule): string;
+export declare function getByRulesStyle(filters: FilterRule[], idFieldName: string, features: Feature[], elseFilter?: FilterRule): FlatStyle;

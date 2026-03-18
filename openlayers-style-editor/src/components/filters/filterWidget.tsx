@@ -7,10 +7,9 @@ import {InputText} from "primereact/inputtext";
 import {FilterWidgetContext, FilterWidgetContextType} from "./filterWidgetContext";
 import {Button} from "primereact/button";
 import {Toast} from "primereact/toast";
-import {FilterRule} from "@/components/basedOnRules.tsx";
 import {UniqueSymbolComponent} from "@/components/uniqueSymbolComponent";
 import {Color} from "ol/color";
-import {RenderType, singleColorStyle} from "@/rendererUtils";
+import {FilterRule, RenderType, singleColorStyle} from "@/rendererUtils";
 import {RadioButton} from "primereact/radiobutton";
 import {useTranslation} from "react-i18next";
 
@@ -58,7 +57,7 @@ export const FilterWidget = (props: Props) => {
             case "startsWith":
                 return `{
                 "==": [
-                    { "substr": [{ "var": "${attribute}" }, 0, ${value.length}] },
+                    { "substr": [{ "var": ["${attribute}", ""] }, 0, ${value.length}] },
                     "${value}"
                 ]
             }`;
@@ -66,7 +65,7 @@ export const FilterWidget = (props: Props) => {
             case "endsWith":
                 return `{
                 "==": [
-                    { "substr": [{ "var": "${attribute}" }, -${value.length}] },
+                    { "substr": [{ "var": ["${attribute}", ""] }, -${value.length}] },
                     "${value}"
                 ]
             }`;
@@ -74,7 +73,7 @@ export const FilterWidget = (props: Props) => {
             case "!in":
                 return `{
                 "!": {
-                    "in": [${JSON.stringify(value)}, { "var": "${attribute}" }]
+                    "in": [${JSON.stringify(value)}, { "var": ["${attribute}", ""] }]
                 }
             }`;
 
@@ -110,7 +109,11 @@ export const FilterWidget = (props: Props) => {
         const parsedRule = JSON.parse(rule);
 
         const isAll = parsedRule.hasOwnProperty("and");
-        const conditions = parsedRule[isAll ? "and" : "or"];
+        let conditions = parsedRule[isAll ? "and" : "or"];
+
+        if (!conditions) {
+            conditions = [parsedRule];
+        }
 
         const deconstructedConditions = conditions.map((condition: any) => {
             const operator = Object.keys(condition)[0];
@@ -119,16 +122,17 @@ export const FilterWidget = (props: Props) => {
             if (operator === "==" && value[0].hasOwnProperty("substr")) {
                 const substr = value[0].substr;
                 const valueString = value[1];
+                const attributeName = Array.isArray(substr[0].var) ? substr[0].var[0] : substr[0].var;
                 if (substr[1] < 0) {
                     return {
                         operator: "endsWith",
-                        attribute: substr[0].var,
+                        attribute: attributeName,
                         value: valueString,
                     };
                 } else {
                     return {
                         operator: "startsWith",
-                        attribute: substr[0].var,
+                        attribute: attributeName,
                         value: valueString,
                     };
                 }
@@ -137,9 +141,10 @@ export const FilterWidget = (props: Props) => {
             if (operator === "!") {
                 const innerOperator = Object.keys(value)[0];
                 const innerCondition = value[innerOperator];
+                const attributeName = Array.isArray(innerCondition[1].var) ? innerCondition[1].var[0] : innerCondition[1].var;
                 return {
                     operator: "!in",
-                    attribute: innerCondition[1].var,
+                    attribute: attributeName,
                     value: innerCondition[0],
                 };
             }
@@ -147,23 +152,27 @@ export const FilterWidget = (props: Props) => {
             if (operator === "==") {
                 const max = value[0];
                 if (max === null) {
+                    const attributeName = Array.isArray(value[1].var) ? value[1].var[0] : value[1].var;
                     return {
                         operator: "null",
-                        attribute: value[1].var
+                        attribute: attributeName
                     };
                 }
             }
 
             const max = value[0];
-            if (max.hasOwnProperty("var"))
+            if (max.hasOwnProperty("var")) {
+                const attributeName = Array.isArray(max.var) ? max.var[0] : max.var;
                 return {
                     operator: operator,
-                    attribute: max.var,
+                    attribute: attributeName,
                     value: value[1],
                 };
+            }
+            const attributeName = Array.isArray(value[1].var) ? value[1].var[0] : value[1].var;
             return {
                 operator: operator,
-                attribute: value[1].var,
+                attribute: attributeName,
                 value: max,
             };
         });

@@ -1,15 +1,16 @@
-import { Button } from "primereact/button";
-import { useEffect, useMemo, useState } from "react";
-import { Render, RenderType } from "../rendererUtils";
+import {Button} from "primereact/button";
+import {useEffect, useMemo, useState} from "react";
+import {Render, RenderType} from "../rendererUtils";
 import TileLayer from "ol/layer/Tile";
-import { OSM } from "ol/source";
-import { Feature, Map, View } from "ol";
-import VectorSource, { VectorSourceEvent } from "ol/source/Vector";
+import {OSM} from "ol/source";
+import {Feature, Map, View} from "ol";
+import VectorSource, {VectorSourceEvent} from "ol/source/Vector";
 import WebGLVectorLayer from "ol/layer/WebGLVector";
-import { GeoJSON } from "ol/format";
+import {GeoJSON} from "ol/format";
 import "./test.css";
 import StyleEditor from "../components/main/StyleEditor";
 
+// @ts-ignore
 const pospUrl = new URL('./POSP.geojson', import.meta.url).href;
 
 export function Test() {

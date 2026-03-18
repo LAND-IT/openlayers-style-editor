@@ -77,6 +77,70 @@ export const GeometryEditor: React.FC<Props> = (props: Props) => {
                 layerCurrentRenderer.type == RenderType.ByRules ? options[3] : options[0])
     }, [currentRenderer]);
 
+    function findIdField(features: Feature[]): string | null {
+        if (!features || features.length === 0) return null;
+
+        // 1. Collect all property keys from a sample of features
+        const candidates = new Set<string>();
+        const sampleSize = Math.min(features.length, 100);
+        for (let i = 0; i < sampleSize; i++) {
+            const props = features[i].getProperties();
+            if (props) {
+                Object.keys(props).filter(k => k !== 'geometry').forEach(k => candidates.add(k));
+            }
+        }
+
+        if (candidates.size === 0) return null;
+
+        let bestField: string | null = null;
+        let maxUniqueness = -1;
+        const perfectCandidates: string[] = [];
+
+        // 2. Evaluate uniqueness of each candidate
+        for (const key of Array.from(candidates)) {
+            const uniqueValues = new Set();
+            let validCount = 0;
+
+            for (const feature of features) {
+                const val = feature.get(key);
+                // Ignore null/empty when counting uniqueness to allow spotty ID fields
+                if (val !== null && val !== undefined && val !== "") {
+                    uniqueValues.add(val);
+                    validCount++;
+                }
+            }
+
+            if (validCount === 0) continue;
+
+            const uniqueness = uniqueValues.size / validCount;
+
+            // Also prioritize fields with more valid values overall if uniqueness ties
+            if (uniqueness > maxUniqueness || (uniqueness === maxUniqueness && validCount > (features.length / 2))) {
+                maxUniqueness = uniqueness;
+                bestField = key;
+            }
+
+            if (uniqueness === 1.0) {
+                perfectCandidates.push(key);
+            }
+        }
+
+        // 3. If there are perfectly unique candidates, prefer ones named like an ID
+        if (perfectCandidates.length > 0) {
+            const lowerKeys = perfectCandidates.map(k => k.toLowerCase());
+            const exactIdMatch = perfectCandidates.find((_, i) => lowerKeys[i] === 'id' || lowerKeys[i] === 'objectid' || lowerKeys[i] === 'fid' || lowerKeys[i] === 'uid' || lowerKeys[i] === 'uuid');
+            if (exactIdMatch) return exactIdMatch;
+
+            const partialIdMatch = perfectCandidates.find((_, i) => lowerKeys[i].includes('id') || lowerKeys[i].includes('key'));
+            if (partialIdMatch) return partialIdMatch;
+
+            return perfectCandidates[0]; // Otherwise pick the first perfect one
+        }
+
+        // 4. Fallback to the field with the highest uniqueness ratio
+        return bestField;
+    }
+
     return (
         <>
             <div className={"geometry-editor"}>
@@ -113,10 +177,13 @@ export const GeometryEditor: React.FC<Props> = (props: Props) => {
                         showPreDefinedRamps={showPreDefinedRamps}
                         layerCurrentRenderer={layerCurrentRenderer} numbersLocale={numbersLocale}/>}
 
-                {activeIndex?.code == 3 && <FilterWidgetContextProvider attributes={attr}>
+                {activeIndex?.code == 3 && <FilterWidgetContextProvider attributes={attr} idFieldName={findIdField(features)}>
                     <BasedOnRules applyRenderer={applyRenderer}
                                   layerCurrentRenderer={layerCurrentRenderer}
-                                  setVisible={setVisible} features={features} attributes={attr}/>
+                                  setVisible={setVisible}
+                                  features={features}
+                                  idFieldName={findIdField(features)}
+                    />
                 </FilterWidgetContextProvider>}
             </div>
         </>

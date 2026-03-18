@@ -18,7 +18,8 @@ export const ConditionOnFilter = (props: Props) => {
 
     const {
         queryWidget,
-        setExpressionSet
+        setExpressionSet,
+        idFieldName
     } = useContext(FilterWidgetContext) as FilterWidgetContextType
 
     const toast = useRef<Toast | null>(null);
@@ -38,10 +39,12 @@ export const ConditionOnFilter = (props: Props) => {
     const functionsTexts = [
         {name: t('filters.is' as any), logic: "=="},
         {name: t('filters.is_not' as any), logic: "!="},
-        {name: t('filters.starts_with' as any), logic: "startsWith"},
-        {name: t('filters.ends_with' as any), logic: "endsWith"},
-        {name: t('filters.contains' as any), logic: "in"},
-        {name: t('filters.does_not_contain' as any), logic: "!in"},
+        ...(idFieldName ? [
+            {name: t('filters.starts_with' as any), logic: "startsWith"},
+            {name: t('filters.ends_with' as any), logic: "endsWith"},
+            {name: t('filters.contains' as any), logic: "in"},
+            {name: t('filters.does_not_contain' as any), logic: "!in"}
+        ] : []),
         {name: t('filters.is_null' as any), logic: "null"}
     ];
 

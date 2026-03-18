@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from 'react';
-import { FilterRule } from '../basedOnRules.tsx';
+import { FilterRule } from '../../rendererUtils';
 interface Props {
     visible: boolean;
     setVisible: Dispatch<SetStateAction<boolean>>;
