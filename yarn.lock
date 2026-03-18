@@ -5440,8 +5440,8 @@ open@^8.4.0:
     is-docker "^2.1.1"
     is-wsl "^2.2.0"
 
-openlayers-style-editor@1.0.0, "openlayers-style-editor@file:/Users/mbm/Documents/Trabalho/Projetos/styles-editor/openlayers-style-editor":
-  version "1.0.0"
+openlayers-style-editor@1.1.1, "openlayers-style-editor@file:/Users/mbm/Documents/Trabalho/Projetos/styles-editor/openlayers-style-editor":
+  version "1.1.1"
   resolved "file:openlayers-style-editor"
   dependencies:
     "@types/json-logic-js" "^2.0.8"
@@ -5654,7 +5654,7 @@ pacote@^21.0.2:
     dotenv "17.3.1"
     next "16.1.6"
     ol "10.8.0"
-    openlayers-style-editor "0.1.9"
+    openlayers-style-editor "1.1.1"
     primereact "10.9.7"
     prism-react-renderer "^2.4.1"
     react "19.2.4"
