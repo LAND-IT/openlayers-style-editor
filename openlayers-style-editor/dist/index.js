@@ -93,7 +93,7 @@ function getCategorizedStyle(attribute, colors, outlineColor, outlineWidth, defa
 				["id"]
 			],
 			"white",
-			outlineColorCopy || "#000000"
+			outlineColorCopy || fromString("#000000")
 		],
 		"stroke-width": [
 			"case",
@@ -121,7 +121,7 @@ function singleColorStyle(color, outlineColor, outlineWidth) {
 				["id"]
 			],
 			"white",
-			outlineColorCopy || "#000000"
+			outlineColorCopy || fromString("#000000")
 		],
 		"stroke-width": [
 			"case",
@@ -165,7 +165,7 @@ function getGraduatedStyle(attribute, ramp, outlineColor, outlineWidth) {
 				["id"]
 			],
 			"white",
-			outlineColorCopy || "#000000"
+			outlineColorCopy || fromString("#000000")
 		],
 		"stroke-width": [
 			"case",
@@ -282,8 +282,9 @@ function getStyleColorsAndValues(style, type) {
 	return colors;
 }
 function getRendererColorAndSizeStroke(renderer) {
+	const strokeColor = renderer.rendererOL["stroke-color"][3];
 	return {
-		color: renderer.rendererOL["stroke-color"][3],
+		color: typeof strokeColor === "string" ? fromString(strokeColor) : strokeColor,
 		size: renderer.rendererOL["stroke-width"][3]
 	};
 }

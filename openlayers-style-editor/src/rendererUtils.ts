@@ -100,7 +100,7 @@ export function getCategorizedStyle(attribute: string, colors: Row[], outlineCol
             'case',
             ['==', ['var', 'highlightedId'], ['id']],
             'white',
-            outlineColorCopy || '#000000'
+            outlineColorCopy || fromString('#000000')
         ],
         'stroke-width': ['case', ['==', ['var', 'highlightedId'], ['id']], 2, outlineWidth == undefined ? 1 : outlineWidth],
         'fill-color': aux
@@ -119,7 +119,7 @@ export function singleColorStyle(color: Color, outlineColor?: Color, outlineWidt
             'case',
             ['==', ['var', 'highlightedId'], ['id']],
             'white',
-            outlineColorCopy || '#000000'
+            outlineColorCopy || fromString('#000000')
         ],
         'stroke-width': ['case', ['==', ['var', 'highlightedId'], ['id']], 2, outlineWidth == undefined ? 1 : outlineWidth],
         "stroke-offset": 0,
@@ -156,7 +156,7 @@ export function getGraduatedStyle(attribute: string, ramp: Row[], outlineColor?:
             'case',
             ['==', ['var', 'highlightedId'], ['id']],
             'white',
-            outlineColorCopy || '#000000'
+            outlineColorCopy || fromString('#000000')
         ],
         'stroke-width': ['case', ['==', ['var', 'highlightedId'], ['id']], 2, outlineWidth == undefined ? 1 : outlineWidth],
         'fill-color': aux
@@ -279,8 +279,9 @@ export function getStyleColorsAndValues(style: FlatStyle, type: RenderType): Row
 }
 
 export function getRendererColorAndSizeStroke(renderer: Render): { color: Color, size: number } {
+    const strokeColor = renderer.rendererOL["stroke-color"]![3];
     return {
-        color: renderer.rendererOL["stroke-color"]![3] as Color,
+        color: typeof strokeColor === "string" ? fromString(strokeColor) : strokeColor as Color,
         size: (renderer.rendererOL["stroke-width"]! as any[])[3] as number
     }
 }

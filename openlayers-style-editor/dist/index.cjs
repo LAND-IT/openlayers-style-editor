@@ -125,7 +125,7 @@
 					["id"]
 				],
 				"white",
-				outlineColorCopy || "#000000"
+				outlineColorCopy || (0, ol_color_js.fromString)("#000000")
 			],
 			"stroke-width": [
 				"case",
@@ -153,7 +153,7 @@
 					["id"]
 				],
 				"white",
-				outlineColorCopy || "#000000"
+				outlineColorCopy || (0, ol_color_js.fromString)("#000000")
 			],
 			"stroke-width": [
 				"case",
@@ -197,7 +197,7 @@
 					["id"]
 				],
 				"white",
-				outlineColorCopy || "#000000"
+				outlineColorCopy || (0, ol_color_js.fromString)("#000000")
 			],
 			"stroke-width": [
 				"case",
@@ -314,8 +314,9 @@
 		return colors;
 	}
 	function getRendererColorAndSizeStroke(renderer) {
+		const strokeColor = renderer.rendererOL["stroke-color"][3];
 		return {
-			color: renderer.rendererOL["stroke-color"][3],
+			color: typeof strokeColor === "string" ? (0, ol_color_js.fromString)(strokeColor) : strokeColor,
 			size: renderer.rendererOL["stroke-width"][3]
 		};
 	}
