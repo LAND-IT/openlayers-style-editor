@@ -176,20 +176,15 @@ export const Categorized: React.FC<Props> = (props: Props) => {
     }
 
     const updateColorPicker = (newColor: Color, tableRow: TableRow) => {
-        const tableUpdated: TableRow[] = []
-        table.forEach(({value, visible, color}: TableRow) => {
-            if (value === tableRow.value) {
-                tableUpdated.push({
-                    value,
-                    visible,
-                    color: newColor,
-                })
-            } else {
-                tableUpdated.push({value, visible, color})
-            }
-        })
-        setTable(tableUpdated)
-    }
+        setTable(previousTable =>
+            previousTable.map(row =>
+                row.value === tableRow.value
+                    ? { ...row, color: newColor }
+                    : row
+            )
+        );
+    };
+
 
     const colorColumnTemplate = (tr: TableRow) => {
         return (
