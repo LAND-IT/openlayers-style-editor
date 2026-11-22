@@ -1407,20 +1407,10 @@
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)(primereact_checkbox_checkbox_esm_js.Checkbox, { checked: tr.visible });
 		};
 		const updateColorPicker = (newColor, tableRow) => {
-			const tableUpdated = [];
-			table.forEach(({ value, visible, color }) => {
-				if (value === tableRow.value) tableUpdated.push({
-					value,
-					visible,
-					color: newColor
-				});
-				else tableUpdated.push({
-					value,
-					visible,
-					color
-				});
-			});
-			setTable(tableUpdated);
+			setTable((previousTable) => previousTable.map((row) => row.value === tableRow.value ? {
+				...row,
+				color: newColor
+			} : row));
 		};
 		const colorColumnTemplate = (tr) => {
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
